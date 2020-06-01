@@ -1,0 +1,76 @@
+This example is an n = 1 RSAE instability from DIII-D. 
+
+**** INITIAL VALUE TIME EVOLUTION OPTION:
+
+In the file Input_Model set matrix_out = .false. Then to run from this directory, type:
+
+../../Source/xfar3d
+
+The input files used here are:
+
+Input_Model - main input file containing FAR3d options, physicsl paramters, mode selection, etc.
+Eq_DIIID_RS - Equilibrium file containing magnetic field, geometry data (R,Z,Phi), and metric
+              elements. These are all expressed in Boozer coordinates and are represetented in
+	      FAR3d's pseudospectral form (finite difference grid in radius, Fourier series in
+	      poloidal/toroidal angles (m*theta - n*zeta)
+Data.txt, Data2.txt - These are two different versions of profile files. They contain profile
+              information derived from TRANSP modeling of this particular discharge. Both will
+	      work and give similar answers, but Data2.txt includes data on more profiles than
+	      Data.txt
+	      
+After the run finishes, the main output is contained in the file farprt. This includes the input
+      data, the evolution of energies in the different modes, and, at the end, the growth rates
+      and real frequencies of the modes. For a well-converged linear run all varialble and modes
+      should have close to the same growth rate (gam) and real frequency (om_r). Thes are
+      normalized to the Alfven time (R_0/v_A0) at the magnetic axis. At the end of farprt
+      the average of the growth rate and real frequency are calculated, based on averaging
+      over all of the modes and dynamic variables. The standard deviation is also provided
+      following the average. This information is also provided more compactly in the file
+      temp_grwth_omega
+      
+      
+**** EIGENSOLVER OPTION:
+      
+In the file Input_Model set matrix_out = .true. Then to run from this directory, type:
+
+../../Source/xfar3d
+
+This writes out non-zero elements of the two block tridiagonal matrices (a_matrix.dat and b_matrix.dat)
+and the file jdqz.dat which contains the dimension data, the mode list and a flux surface list.
+This is then followed by running the eigensolver:
+
+../../Eigensolver/xEigen .076 .048
+ 
+The command line arguments are real_frequency and growth rate (both normalized to Alfven time R_0/v_A0).
+These are given to the code as a target for an eigenvalue search in the complex plane - it will find
+seven eigenvalues that it judges to be close to the target. In this example we have specified a target
+close to that found above by the initial value version of FAR3d. The screen output is as given below.
+As expected, an unstable eigenvalue is found that is close to that found with the initial value version,
+and out of the three growing modes found, this one has the highest growth rate. Each line beginning with
+"lambda" is a separate eigenmode. This is followed by a line that gives an error metric, the inner product
+with itself of the equation being solved (Ax = lambda Bx) where lambda is replaced by alpha/beta, where
+alpha and beta are complex quantities and om_r = real(alpha/beta), gam = imag(alpha/beta).
+
+freq. =   0.7600E-01   growth =   0.4800E-01
+eigenvalue target =   0.4800000E-01    0.7600000E-01
+ reading in and setup matrix took   0.200426000000000      sec
+ symtrd_factor took   3.533399999999998E-002 sec
+         199           8       11144           7
+lambda( 1): ( 4.8251E-02, 7.5524E-02 )
+       ||beta Ax - alpha Bx||: 0.922520D-11
+lambda( 2): ( 1.4586E-02, 6.7960E-02 )
+       ||beta Ax - alpha Bx||: 0.173325D-09
+lambda( 3): ( 1.7560E-02, 1.2111E-01 )
+       ||beta Ax - alpha Bx||: 0.179414D-09
+lambda( 4): (-8.5429E-03, 8.2863E-02 )
+       ||beta Ax - alpha Bx||: 0.631330D-09
+lambda( 5): (-9.6841E-03, 7.6075E-02 )
+       ||beta Ax - alpha Bx||: 0.485073D-09
+lambda( 6): (-1.7886E-03, 1.0577E-01 )
+       ||beta Ax - alpha Bx||: 0.213370D-10
+lambda( 7): (-1.0014E-02, 8.1992E-02 )
+       ||beta Ax - alpha Bx||: 0.582744D-09
+ END JDQZ AFTER  50.53 SEC. CPU-TIME AND  50.53 SEC. ELAPSED TIME
+Freq. Range:   0.6796E-01 to   0.1211E+00
+
+This same list of growth rates and real frequencies is written into the file egn_values.dat
