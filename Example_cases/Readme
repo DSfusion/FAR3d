@@ -1,4 +1,4 @@
-This example is an n = 1 RSAE instability from DIII-D. 
+The example in directory DIIID is an n = 1 RSAE instability from DIII-D. The example in directory ITER_NBI_Alpha is not complete yet.
 
 **** INITIAL VALUE TIME EVOLUTION OPTION:
 
