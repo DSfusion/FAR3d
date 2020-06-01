@@ -222,11 +222,11 @@
 			call b2lx(sceq2,-1,2,8,0,1,0,betfc_alp)
 		end if	
 		
-!  Shared equilibrium toroidal flow velocity for u-zeta equation
+!  Sheared equilibrium toroidal flow velocity for u-zeta equation
 
         call b2lx0(vzt_eq,2,4,0,0,1,-1.0_IDP) 
 
-!  Shared equilibrium poloidal flow velocity for u-zeta equation
+!  Sheared equilibrium poloidal flow velocity for u-zeta equation
 
                 vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,2,4,1,0,0,-1.0_IDP) 			
@@ -466,11 +466,11 @@
 		end do
 		call b2lx(sceq1,-1,3,7,0,0,0,-gamma)
 		
-!  Shared equilibrium toroidal flow velocity for pressure equation
+!  Sheared equilibrium toroidal flow velocity for pressure equation
 
         call b2lx0(vzt_eq,3,3,0,0,1,-1.0_IDP) 	
 
-!  Shared equilibrium poloidal flow velocity for pressure equation
+!  Sheared equilibrium poloidal flow velocity for pressure equation
 
         vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,3,3,1,0,0,-1.0_IDP) 		
@@ -597,11 +597,11 @@
 	       call b2lx(sceq2,1,5,5,1,0,0,-1.0_IDP)
 	       call b2lx(sceq3,1,5,5,0,0,1,-1.0_IDP)
 		   
-!  Shared equilibrium toroidal flow velocity for fast ion density equation
+!  Sheared equilibrium toroidal flow velocity for fast ion density equation
 
         call b2lx0(vzt_eq,5,5,0,0,1,-1.0_IDP) 		
 
-!  Shared equilibrium poloidal flow velocity for fast ion density equation
+!  Sheared equilibrium poloidal flow velocity for fast ion density equation
 
         vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,5,5,1,0,0,-1.0_IDP) 		   
@@ -612,11 +612,11 @@
 	       call b2lx(sceq2,1,6,6,1,0,0,-1.0_IDP)
 	       call b2lx(sceq3,1,6,6,0,0,1,-1.0_IDP)
 		   
-!  Shared equilibrium toroidal flow velocity for fast ion parallel velocit equation
+!  Sheared equilibrium toroidal flow velocity for fast ion parallel velocit equation
 
         call b2lx0(vzt_eq,6,6,0,0,1,-1.0_IDP) 		
 
-!  Shared equilibrium poloidal flow velocity for fast ion parallel velocity equation
+!  Sheared equilibrium poloidal flow velocity for fast ion parallel velocity equation
 
         vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,6,6,1,0,0,-1.0_IDP) 			   
@@ -777,11 +777,11 @@
 		end do		
 		call b2lx(sceq2,1,7,1,1,0,0,1.0_IDP)		
 
-!  Shared equilibrium toroidal flow velocity for the thermal moment of energetic particles equation
+!  Sheared equilibrium toroidal flow velocity for the thermal moment of energetic particles equation
 
         call b2lx0(vzt_eq,7,7,0,0,1,-1.0_IDP) 
 
-!  Shared equilibrium poloidal flow velocity for the thermal moment of energetic particles equation
+!  Sheared equilibrium poloidal flow velocity for the thermal moment of energetic particles equation
 
         vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,7,7,1,0,0,-1.0_IDP) 	
@@ -807,11 +807,11 @@
 	       call b2lx(sceq2,1,8,8,1,0,0,-1.0_IDP)
 	       call b2lx(sceq3,1,8,8,0,0,1,-1.0_IDP)
 		   
-!  Shared equilibrium toroidal flow velocity for fast alpha density equation
+!  Sheared equilibrium toroidal flow velocity for fast alpha density equation
 
           call b2lx0(vzt_eq,8,8,0,0,1,-1.0_IDP) 
 
-!  Shared equilibrium poloidal flow velocity for fast alpha density equation
+!  Sheared equilibrium poloidal flow velocity for fast alpha density equation
 
         vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,8,8,1,0,0,-1.0_IDP) 			   
@@ -822,11 +822,11 @@
 	       call b2lx(sceq2,1,9,9,1,0,0,-1.0_IDP)
 	       call b2lx(sceq3,1,9,9,0,0,1,-1.0_IDP)
 		   
-!  Shared equilibrium toroidal flow velocity for fast alpha parallel velocity equation
+!  Sheared equilibrium toroidal flow velocity for fast alpha parallel velocity equation
 
           call b2lx0(vzt_eq,9,9,0,0,1,-1.0_IDP) 
 
-!  Shared equilibrium poloidal flow velocity for fast alpha parallel velocity equation
+!  Sheared equilibrium poloidal flow velocity for fast alpha parallel velocity equation
 
         vth_eq1=rinv*vth_eq/eps
         call b2lx0(vth_eq1,9,9,1,0,0,-1.0_IDP) 					   
