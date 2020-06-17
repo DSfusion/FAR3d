@@ -1,0 +1,4 @@
+ifort -c bspline90_22_ver0.f90
+ifort -c init_value_run_plotter.f90 -I. `PKG_CONFIG_PATH=/usr/local/plplot-5.11.1/lib/pkgconfig pkg-config --cflags --libs plplot-f95`
+ifort -O -o xplot_init_value_run init_value_run_plotter.o bspline90_22_ver0.o -I. `PKG_CONFIG_PATH=/usr/local/plplot-5.11.1/lib/pkgconfig pkg-config --cflags --libs plplot-f95` \
+  -L/Users/dsp/fortran_code_development/Silo-4.10.2/lib -lsilo

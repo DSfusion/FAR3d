@@ -1,0 +1,7 @@
+LIBSTELL=/Volumes/Stellopt_ParVMEC/LIBSTELL/Release
+LIBSTELLA=/Volumes/Stellopt_ParVMEC/LIBSTELL/Release/libstell.a
+
+ifort -O -c read_boozer_wout.f90 -I$LIBSTELL -I/Users/dsp/Applications/netcdf-4.0.1_install/include
+ifort -O -o xbw_read read_boozer_wout.o -I$LIBSTELL $LIBSTELLA  \
+-I/Users/dsp/Applications/netcdf-4.0.1_install/include \
+-L/Users/dsp/Applications/netcdf-4.0.1_install/lib -lnetcdf

@@ -1,0 +1,64 @@
+(1) Compile/load the code init_value_run_plotter.f90 using the script bld_init_value_run_plotter
+     (this requires the Plplot and the Visit Silo libraries,also the spline fit code bspline90_22_ver0.f90)
+    Compile/load the code read_boozer_wout.f90 using the script bld_read_boozer_wout
+     (this requires the LIBSTELL and Netcdf libraries)
+    The above scripts and codes will need some modifications for each platform to indicate
+      the library locations.
+
+(2) Run code to generate R,Z coordinates from Boozer representation for 2D contour plot:
+
+xbw_read d3d_176523_00615
+
+  This produces the file geom_bzr_to_cyl.dat
+
+(3) Run plotter:
+
+xplot_init_value_run fs0000z 4
+
+  This will plot the data read from the FAR3d dump file fs0000z.
+  The 4 indicates that the variable that will be plotted (in this case 4 = fluctuating fast ion density)
+  Other variable choices are:
+    1 - fluctuating poloidal flux
+    2 - potential
+    3 - fluctuating thermal plasma pressure
+    4 - fluctuating fast ion density
+    5 - fluctuating fast ion parallel velocity moment
+    6 - fluctuating thrermal plasma parallel velocity moment
+    
+   Defaults: if you just type: xplot_init_value_run it is assumeed that the
+   dump file is fs0000z and the variable is 2 (potential)
+   
+   The code produces a Plplot x-y plot of the Fourier modes vs. radius. The
+   user will be prompted with several choices of output format. Just hitting
+   return will on most systems just make the plot on the screen.
+   This code also produces a file 2D_phi.silo, 2d_nfast.silo, etc. with the
+   name after the underscore corresponding to the variable that was selected.
+   This is a 2D contour plot of the mode structure in R, Z coordinates using
+   the data format (Silo) used by Visit. This may be plotted by using the
+   Visit session (2D_mode_structure.session).
+   
+   
+****Second option****
+
+FAR3d also writes out the following text files that contain the Fourier amplitudes
+vs. radius (the number of modes included is determined by the variable lplots in the
+FAR3d Input file). These include the basic dynamic variables (phi, psi, uzt = vorticity,
+vthprlf, pr, nf, vprlf) as well as magnetic field and flow velocity components that
+have been derived from these variables (br, bth, vr, vth | r = radial, th = poloidal
+angle). spctr_0000 contains the integrated kinetic and magnetic energy components in
+each mode.
+
+br_0000
+phi_0000
+psi_0000
+uzt_0000
+vr_0000
+vthprlf_0000
+bth_0000
+nf_0000
+pr_0000
+spctr_0000
+vprlf_0000
+vth_0000
+
+
