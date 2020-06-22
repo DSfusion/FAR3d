@@ -1,0 +1,8 @@
+ifort -c bspline90_22_ver0.f90
+ifort -c egn_plotter_jdqz_far3d.f90 \
+`PKG_CONFIG_PATH=/usr/local/plplot-5.11.1/lib/pkgconfig pkg-config --cflags --libs plplot-f95` \
+-L/Users/dsp/fortran_code_development/silo-4.10.2/lib -lsilo
+
+ifort -O -o xplot_egn_jdqz_far3d egn_plotter_jdqz_far3d.o bspline90_22_ver0.o -I. \
+`PKG_CONFIG_PATH=/usr/local/plplot-5.11.1/lib/pkgconfig pkg-config --cflags --libs plplot-f95` \
+-L/Users/dsp/fortran_code_development/silo-4.10.2/lib -lsilo

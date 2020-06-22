@@ -1,0 +1,46 @@
+(1) Compile/load the code egn_plotter_jdqz_far3d.f90 using the script bld_plt_egn_jdqz_far3d
+     (this requires the Plplot and the Visit Silo libraries,also the spline fit code bspline90_22_ver0.f90)
+    Compile/load the code read_boozer_wout.f90 using the script bld_read_boozer_wout
+     (this requires the LIBSTELL and Netcdf libraries)
+    The above scripts and codes will need some modifications for each platform to indicate
+      the library locations.
+
+(2) As with the initial value version, run code to generate R,Z coordinates from Boozer
+    representation for 2D contour plot:
+
+xbw_read d3d_176523_00615
+
+  This produces the file geom_bzr_to_cyl.dat. If this has already been done for this
+  equilibrium the existing geom_bzr_to_cyl.dat file can be used.
+
+(3) Run the plotter (the eigenvalue option of the code has a different plotter than
+    the initial value code since it produces multiple eigenmodes for each run. The
+    current version is set up to find 7 eigenmodes - this can be changed if needed)
+
+xplot_egn_jdqz_far3d
+
+  This will plot the data read from the FAR3d eigensolver files. It reads data from
+  egn_values.dat, egn_mode_ascii.dat,and geom_bzr_to_cyl.dat. xplot_egn_jdqz_far3d is
+  created from running the script bld_plt_egn_jdqz_far3d which compiles the source
+  codes egn_plotter_jdqz_far3d.f90 and bspline90_22_ver0.f90
+    
+   Defaults: if you just type: xplot_egn_jdqz_far3d then the data from the above input
+   files is read and the 7 eigenmode structures are plotted (4 per Plplot window).
+   Each plot is labeled with its frequency and growth rate (in Alfven units, i.e.,
+   normalized to v_A0/R_0). The plots show the different Fourier amplitudes vs.
+   radius using different colors and the (m,n) of the dominant mode is indicated
+   at the top of each plot.
+   
+   The code produces a Plplot x-y plot of the Fourier modes vs. radius. The
+   user will be prompted with several choices of output format. Just hitting
+   return will on most systems just make the plot on the screen.
+   
+   The user can then select a mode of particular interest out of the 7 plots for
+   generating a 2D Visit silo file. To do this step, rerun the plotter with an
+   integer following the executable name. For example "xplot_egn_jdqz_far3d 3".
+   This would select out the 3rd eigenmode and create a 2D_jdqz_plot.silo file
+   with the 2D mode structure in a format that can be read by Visit. It also
+   creates a Plplot screen plot of that particular mode and outputs an egn_out.curve
+   file that can be used with Visit to produce plots of the Fourier modes vs. radius
+   similar to the Plplot plots.The advantage of plotting from egn_out.curve is that
+   it adds labels indicating the (m,n) value of each curve.
