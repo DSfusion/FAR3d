@@ -2,3 +2,5 @@
 *.o
 *.mod
 xfar3d
+Graphics/xplot_init_value_run
+Graphics/silo.inc
