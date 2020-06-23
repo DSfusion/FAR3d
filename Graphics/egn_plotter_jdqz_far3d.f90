@@ -36,7 +36,7 @@
       use bspline
       USE PLPLOT
       implicit none
-      include "/Users/dsp/fortran_code_development/silo-4.10.2/include/silo.inc"
+      include "silo.inc"
       integer :: mn_col, ns, i, j, k, istat, nmat, icol, inum, kz, kt, itheta, &
        izeta, nfp, m, ic, nmat_rd, mpol, icycl
       real*8, DIMENSION(:,:,:), ALLOCATABLE :: egn_vec_extnd

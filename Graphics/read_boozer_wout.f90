@@ -66,8 +66,8 @@
       REAL(kind=rprec) :: seval
       character arg1*40,warg1*45
       character*1 tb
-      integer nargs, numargs, numchars, itheta, izeta, nznt
-      integer iargc, getarg, unit_no, istat, ierr, ig, lf, is, l
+      integer nargs, numargs, itheta, izeta, nznt
+      integer iargc, unit_no, istat, ierr, ig, lf, is, l
       real viz_flux   !for plotting interior flux surfaces in AVS
       real surf_area_element, surf_area_total
       logical lasym, viz, test_jacob, test_upr_lowr, &
@@ -75,7 +75,7 @@
 !-----------------------------------------------
       tb = char(9)
       numargs = iargc()
-      numchars = getarg(1,arg1)
+      call getarg(1,arg1)
 !
 !
       warg1 = arg1
