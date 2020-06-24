@@ -6,3 +6,5 @@ Graphics/xplot_init_value_run
 Graphics/xplot_egn_jdqz_far3d
 Graphics/silo.inc
 Graphics/xbw_read
+Eigensolver/xEigen
+Eigensolver/LIB_JDQZ/libjdqz.a
