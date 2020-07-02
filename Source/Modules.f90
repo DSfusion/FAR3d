@@ -13,11 +13,11 @@
 		
 		real(IDP) :: stdifp,stdifu,stdifnf,stdifvf,stdifv,stdifnalp,stdifvalp,dt0,Adens,Bdens,Adensalp,Bdensalp, &
 		             LcA0,LcA1,LcA2,LcA3,LcA0alp,LcA1alp,LcA2alp,LcA3alp, &
-                     ext_prof,omegar,iflr,r_epflr,r_epflralp,dpres,DIIID_u,betath_factor,etascl,reta,eta0,etalmb,deltaq,deltaiota		
+                             ext_prof,omegar,iflr,r_epflr,r_epflralp,dpres,DIIID_u,betath_factor,etascl,reta,eta0,etalmb,deltaq,deltaiota		
 		integer :: ihist,nocpl,maxstp,nstep,ndump,nprint,lplots,itime,nstep1,nonlin,noeqn,edge_p, &
-                   iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,inalp,ivalp,iq,iw,ix1,ix2,iwa,ix1a,ix2a, &
-				   EP_dens_on,Alpha_dens_on,EP_vel_on,Alpha_vel_on,Trapped_on,ext_prof_len,q_prof_on,Eq_vel_on, & 
-                                                           Eq_velp_on,Eq_Presseq_on,Eq_Presstot_on,Auto_grid_on,Edge_on
+                           iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,inalp,ivalp,iq,iw,ix1,ix2,iwa,ix1a,ix2a, &
+		           EP_dens_on,Alpha_dens_on,EP_vel_on,Alpha_vel_on,Trapped_on,ext_prof_len,q_prof_on,Eq_vel_on, & 
+                           Eq_velp_on,Eq_Presseq_on,Eq_Presstot_on,Auto_grid_on,Edge_on,vtk_on
                                                                          
 		character(len=40) :: eq_name,ext_prof_name		
 		logical :: matrix_out
@@ -96,6 +96,7 @@
                         !  Eq_Presstot_on activates external profiles for the thermal and EP pressures if 1
                         !  Auto_grid_on activates a default grid spacing
                         !  Edge_on activates the VMEC data extrapolation
+                        !  vtk_on activates the vtk format in the output
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!		
 	
 	end module cotrol
@@ -130,7 +131,7 @@
 		real(IDP) :: delta,rc,fti,fte,bmodn,mu0,uion,vthi,vthe,xnuelc0,coul_log
 		real(IDP), dimension(:), allocatable :: dnnbi,dne,dni,temp_epnn,ti,te,temp_ep,qprofile, &
 		                                        dnnbinn,dnenn,dninn,pthermalnn,tinn,tenn,tbn,tbnnn,pepnn,ptotnn, &
-                                                        pthermal,pep,ptot,vthermalep,vAlfven,vtherm_ionP, &
+                                                        pthermal,pep,ptot,vthermalep,vAlfven,vtherm_ionP,vtherm_elecP, &
 							dnalpha,dnalphann,talpha,talphann,vzt_eqp,vth_eqp
 												                                            												
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Definitions !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!			
@@ -264,10 +265,10 @@
 		real(IDP), dimension(0:10) :: cnep,ctep,cnfp,cvfp,cvep,cnfpalp,cvfpalp,eqvt,eqvp
 		real(IDP), dimension(:,:), allocatable :: grr,grt,gtt,grz,gtz,gzz,sqgi,sqg, &
 							  grroj,grtoj,gttoj,grzoj,gtzoj,gzzoj,grrup,grtup,grzup,gttup,gtzup,gzzup, &
-							  bmod,bst,jbgrr,jbgrt,jbgtt,jbgrz,jbgtz,lplr,lplt,lplz,omdrprp,omdtprp,omdzprp, &
+							  bmod,bst,jbgrr,jbgrt,jbgtt,jbgrz,jbgtz,omdrprp,omdtprp,omdzprp, &
 							  omdr,omdt,omdz,djroj,djtoj,djzoj,dbsjtoj,dbsjzoj,dbsjtbj,dgttr,dgrrt,dgrtt,dgttt,dgrrz, &
-							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lpltr,lpltt, &
-							  lpltz,lplzr,lplzt,lplzz,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz, &
+							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lplr,lpltt, &
+							  lpltz,lplt,lplz,lplzz,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz, &
 							  sqgdroj,sqgdthoj,sqgdztoj,sqgdthojbst,sqgdztojbst,sqgibmodith,sqgibmodizt, &
                                                           test,testr,testt,testrr,testtt,testrt
 							   
@@ -366,10 +367,7 @@
 			!  sqgibmodith = bmod*sqg*[ d/dth (sqgi) ] / rho 
 			!  sqgibmodizt = bmod*sqg*[ d/dtz (sqgi) ] 
 			!  eildrr,eildrt,eildrz,eildtt,eildtz,eildzz,eildr,eildt,eildz electron-ion Landau damping terms
-			!  lplrr,lplrt,lplrz,lpltr,lpltt,lpltz,lplzr,lplzt,lplzz perpendicular gradient operator terms
-			!  lplr = lplrr+lpltr+lplzr
-			!  lplt = lplt=lplrt+lpltt+lplzt
-			!  lplz = lplz=lplrz+lpltz+lplzz
+			!  lplrr,lplrt,lplrz,lplr,lpltt,lpltz,lplt,lplz,lplzz perpendicular gradient operator terms
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!				
 	end module equil	

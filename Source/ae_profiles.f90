@@ -169,7 +169,8 @@
           allocate(ptotnn(0:mj))	
           allocate(vthermalep(0:mj))	
           allocate(vAlfven(0:mj))
-          allocate(vtherm_ionP(0:mj))	  
+          allocate(vtherm_ionP(0:mj))
+          allocate(vtherm_elecP(0:mj))		  
 
 		  call spline(ns0,rho_e,qprof,bspl,cspl,dspl)
           do je=0,mj
@@ -216,9 +217,10 @@
           do je=0,mj
             xx = r(je)
             tenn(je) = 1.e+3*seval(ns0,xx,rho_e,temp_elec_e,bspl,cspl,dspl)
+            vtherm_elecP(je) = sqrt(tenn(je)*1.6e-19/(uion_e*9.1094e-31))/va0	
           end do	
 		  tenn_max=maxval(tenn(0:mj))	
-		  te(:)=tenn(:)/tenn_max			  
+		  te(:)=tenn(:)/tenn_max		  
 		  
           call spline(ns0,rho_e,temp_beam_e,bspl,cspl,dspl)
           do je=0,mj
@@ -433,7 +435,8 @@
           allocate(ptotnn(0:mj))		
           allocate(vthermalep(0:mj))	
           allocate(vAlfven(0:mj))
-          allocate(vtherm_ionP(0:mj))		  
+          allocate(vtherm_ionP(0:mj))	
+          allocate(vtherm_elecP(0:mj))	  
 
 		  call spline(ns0,rho_e,qprof,bspl,cspl,dspl)
           do je=0,mj
@@ -489,6 +492,7 @@
           do je=0,mj
             xx = r(je)
             tenn(je) = 1.e+3*seval(ns0,xx,rho_e,temp_elec_e,bspl,cspl,dspl)
+            vtherm_elecP(je) = sqrt(tenn(je)*1.6e-19/(uion_e*9.1094e-31))/va0
           end do	
 		  tenn_max=maxval(tenn(0:mj))	
 		  te(:)=tenn(:)/tenn_max				  

@@ -62,6 +62,20 @@
 				integer :: ieqn,ivar
 				real(IDP) :: coef
 			end subroutine b2lx_dlsq
+			subroutine b2lx_dlsq_r(ieqn,ivar,wk1,wk2,coef)
+				use param
+				implicit none
+				integer :: ieqn,ivar,itypf,l,j
+				real(IDP) :: coef
+		                real(IDP), dimension(0:,0:) :: wk1,wk2
+			end subroutine b2lx_dlsq_r
+			subroutine b2lx_dlsq_x(ieqn,ivar,wk1,wk2,coef)
+				use param
+				implicit none
+				integer :: ieqn,ivar,itypf,l,j
+				real(IDP) :: coef
+		                real(IDP), dimension(0:,0:) :: wk1,wk2
+			end subroutine b2lx_dlsq_x
 			subroutine dbydth(d,a,ltype,c1,c2,k)
 				use param
 				implicit none
@@ -185,11 +199,11 @@
 
 			if (ext_prof == 1) then
 				do l=1,leqmax
-					sceq5(:,l)=1.2533*iflr*iflr*vAlfven*vAlfven*bmod(:,l)/(vtherm_ionP*(feq-qqinv*cureq))
+					sceq5(:,l)=1.2533*iflr*iflr*ti*bmod(:,l)/(dni*vtherm_elecP*(feq-qqinv*cureq))
 				end do
 			else
 				do l=1,leqmax
-					sceq5(:,l)=1.2533*iflr*iflr*bmod(:,l)/(denseq*vtherm_ion*(feq-qqinv*cureq))
+					sceq5(:,l)=1.2533*iflr*iflr*ti*bmod(:,l)/(dni*vtherm_elecP*(feq-qqinv*cureq))
 				end do
 			end if
 			call b2lx_landau_grad_parallel(sceq5,1,1,iq,0,0,0,1.0_IDP)
@@ -284,7 +298,8 @@
 		if (iflr_on == 1) then
 
 			coef=omegar*iflr*iflr
-			call b2lx_dlsq(2,4,coef)
+!			call b2lx_dlsq_x(2,4,sceq1,sceq2,coef)
+                        call b2lx_dlsq_r(2,4,sceq1,sceq2,coef)
 
 		end if
 
@@ -386,7 +401,7 @@
 		
 ! diffusion term added
 
-		call b2lx_dlsq(2,4,stdifu)
+		call b2lx_dlsq_r(2,4,sceq1,sceq2,stdifu)
 
 ! end diffusion term
 
@@ -532,7 +547,7 @@
 		
 ! diffusion term added
 
-		call b2lx_dlsq(3,3,stdifp)
+		call b2lx_dlsq_r(3,3,sceq1,sceq2,stdifp)
 
 ! end diffusion term
 
@@ -653,7 +668,7 @@
 
 ! diffusion term added
 
-		call b2lx_dlsq(5,5,stdifnf)
+		call b2lx_dlsq_r(5,5,sceq1,sceq2,stdifnf)
 
 ! end diffusion term
 
@@ -749,7 +764,7 @@
 		 
 ! diffusion term added
 
-		call b2lx_dlsq(6,6,stdifvf)
+		call b2lx_dlsq_r(6,6,sceq1,sceq2,stdifvf)
 
 ! end diffusion term
 		close(unit=87)    !close file for fast ion coefficient checks
@@ -787,7 +802,7 @@
         call b2lx0(vth_eq1,7,7,1,0,0,-1.0_IDP) 	
 
 ! diffusion term added
-		call b2lx_dlsq(7,7,stdifv)			
+		call b2lx_dlsq_r(7,7,sceq1,sceq2,stdifv)			
 		
 !  End of fast ion moment equations		 
 
@@ -846,7 +861,7 @@
 
 ! diffusion term added
 
-			call b2lx_dlsq(8,8,stdifnalp)
+			call b2lx_dlsq_r(8,8,sceq1,sceq2,stdifnalp)
 
 ! end diffusion term
 
@@ -915,7 +930,7 @@
 		
 ! diffusion term added
 
-			call b2lx_dlsq(9,9,stdifvalp)
+			call b2lx_dlsq_r(9,9,sceq1,sceq2,stdifvalp)
 
 ! end diffusion term		
 				

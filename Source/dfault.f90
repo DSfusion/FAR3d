@@ -151,6 +151,7 @@
 		EP_vel_on=0.
 		Alpha_vel_on=0.
 		ext_prof_len=100
+                vtk_on=0
         deltaq=0.
 		deltaiota=0.	
                                 Eq_vel_on=0.

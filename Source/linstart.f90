@@ -73,6 +73,20 @@
 				integer :: ieqn,ivar
 				real(IDP) :: coef
 			end subroutine block_dlsq
+			subroutine block_dlsq_r(ieqn,ivar,wk1,wk2,coef)
+				use param
+				implicit none
+				integer :: ieqn,ivar,itypf,l,j
+				real(IDP) :: coef
+		                real(IDP), dimension(0:,0:) :: wk1,wk2
+			end subroutine block_dlsq_r
+			subroutine block_dlsq_x(ieqn,ivar,wk1,wk2,coef)
+				use param
+				implicit none
+				integer :: ieqn,ivar,itypf,l,j
+				real(IDP) :: coef
+		                real(IDP), dimension(0:,0:) :: wk1,wk2
+			end subroutine block_dlsq_x
 			subroutine dbydth(d,a,ltype,c1,c2,k)
 				use param
 				implicit none
@@ -156,7 +170,14 @@
 				integer :: itypf
 				real(IDP) :: c1,c2
 				real(IDP), dimension(0:,0:) :: ss,ff,wk1,wk2,wk3
-			end subroutine dlsq		
+			end subroutine dlsq
+			subroutine dlsq_r(ss,ff,itypf,wk1,wk2,wk3,c1,c2)
+				use param
+				implicit none
+				integer :: itypf
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: ss,ff,wk1,wk2,wk3
+			end subroutine dlsq_r		
 		end interface
 
 !		In this subroutine we include the model in a tridiagonal matrix amat, bmat and cmat	
@@ -221,7 +242,7 @@
 
 	  	  open(unit=46,file="profiles_ex.dat",status="unknown")
 		  write(46,'("       r",a1,"   dnnbi(m^-3)",a1,"    dne(m^-3)",a1,"    dni(m^-3)",a1,"     tbn(keV)",a1, &
-		             "     ti(keV)",a1,"     te(keV)",a1,"   vzt_eq/vA0",a1,"   vth_eq/vA0",a1,"  vthermalep(m/s)",a1,"       etann(MKS)")') &
+		             "     ti(keV)",a1,"     te(keV)",a1,"   vzt_eq(m/s)",a1,"   vth_eq(m/s)",a1,"  vthermalep(m/s)",a1,"       etann(MKS)")') &
 		  	     tb,tb,tb,tb,tb,tb,tb,tb,tb,tb
 		  do j=0,mj
 		   write(46,'(e15.7,10(a1,e15.7))') r(j),tb,dnnbinn(j),tb,dnenn(j),tb,dninn(j),tb,tbnnn(j), &
@@ -464,7 +485,8 @@
 !   Ion FLR effects auxiliary variable
 
 		if (iflr_on == 1) then
-			call dlsq(sc1,psi,1,sc2,sc3,sc4,0.0_IDP,1.0_IDP)
+!			call dlsq(sc1,psi,1,sc2,sc3,sc4,0.0_IDP,1.0_IDP)
+			call dlsq_r(sc1,psi,1,sc2,sc3,sc4,0.0_IDP,1.0_IDP)
 			lskp=(iq-1)*lmaxn
 			do j=1,mjm1
 				do l=1,lmaxn
@@ -715,18 +737,18 @@
 
 			if (ext_prof == 1) then
 				do l=1,leqmax
-					sceq5(:,l)=1.2533*iflr*iflr*vAlfven*vAlfven*bmod(:,l)/(vtherm_ionP*(feq-qqinv*cureq))
+					sceq5(:,l)=1.2533*iflr*iflr*ti*bmod(:,l)/(dni*vtherm_elecP*(feq-qqinv*cureq))
 				end do
 			else
 				do l=1,leqmax
-					sceq5(:,l)=1.2533*iflr*iflr*bmod(:,l)/(denseq*vtherm_ion*(feq-qqinv*cureq))
+					sceq5(:,l)=1.2533*iflr*iflr*ti*bmod(:,l)/(dni*vtherm_elecP*(feq-qqinv*cureq))
 				end do
 			end if
 			call blockj_landau_grad_parallel(sceq5,1,1,iq,0,0,0,1.0_IDP)
 
 !   Ion FLR effects auxiliary equation
 
-			call block_dlsq(iq,1,1.0_IDP)
+			call block_dlsq_r(iq,1,sceq1,sceq2,1.0_IDP)
 			sd1=1.0_IDP
 			call block0(sd1,iq,iq,0,0,0,-1.0_IDP)
 
@@ -823,7 +845,8 @@
         if(iflr_on .eq. 1) then 
 		
  			coef=omegar*iflr*iflr
-			call block_dlsq(2,4,coef)			
+!			call block_dlsq_x(2,4,sceq1,sceq2,coef)	
+			call block_dlsq_r(2,4,sceq1,sceq2,coef)	
 
 		end if
 
@@ -925,7 +948,7 @@
 
 ! diffusion term added
 
-		call block_dlsq(2,4,stdifu)
+		call block_dlsq_r(2,4,sceq1,sceq2,stdifu)
 
 ! end diffusion term
 
@@ -1072,7 +1095,7 @@
 
 ! diffusion term added 
 
- 		call block_dlsq(3,3,stdifp) 
+ 		call block_dlsq_r(3,3,sceq1,sceq2,stdifp) 
 
 ! end diffusion term
 
@@ -1177,7 +1200,7 @@
 
 ! diffusion term added
 
-		call block_dlsq(5,5,stdifnf)
+		call block_dlsq_r(5,5,sceq1,sceq2,stdifnf)
 
 ! end diffusion term
 
@@ -1264,7 +1287,7 @@
 		
 ! diffusion term added
 
-		call block_dlsq(6,6,stdifvf)
+		call block_dlsq_r(6,6,sceq1,sceq2,stdifvf)
 
 ! end diffusion term
 
@@ -1301,7 +1324,7 @@
         call block0(vth_eq1,7,7,1,0,0,-1.0_IDP) 	
 
 ! diffusion term added
-		call block_dlsq(7,7,stdifv)
+		call block_dlsq_r(7,7,sceq1,sceq2,stdifv)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	Alpha particle effects	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
  
@@ -1359,7 +1382,7 @@
 
 ! diffusion term added
 
-			call block_dlsq(8,8,stdifnalp)
+			call block_dlsq_r(8,8,sceq1,sceq2,stdifnalp)
 
 ! end diffusion term
 
@@ -1445,7 +1468,7 @@
 	   
 ! diffusion term added
  
-                                              call block_dlsq(9,9,stdifvalp)
+                                              call block_dlsq_r(9,9,sceq1,sceq2,stdifvalp)
 
 ! end diffusion term		
 				

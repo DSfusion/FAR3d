@@ -161,7 +161,7 @@
 		  end if
                        end if
 				
-!       Ion flr components: thermal ion velocity profile if no external profile
+!       Ion flr components: normalized thermal ion velocity profile if no external profile
 
 	   	    if (cvep(0) > 0.0_IDP) then
 		      vtherm_ion=cvep(0)

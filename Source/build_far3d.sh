@@ -18,7 +18,7 @@ OBJS2=" inputlist.f90 dfault.f90 setup.f90 setmod.f90 seteq.f90 etachi.f90 grid.
 #Model subroutines
 OBJS3=" b2lx.f90 block.f90 linstart.f90 lincheck.f90 linstep.f90"
 #Operator subroutines
-OBJS4=" clgam.f90 derivatives.f90 eqdy_dyeq.f90 om.f90 dlstar.f90 eigensolver_tools.f90 Laundamp_tools.f90 dlsq.f90"
+OBJS4=" clgam.f90 derivatives.f90 eqdy_dyeq.f90 om.f90 dlstar.f90 eigensolver_tools.f90 Laundamp_tools.f90 dlsq.f90 dlsq_r.f90"
 #Output subroutines
 OBJS5=" endrun.f90 energy.f90 output.f90 wrdump.f90 rddump.f90"
 #Tool subroutines

@@ -330,7 +330,9 @@
 		read(5,*) nprint	
 		read(5,'(a1)') cdum0		
 		read(5,*) ndump	
-		read(5,'(a1)') cdum0
+!		read(5,'(a1)') cdum0
+!		read(5,*) vtk_on
+		read(5,'(a1)') cdum0			
 		read(5,'(a1)') cdum0
 		read(5,*) DIIID_u	
 		

@@ -13,16 +13,16 @@
 		real(IDP), dimension(:), allocatable :: rbinv,pfar,phip,curfar,ffar,sfar1,sfar2,sfar3,sfar4,rsb,Abst,Wbst
 		real(IDP), dimension(:,:), allocatable :: rmnb,sqgib,sqgb,grrb,grtb,gttb,bmodb,grrojb,grtojb,gttojb,jbgrrb,jbgrtb,jbgttb
 		real(IDP), dimension(:,:), allocatable :: sqgieq,sqgeq,grreq,grteq,gtteq,grzeq,gtzeq,gzzeq,bmodeq,bsteq,jbgrreq,jbgrteq,jbgtteq,jbgrzeq,jbgtzeq, &
-							  grrojeq,grtojeq,gttojeq,grzojeq,gtzojeq,gzzojeq,lplreq,lplteq,lplzeq,omdreq,omdteq,omdzeq, &
+							  grrojeq,grtojeq,gttojeq,grzojeq,gtzojeq,gzzojeq,omdreq,omdteq,omdzeq, &
                                                           djrojeq,djtojeq,djzojeq,omdrprpeq,omdtprpeq,omdzprpeq, &
                                                           grrupeq,grtupeq,grzupeq,gttupeq,gtzupeq,gzzupeq,sb1,sb2,sb3,sb4,sb5,sb6,sb7, &
                                                           dbsjtojeq,dbsjzojeq,dbsjtbjeq,dgttreq,dgrrteq,dgrtteq,dgttteq,dgrrzeq, &
 							  dgrtzeq,dgttzeq,dgrtpeq,dgttpeq,jsqeq,bsgrteq,bsgtteq,bsqeq,bsqgtteq, &
-							  lplrreq,lplrteq,lplrzeq,lpltreq,lpltteq,lpltzeq,lplzreq,lplzteq,lplzzeq, &
+							  lplrreq,lplrteq,lplrzeq,lpltteq,lpltzeq,lplzzeq,lplreq,lplteq,lplzeq, &
 							  eildreq,eildteq,eildzeq,eildrreq,eildrteq,eildrzeq,eildtteq,eildtzeq,eildzzeq, &
                                                           sqgdrojeq,sqgdthojeq,sqgdztojeq,sqgdthojbsteq,sqgdztojbsteq,sqgibmoditheq,sqgibmodizteq, &
-                                                          testeq,testreq,testteq,testrreq,testtteq,testrteq
-
+                                                          testeq,testreq,testteq,testrreq,testtteq,testrteq, &
+                                                          bmodieq,bdceq,brtdceq,bbbdceq,bbdceq 
 		LOGICAL :: lasym
         complex(IDP) :: zetai,zetae,zetai2,zetai3,zetai4,zi,y0i,y1i, &
                    y2i,ddii,zetae2,zetae3,zetae4,ze,y0e,y1e,y2e,ddee,rei,sei, &
@@ -135,27 +135,27 @@
 
 		allocate (sqg(0:mj,0:leqmax),sqgi(0:mj,0:leqmax),bmod(0:mj,0:leqmax),bst(0:mj,0:leqmax), &
 			  grr(0:mj,0:leqmax),grt(0:mj,0:leqmax),gtt(0:mj,0:leqmax), &
-                                                    grz(0:mj,0:leqmax),gtz(0:mj,0:leqmax),gzz(0:mj,0:leqmax), &
+                          grz(0:mj,0:leqmax),gtz(0:mj,0:leqmax),gzz(0:mj,0:leqmax), &
 			  grroj(0:mj,0:leqmax),grtoj(0:mj,0:leqmax),gttoj(0:mj,0:leqmax), &
-                                                    grzoj(0:mj,0:leqmax),gtzoj(0:mj,0:leqmax),gzzoj(0:mj,0:leqmax), &
-                                                    grrup(0:mj,0:leqmax),grtup(0:mj,0:leqmax),grzup(0:mj,0:leqmax), &
-                                                                     gttup(0:mj,0:leqmax),gtzup(0:mj,0:leqmax), gzzup(0:mj,0:leqmax), &
-			  jbgrr(0:mj,0:leqmax),jbgrt(0:mj,0:leqmax),jbgtt(0:mj,0:leqmax),jbgrz(0:mj,0:leqmax),jbgtz(0:mj,0:leqmax),lplr(0:mj,0:leqmax), &
-			  lplt(0:mj,0:leqmax),lplz(0:mj,0:leqmax),djroj(0:mj,0:leqmax),djtoj(0:mj,0:leqmax),djzoj(0:mj,0:leqmax), &
+                          grzoj(0:mj,0:leqmax),gtzoj(0:mj,0:leqmax),gzzoj(0:mj,0:leqmax), &
+                          grrup(0:mj,0:leqmax),grtup(0:mj,0:leqmax),grzup(0:mj,0:leqmax), &
+                          gttup(0:mj,0:leqmax),gtzup(0:mj,0:leqmax), gzzup(0:mj,0:leqmax), &
+			  jbgrr(0:mj,0:leqmax),jbgrt(0:mj,0:leqmax),jbgtt(0:mj,0:leqmax),jbgrz(0:mj,0:leqmax),jbgtz(0:mj,0:leqmax), &
+			  djroj(0:mj,0:leqmax),djtoj(0:mj,0:leqmax),djzoj(0:mj,0:leqmax), &
 			  jsq(0:mj,0:leqmax),omdr(0:mj,0:leqmax),omdt(0:mj,0:leqmax),omdz(0:mj,0:leqmax), &
 			  dbsjtoj(0:mj,0:leqmax),dbsjzoj(0:mj,0:leqmax),dbsjtbj(0:mj,0:leqmax),dgttr(0:mj,0:leqmax), &
 			  dgrrt(0:mj,0:leqmax),dgrtt(0:mj,0:leqmax),dgttt(0:mj,0:leqmax),dgrrz(0:mj,0:leqmax), &
 			  dgrtz(0:mj,0:leqmax),dgttz(0:mj,0:leqmax),dgrtp(0:mj,0:leqmax),dgttp(0:mj,0:leqmax), &
 			  bsgrt(0:mj,0:leqmax),bsgtt(0:mj,0:leqmax),bsq(0:mj,0:leqmax),bsqgtt(0:mj,0:leqmax), &
-			  lplrr(0:mj,0:leqmax),lplrt(0:mj,0:leqmax),lplrz(0:mj,0:leqmax),lpltr(0:mj,0:leqmax),lpltt(0:mj,0:leqmax), &
-			  lpltz(0:mj,0:leqmax),lplzr(0:mj,0:leqmax),lplzt(0:mj,0:leqmax),lplzz(0:mj,0:leqmax), &
+			  lplrr(0:mj,0:leqmax),lplrt(0:mj,0:leqmax),lplrz(0:mj,0:leqmax),lplr(0:mj,0:leqmax),lpltt(0:mj,0:leqmax), &
+			  lpltz(0:mj,0:leqmax),lplt(0:mj,0:leqmax),lplz(0:mj,0:leqmax),lplzz(0:mj,0:leqmax), &
 			  sqgdroj(0:mj,0:leqmax),sqgdthoj(0:mj,0:leqmax),sqgdztoj(0:mj,0:leqmax),sqgdthojbst(0:mj,0:leqmax), &
 			  sqgdztojbst(0:mj,0:leqmax),sqgibmodith(0:mj,0:leqmax),sqgibmodizt(0:mj,0:leqmax),test(0:mj,0:leqmax), &
                           testr(0:mj,0:leqmax),testt(0:mj,0:leqmax),testrr(0:mj,0:leqmax),testtt(0:mj,0:leqmax),testrt(0:mj,0:leqmax))
 		if (ieldamp_on == 1) allocate (eildr(0:mj,0:leqmax),eildt(0:mj,0:leqmax),eildz(0:mj,0:leqmax),eildrr(0:mj,0:leqmax), &
 					       eildrt(0:mj,0:leqmax),eildrz(0:mj,0:leqmax),eildtt(0:mj,0:leqmax),eildtz(0:mj,0:leqmax), &
 					       eildzz(0:mj,0:leqmax))	
-                        if(Trapped_on == 1) allocate (omdrprp(0:mj,0:leqmax),omdtprp(0:mj,0:leqmax),omdzprp(0:mj,0:leqmax))
+                if(Trapped_on == 1) allocate (omdrprp(0:mj,0:leqmax),omdtprp(0:mj,0:leqmax),omdzprp(0:mj,0:leqmax))
 
 !		Here we open the equilibria file and read the equilibria parameters		
  		open(unit=25,file=eq_name,status='old',convert='big_endian',form='unformatted')	
@@ -465,19 +465,20 @@
 			  grrojeq(0:mj,0:lbmax),grtojeq(0:mj,0:lbmax),gttojeq(0:mj,0:lbmax), &
 			  grzojeq(0:mj,0:lbmax),gtzojeq(0:mj,0:lbmax),gzzojeq(0:mj,0:lbmax), &
 			  jbgrreq(0:mj,0:lbmax),jbgrteq(0:mj,0:lbmax),jbgtteq(0:mj,0:lbmax),jbgrzeq(0:mj,0:lbmax),jbgtzeq(0:mj,0:lbmax), &
-			  lplreq(0:mj,0:lbmax),lplteq(0:mj,0:lbmax),lplzeq(0:mj,0:lbmax),djrojeq(0:mj,0:lbmax),djtojeq(0:mj,0:lbmax),djzojeq(0:mj,0:lbmax), &
+			  djrojeq(0:mj,0:lbmax),djtojeq(0:mj,0:lbmax),djzojeq(0:mj,0:lbmax), &
 			  jsqeq(0:mj,0:lbmax),omdreq(0:mj,0:lbmax),omdteq(0:mj,0:lbmax),omdzeq(0:mj,0:lbmax), &
 			  dbsjtojeq(0:mj,0:lbmax),dbsjzojeq(0:mj,0:lbmax),dbsjtbjeq(0:mj,0:lbmax),dgttreq(0:mj,0:lbmax), &
 			  dgrrteq(0:mj,0:lbmax),dgrtteq(0:mj,0:lbmax),dgttteq(0:mj,0:lbmax),dgrrzeq(0:mj,0:lbmax), &
 			  dgrtzeq(0:mj,0:lbmax),dgttzeq(0:mj,0:lbmax),dgrtpeq(0:mj,0:lbmax),dgttpeq(0:mj,0:lbmax), &
 			  bsgrteq(0:mj,0:lbmax),bsgtteq(0:mj,0:lbmax),bsqeq(0:mj,0:lbmax),bsqgtteq(0:mj,0:lbmax), &
-			  lplrreq(0:mj,0:lbmax),lplrteq(0:mj,0:lbmax),lplrzeq(0:mj,0:lbmax),lpltreq(0:mj,0:lbmax),lpltteq(0:mj,0:lbmax), &
-			  lpltzeq(0:mj,0:lbmax),lplzreq(0:mj,0:lbmax),lplzteq(0:mj,0:lbmax),lplzzeq(0:mj,0:lbmax), &
+			  lplrreq(0:mj,0:lbmax),lplrteq(0:mj,0:lbmax),lplrzeq(0:mj,0:lbmax),lplreq(0:mj,0:lbmax),lpltteq(0:mj,0:lbmax), &
+			  lpltzeq(0:mj,0:lbmax),lplteq(0:mj,0:lbmax),lplzeq(0:mj,0:lbmax),lplzzeq(0:mj,0:lbmax), &
 			  sb1(0:mj,0:lbmax),sb2(0:mj,0:lbmax),sb3(0:mj,0:lbmax),sb4(0:mj,0:lbmax),sb5(0:mj,0:lbmax),sb6(0:mj,0:lbmax),sb7(0:mj,0:lbmax), &
 			  sqgdrojeq(0:mj,0:lbmax),sqgdthojeq(0:mj,0:lbmax),sqgdztojeq(0:mj,0:lbmax),sqgdthojbsteq(0:mj,0:lbmax), &	
 			  sqgdztojbsteq(0:mj,0:lbmax),sqgibmoditheq(0:mj,0:lbmax),sqgibmodizteq(0:mj,0:lbmax), &
                           testeq(0:mj,0:lbmax),testreq(0:mj,0:lbmax),testteq(0:mj,0:lbmax),testrreq(0:mj,0:lbmax), &
-                          testtteq(0:mj,0:lbmax),testrteq(0:mj,0:lbmax))
+                          testtteq(0:mj,0:lbmax),testrteq(0:mj,0:lbmax), &
+                          bmodieq(0:mj,0:lbmax),bdceq(0:mj,0:lbmax),brtdceq(0:mj,0:lbmax),bbbdceq(0:mj,0:lbmax),bbdceq(0:mj,0:lbmax)) 
                         if(Trapped_on == 1) allocate (omdrprpeq(0:mj,0:lbmax),omdtprpeq(0:mj,0:lbmax),omdzprpeq(0:mj,0:lbmax))
 
 		sqgieq=0.0_IDP
@@ -500,8 +501,24 @@
 		jbgrteq=0.0_IDP
 		jbgtteq=0.0_IDP	
 		jbgrzeq=0.0_IDP
-		jbgtzeq=0.0_IDP			
-		
+		jbgtzeq=0.0_IDP		
+
+                bmodieq=0.0_IDP
+                bdceq=0.0_IDP
+                brtdceq=0.0_IDP
+                bbbdceq=0.0_IDP
+                bbdceq=0.0_IDP
+
+                lplrreq=0.0_IDP
+                lplrteq=0.0_IDP
+                lplrzeq=0.0_IDP
+                lpltzeq=0.0_IDP
+                lpltteq=0.0_IDP
+                lplzzeq=0.0_IDP
+                lplreq=0.0_IDP
+                lplteq=0.0_IDP
+                lplzeq=0.0_IDP
+  
 		ir=max(15,mjeq/10)
 		do l=1,lbmax
 			m=min(abs(mmb(l)),30)
@@ -763,66 +780,89 @@
 		call multb(sb1,sqgeq,1,bsteq,-1,0.0_IDP,1.0_IDP)
 		do l=1,lbmax
 			grzeq(:,l)=eps*r*qqinv*grteq(:,l)+r*sb1(:,l)/eps
-!			gtzeq(:,l)=eps*r*qqinv*gtteq(:,l)+cureq*sqgeq(:,l)/(r*eps)			
-			gtzeq(:,l)=eps*r*qqinv*gtteq(:,l)+cureq*sqgeq(:,l)*rinv(:)/eps			
+			gtzeq(:,l)=eps*r*qqinv*gtteq(:,l)+cureq*sqgeq(:,l)*rinv/eps			
 			gzzeq(:,l)=(feq+qqinv*cureq)*sqgeq(:,l)+ (eps*r*qqinv)*(eps*r*qqinv)*gtteq(:,l)			
-!			grrupeq(:,l)=(feq+qqinv*cureq)*gttojeq(:,l)-(cureq/(eps*r))*(cureq/(eps*r))
-			grrupeq(:,l)=(feq+qqinv*cureq)*gttojeq(:,l)-(cureq*rinv(:)/(eps))*(cureq*rinv(:)/(eps))
+			grrupeq(:,l)=(feq+qqinv*cureq)*gttojeq(:,l)-(cureq*rinv/eps)*(cureq*rinv/eps)
 		end do
-		call multb(grzojeq,grzeq,-1,sqgieq,1,0.0_IDP,1.0_IDP)	
-		call multb(gtzojeq,gtzeq,1,sqgieq,1,0.0_IDP,1.0_IDP)			
-		call multb(sb1,gttojeq,1,bsteq,-1,0.0_IDP,1.0_IDP)		
-		do l=1,lbmax		
-			grtupeq(:,l)=-feq*grtojeq(:,l)+r*r*qqinv*sb1(:,l)+cureq*bsteq(:,l)/(eps*eps)		
-!			grzupeq(:,l)=((cureq*grtojeq(:,l)/r)-r*sb1(:,l))/eps
-			grzupeq(:,l)=((cureq*grtojeq(:,l)*rinv(:))-r*sb1(:,l))/eps
-		end do
-		call multb(sb1,grtojeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
-		call multb(sb2,bsteq,-1,bsteq,-1,0.0_IDP,1.0_IDP)	
-		call multb(sb3,sb2,1,gttojeq,1,0.0_IDP,1.0_IDP)	
-		call multb(sb4,grzojeq,-1,bsteq,1,0.0_IDP,1.0_IDP)	
-		do l=1,lbmax							
-!			gzzupeq(:,l)=(1/(feq-qqinv*cureq))*(sqgieq(:,l)+(cureq*cureq*grrojeq(:,l)/(eps*eps*r*r))-2*cureq*sb1(:,l)/(eps*eps)+r*r*sb3(:,l)/(eps*eps))
-!            gtzupeq(:,l)=-(cureq*grrojeq(:,l)/r -r*sb1(:,l))/eps -eps*r*qqinv*gzzupeq(:,l)
-!			gttupeq(:,l)=(feq-qqinv*cureq)*grrojeq(:,l)-2*r*r*qqinv*sb1(:,l)-(r*r/(eps*eps))*sb2(:,l)+(eps*r*qqinv)*(eps*r*qqinv)*gzzupeq(:,l)
-			gzzupeq(:,l)=(1/(feq-qqinv*cureq))*(sqgieq(:,l)+(cureq*cureq*grrojeq(:,l)*rinv(:)*rinv(:)/(eps*eps))-2*cureq*sb1(:,l)/(eps*eps)+r*r*sb3(:,l)/(eps*eps))
-            gtzupeq(:,l)=-(cureq*grrojeq(:,l)*rinv(:) -r*sb1(:,l))/eps -eps*r*qqinv*gzzupeq(:,l)
-			gttupeq(:,l)=(feq-qqinv*cureq)*grrojeq(:,l)-2*r*r*qqinv*sb1(:,l)-(r*r/(eps*eps))*sb2(:,l)+(eps*r*qqinv)*(eps*r*qqinv)*gzzupeq(:,l)
-
-		end do	
-
-		call multb(jbgrzeq,grzeq,-1,sqgeq,1,0.0_IDP,1.0_IDP)
-		call multb(jbgtzeq,gtzeq,1,sqgeq,1,0.0_IDP,1.0_IDP)
 
 		grzeq(0,:)=0.0_IDP
 		gtzeq(0,:)=0.0_IDP
 		gzzeq(0,:)=0.0_IDP
-		grzojeq(0,:)=0.0_IDP
-		gtzojeq(0,:)=0.0_IDP
-		jbgrzeq(0,:)=0.0_IDP
-		jbgtzeq(0,:)=0.0_IDP
 		grrupeq(0,:)=0.0_IDP
-		grtupeq(0,:)=0.0_IDP
-		grzupeq(0,:)=0.0_IDP
-		gzzupeq(0,:)=0.0_IDP
-		gtzupeq(0,:)=0.0_IDP
-		gttupeq(0,:)=0.0_IDP
-
 		do l=1,lbmax
 			if (mmb(l) == 0 .or. abs(mmb(l)) == 2) then
 				grzeq(0,l)=2.*grzeq(1,l)-grzeq(2,l)
 				gtzeq(0,l)=2.*gtzeq(1,l)-gtzeq(2,l)
 				gzzeq(0,l)=2.*gzzeq(1,l)-gzzeq(2,l)
+				grrupeq(0,l)=2.*grrupeq(1,l)-grrupeq(2,l)
+			endif
+		end do
+
+		call multb(grzojeq,grzeq,-1,sqgieq,1,0.0_IDP,1.0_IDP)	
+		call multb(gtzojeq,gtzeq,1,sqgieq,1,0.0_IDP,1.0_IDP)
+
+		grzojeq(0,:)=0.0_IDP
+		gtzojeq(0,:)=0.0_IDP
+		do l=1,lbmax
+			if (mmb(l) == 0 .or. abs(mmb(l)) == 2) then
 				grzojeq(0,l)=2.*grzojeq(1,l)-grzojeq(2,l)
 				gtzojeq(0,l)=2.*gtzojeq(1,l)-gtzojeq(2,l)
-				jbgrzeq(0,l)=2.*jbgrzeq(1,l)-jbgrzeq(2,l)
-				jbgtzeq(0,l)=2.*jbgtzeq(1,l)-jbgtzeq(2,l)
-				grrupeq(0,l)=2.*grrupeq(1,l)-grrupeq(2,l)
+			endif
+		end do
+			
+		call multb(sb1,gttojeq,1,bsteq,-1,0.0_IDP,1.0_IDP)		
+		do l=1,lbmax		
+			grtupeq(:,l)=-feq*grtojeq(:,l)+r*r*qqinv*sb1(:,l)+cureq*bsteq(:,l)/(eps*eps)		
+			grzupeq(:,l)=((cureq*grtojeq(:,l)*rinv)-r*sb1(:,l))/eps
+		end do
+
+		grtupeq(0,:)=0.0_IDP
+		grzupeq(0,:)=0.0_IDP
+		do l=1,lbmax
+			if (mmb(l) == 0 .or. abs(mmb(l)) == 2) then
 				grtupeq(0,l)=2.*grtupeq(1,l)-grtupeq(2,l)
 				grzupeq(0,l)=2.*grzupeq(1,l)-grzupeq(2,l)
+			endif
+		end do
+
+		call multb(sb1,grtojeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(sb2,bsteq,-1,bsteq,-1,0.0_IDP,1.0_IDP)	
+		call multb(sb3,sb2,1,gttojeq,1,0.0_IDP,1.0_IDP)	
+		call multb(sb4,grzojeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)	
+		do l=1,lbmax							
+			gzzupeq(:,l)=(1/(feq-qqinv*cureq))*(sqgieq(:,l)+(cureq*cureq*grrojeq(:,l)*rinv*rinv/(eps*eps))-2*cureq*sb1(:,l)/(eps*eps)+r*r*sb3(:,l)/(eps*eps))
+		end do	
+
+		gzzupeq(0,:)=0.0_IDP
+		do l=1,lbmax
+			if (mmb(l) == 0 .or. abs(mmb(l)) == 2) then
 				gzzupeq(0,l)=2.*gzzupeq(1,l)-gzzupeq(2,l)
+			endif
+		end do
+
+		do l=1,lbmax							
+                        gtzupeq(:,l)=-(cureq*grrojeq(:,l)*rinv -r*sb1(:,l))/eps -eps*r*qqinv*gzzupeq(:,l)
+			gttupeq(:,l)=(feq+qqinv*cureq)*grrojeq(:,l)-2*r*r*qqinv*sb1(:,l)-(r*r/(eps*eps))*sb2(:,l)+(eps*r*qqinv)*(eps*r*qqinv)*gzzupeq(:,l)
+		end do	
+
+		gtzupeq(0,:)=0.0_IDP
+		gttupeq(0,:)=0.0_IDP
+		do l=1,lbmax
+			if (mmb(l) == 0 .or. abs(mmb(l)) == 2) then
 				gtzupeq(0,l)=2.*gtzupeq(1,l)-gtzupeq(2,l)
 				gttupeq(0,l)=2.*gttupeq(1,l)-gttupeq(2,l)
+			endif
+		end do
+
+		call multb(jbgrzeq,grzeq,-1,sqgeq,1,0.0_IDP,1.0_IDP)
+		call multb(jbgtzeq,gtzeq,1,sqgeq,1,0.0_IDP,1.0_IDP)
+
+		jbgrzeq(0,:)=0.0_IDP
+		jbgtzeq(0,:)=0.0_IDP
+		do l=1,lbmax
+			if (mmb(l) == 0 .or. abs(mmb(l)) == 2) then
+				jbgrzeq(0,l)=2.*jbgrzeq(1,l)-jbgrzeq(2,l)
+				jbgtzeq(0,l)=2.*jbgtzeq(1,l)-jbgtzeq(2,l)
 			endif
 		end do
 
@@ -868,12 +908,6 @@
 		
 		sb1=sqgeq
 		call multb(jsqeq,sqgeq,1,sb1,1,0.0_IDP,1.0_IDP)
-		call dbydrb(sb1,sqgieq,0.0_IDP,1.0_IDP,0)
-		call multb(lplreq,gtteq,1,sb1,1,0.0_IDP,-1.0_IDP)
-		call dbydthb(sb2,sqgieq,1,0.0_IDP,1.0_IDP,0)
-		call multb(lplreq,grteq,-1,sb2,-1,1.0_IDP,1.0_IDP)
-		call multb(lplteq,grteq,-1,sb1,1,0.0_IDP,1.0_IDP)
-		call multb(lplteq,grreq,1,sb2,-1,1.0_IDP,-1.0_IDP)
 		
 		call dbydrb(sb1,sqgeq,0.0_IDP,1.0_IDP,0)
 		call multb(djrojeq,sqgieq,1,sb1,1,0.0_IDP,1.0_IDP)
@@ -900,7 +934,7 @@
 			omdreq(:,l)=omdreq(:,l)/(2.0_IDP*sd1)
 		end do
 
-                               if(Trapped_on .eq. 1) then
+                if(Trapped_on .eq. 1) then
 
 		    do l=1,lbmax
 			    if (mm(l) .eq. 0)  then
@@ -911,7 +945,7 @@
 		     end do
 		     call multb(omdrprpeq,omdreq,-1,sb1,1,0.0_IDP,1.0_IDP)
 
-                                end if
+                end if
 
 		do l=1,lbmax
 			sb1(:,l)=sd1*sqgieq(:,l)
@@ -1005,68 +1039,403 @@
 		call multb(bsgrteq,grtojeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
 		call multb(bsgtteq,gttojeq,1,bsteq,-1,0.0_IDP,1.0_IDP)
 		call multb(bsqgtteq,bsgtteq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
-		call dbydrb(sb1,sqgieq,0.0_IDP,1.0_IDP,0)
-		do l=1,lbmax
-			sb3(:,l)=sd1*gtteq(:,l)-rinv*rinv*cureq*cureq*sqgeq(:,l)/(eps*eps)
-		end do
-		call multb(lplrreq,sb3,1,sb1,1,0.0_IDP,-1.0_IDP)
-		call multb(sb4,gtteq,1,bsteq,-1,0.0_IDP,1.0_IDP)
-		call multb(sb5,sqgeq,1,bsteq,-1,0.0_IDP,1.0_IDP)
-		do l=1,lbmax
-			sb3(:,l)=feq*grteq(:,l)-r*r*qqinv*sb4(:,l)-cureq*sb5(:,l)/(eps*eps)
-		end do
-		call multb(lplrteq,sb3,-1,sb1,1,0.0_IDP,1.0_IDP)
-		call dbydthb(sb2,sqgieq,1,0.0_IDP,1.0_IDP,0)
-		call multb(lpltreq,sb3,-1,sb2,-1,0.0_IDP,1.0_IDP)
-		call multb(sb6,sb5,-1,bsteq,-1,0.0_IDP,1.0_IDP)
-		call multb(sb5,grteq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
-		do l=1,lbmax
-			sb3(:,l)=feq*(feq*grreq(:,l)-2*r*r*qqinv*sb5(:,l))/sd1-r*r*sb6(:,l)/(eps*eps)
-		end do
-		call multb(sb6,sb4,-1,bsteq,-1,0.0_IDP,1.0_IDP)
-		do l=1,lbmax
-			sb3(:,l)=sb3(:,l)+r*r*r*r*qqinv*qqinv*sb6(:,l)/sd1
-		end do
-		call multb(lpltteq,sb3,1,sb2,-1,0.0_IDP,-1.0_IDP)
-		do l=1,lbmax
-			sb3(:,l)=rinv*cureq*grteq(:,l)-r*sb4(:,l)
-		end do
-		call multb(lplrzeq,sb3,-1,sb1,1,0.0_IDP,-1.0_IDP)
-		call dbydztb(sb1,sqgieq,1,0.0_IDP,1.0_IDP)
-		call multb(lplzreq,sb3,-1,sb1,-1,0.0_IDP,-1.0_IDP)
-		do l=1,lbmax
-			sb3(:,l)=(feq*(rinv*cureq*grreq(:,l)-r*sb5(:,l))-r*qqinv*(cureq*sb5(:,l)-r*r*sb6(:,l)))/sd1
-		end do
-		call multb(lpltzeq,sb3,1,sb2,-1,0.0_IDP,1.0_IDP)
-		call multb(lplzteq,sb3,1,sb1,-1,0.0_IDP,1.0_IDP)
-		do l=1,lbmax
-			sb3(:,l)=(rinv*cureq*(rinv*cureq*grreq(:,l)-r*sb5(:,l))-(cureq*sb5(:,l)-r*r*sb6(:,l)))/sd1
-		end do
-		call multb(lplzzeq,sb3,1,sb1,-1,0.0_IDP,-1.0_IDP)
 
-                               sqgdrojeq=0.0_IDP	
-                               sqgdthojeq=0.0_IDP	
-                               sqgdztojeq=0.0_IDP	
-                               sqgdthojbsteq=0.0_IDP	
-                               sqgdztojbsteq=0.0_IDP	
-                               sqgibmoditheq=0.0_IDP	
-                               sqgibmodizteq=0.0_IDP	
+!               FLR components
+                
+		call multb(sb1,bmodeq,1,sqgeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			bmodieq(:,l)=sb1(:,l)/(feq-qqinv*cureq)
+		end do
+		do l=1,lbmax
+			brtdceq(:,l)=bmodeq(:,l)*r*qqinv/(feq-qqinv*cureq)
+		end do
+		do l=1,lbmax
+			bdceq(:,l)=bmodeq(:,l)/(feq-qqinv*cureq)
+		end do
+		call multb(sb1,bmodeq,1,bmodeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			bbdceq(:,l)=sb1(:,l)/((feq-qqinv*cureq)*(feq-qqinv*cureq))
+		end do
+		call multb(sb2,sb1,1,bmodeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			bbbdceq(:,l)=sb2(:,l)/((feq-qqinv*cureq)*(feq-qqinv*cureq))
+		end do
+
+!               FLR component d/dr
+                
+		call dbydrb(sb1,brtdceq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grrupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=-sb3(:,l)*cureq*rinv
+		end do
+		call dbydthb(sb1,brtdceq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb3(:,l)*cureq*rinv
+		end do
+		call dbydztb(sb1,brtdceq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb3(:,l)*cureq*rinv*eps
+		end do
+		call dbydrb(sb1,bdceq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grrupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb3(:,l)*feq
+		end do
+		call dbydthb(sb1,bdceq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb3(:,l)*feq
+		end do
+		call dbydztb(sb1,bdceq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb3(:,l)*feq*eps
+		end do
+		call dbydrb(sb1,bmodieq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grrupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb3(:,l)
+		end do
+		call dbydthb(sb1,bmodieq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb3(:,l)
+		end do
+		call dbydztb(sb1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb3(:,l)*eps
+		end do
+		call dbydztb(sb1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,1,grrupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)-sb2(:,l)*r/(feq-qqinv*cureq)
+		end do
+		call dbydr0(sd1,cureq,0.0_IDP,1.0_IDP,0)
+		call dbydr0(sd2,feq,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+(grrupeq(:,l)*sd2/(feq-qqinv*cureq))-(grrupeq(:,l)*qqinv*sd1/(feq-qqinv*cureq))
+		end do
+		call dbydthb(sb1,bsteq,-1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,grrupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb2(:,l)*r/(feq-qqinv*cureq)
+		end do
+		call dbydrb(sb1,sqgeq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grrupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb3(:,l)+grrupeq(:,l)*rinv
+		end do
+		call dbydrb(sb1,grrupeq,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb1(:,l)
+		end do
+		call dbydthb(sb1,sqgeq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb3(:,l)
+		end do
+		call dbydthb(sb1,grtupeq,-1,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb1(:,l)
+		end do
+		call dbydztb(sb1,sqgeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb3(:,l)*eps
+		end do
+		call dbydztb(sb1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplreq(:,l)=lplreq(:,l)+sb1(:,l)*eps
+		end do
+
+!               FLR component d/dth
+
+		call dbydthb(sb1,bmodieq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bbbdceq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=-sb2(:,l)*2*eps*eps*r*r*qqinv*qqinv
+		end do
+		call dbydztb(sb1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bbbdceq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb2(:,l)*2*eps*eps*r*qqinv
+		end do
+		call dbydrb(sb1,brtdceq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-sb3(:,l)*cureq*rinv
+		end do
+		call dbydthb(sb1,brtdceq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gttupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-sb3(:,l)*cureq*rinv
+		end do
+		call dbydztb(sb1,brtdceq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-sb3(:,l)*cureq*rinv*eps
+		end do
+		call dbydrb(sb1,bdceq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb3(:,l)*feq
+		end do
+		call dbydthb(sb1,bdceq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gttupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb3(:,l)*feq
+		end do
+		call dbydztb(sb1,bdceq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb3(:,l)*feq*eps
+		end do
+		call dbydrb(sb1,bmodieq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-sb3(:,l)
+		end do
+		call dbydthb(sb1,bmodieq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gttupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-sb3(:,l)
+		end do
+		call dbydztb(sb1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-sb3(:,l)*eps
+		end do
+		call dbydztb(sb1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)-(sb2(:,l)*r/(feq-qqinv*cureq))+(grtupeq(:,l)*sd2/(feq-qqinv*cureq))-(grtupeq(:,l)*qqinv*sd1/(feq-qqinv*cureq))
+		end do
+		call dbydthb(sb1,bsteq,-1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb2(:,l)*r*r*qqinv/(feq-qqinv*cureq)
+		end do
+		call dbydrb(sb1,sqgeq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grtupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb3(:,l)
+		end do
+		call dbydrb(sb1,grtupeq,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb1(:,l)
+		end do
+		call dbydthb(sb1,sqgeq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gttupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb3(:,l)
+		end do
+		call dbydthb(sb1,gttupeq,1,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb1(:,l)
+		end do
+		call dbydztb(sb1,sqgeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb3(:,l)*eps
+		end do
+		call dbydztb(sb1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplteq(:,l)=lplteq(:,l)+sb1(:,l)*eps
+		end do
+
+!               FLR component d/dz
+
+		call dbydthb(sb1,bmodieq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bbbdceq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=sb2(:,l)*2*eps*eps*r*qqinv
+		end do
+		call dbydztb(sb1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bbbdceq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb2(:,l)*2*eps*eps
+		end do
+		call dbydrb(sb1,brtdceq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb3(:,l)*cureq*rinv*eps
+		end do
+		call dbydthb(sb1,brtdceq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb3(:,l)*cureq*rinv*eps
+		end do
+		call dbydztb(sb1,brtdceq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gzzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb3(:,l)*cureq*rinv*eps*eps
+		end do
+		call dbydrb(sb1,bdceq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*feq*eps
+		end do
+		call dbydthb(sb1,bdceq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*feq*eps
+		end do
+		call dbydztb(sb1,bdceq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gzzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*feq*eps*eps
+		end do
+		call dbydrb(sb1,bmodieq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb3(:,l)*eps
+		end do
+		call dbydthb(sb1,bmodieq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb3(:,l)*eps
+		end do
+		call dbydztb(sb1,bmodieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,bmodeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gzzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-sb3(:,l)*eps*eps
+		end do
+		call dbydztb(sb1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)-(sb2(:,l)*eps*r/(feq-qqinv*cureq))+(grzupeq(:,l)*sd2*eps/(feq-qqinv*cureq))-(grzupeq(:,l)*sd1*eps*qqinv/(feq-qqinv*cureq))
+		end do
+		call dbydthb(sb1,bsteq,-1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb2(:,l)*eps*r*r*qqinv/(feq-qqinv*cureq)
+		end do
+		call dbydrb(sb1,sqgeq,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,1,grzupeq,-1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*eps+grzupeq(:,l)*eps*rinv
+		end do
+		call dbydrb(sb1,grzupeq,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb1(:,l)*eps
+		end do
+		call dbydthb(sb1,sqgeq,1,0.0_IDP,1.0_IDP,0)
+		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gtzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*eps
+		end do
+		call dbydthb(sb1,gtzupeq,1,0.0_IDP,1.0_IDP,0)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*eps
+		end do
+		call dbydztb(sb1,sqgeq,1,0.0_IDP,1.0_IDP)
+		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
+		call multb(sb3,sb2,-1,gzzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb3(:,l)*eps*eps
+		end do
+		call dbydztb(sb1,gzzupeq,1,0.0_IDP,1.0_IDP)
+		do l=1,lbmax
+			lplzeq(:,l)=lplzeq(:,l)+sb1(:,l)*eps*eps
+		end do
+
+!               FLR component d2/drdt
+
+		do l=1,lbmax
+			lplrteq(:,l)=2*grtupeq(:,l)*rinv
+		end do
+
+!               FLR component d2/drdz
+
+		do l=1,lbmax
+			lplrzeq(:,l)=2*grzupeq(:,l)*eps
+		end do
+
+!               FLR component d2/dtdz
+
+		do l=1,lbmax
+			lpltzeq(:,l)=2*bbdceq(:,l)*eps*eps*r*qqinv+2*gtzupeq(:,l)*eps
+		end do
+
+!               FLR component d2/drdr
+
+		do l=1,lbmax
+			lplrreq(:,l)=grrupeq(:,l)
+		end do
+
+!               FLR component d2/dtdt
+
+		do l=1,lbmax
+			lpltteq(:,l)=-bbdceq(:,l)*eps*eps*r*r*qqinv*qqinv+gttupeq(:,l)
+		end do
+
+!               FLR component d2/dzdz
+
+		do l=1,lbmax
+			lplzzeq(:,l)=-bbdceq(:,l)*eps*eps+gzzupeq(:,l)*eps*eps
+		end do
+
+                sqgdrojeq=0.0_IDP	
+                sqgdthojeq=0.0_IDP	
+                sqgdztojeq=0.0_IDP	
+                sqgdthojbsteq=0.0_IDP	
+                sqgdztojbsteq=0.0_IDP	
+                sqgibmoditheq=0.0_IDP	
+                sqgibmodizteq=0.0_IDP	
 
 		call dbydrb(sb1,sqgeq,0.0_IDP,1.0_IDP,0)	
 		call multb(sb2,sb1,1,sqgieq,1,0.0_IDP,1.0_IDP)	
 		do l=1,lbmax				
-          sqgdrojeq(:,l)=sb2(:,l)
+                    sqgdrojeq(:,l)=sb2(:,l)
 		end do					
 		call dbydthb(sb1,sqgeq,1,0.0_IDP,1.0_IDP,0)			
 		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)
 		do l=1,lbmax				
-           sqgdthojeq(:,l)=sb2(:,l)	
+                    sqgdthojeq(:,l)=sb2(:,l)	
 		end do 				
 		call multb(sqgdthojbsteq,sqgdthojeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)				
 		call dbydztb(sb1,sqgeq,1,0.0_IDP,1.0_IDP)	
 		call multb(sb2,sb1,-1,sqgieq,1,0.0_IDP,1.0_IDP)	
 		do l=1,lbmax			
-           sqgdztojeq(:,l)=sb2(:,l)	
+                     sqgdztojeq(:,l)=sb2(:,l)	
 		end do		 			
 		call multb(sqgdztojbsteq,sqgdztojeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
 		call dbydthb(sb1,sqgieq,1,0.0_IDP,1.0_IDP,0)
@@ -1078,7 +1447,7 @@
 !! Calculate the Landau damping elements		
         if(ieldamp_on .eq. 1) then	    
 	  
-          cmplx1 = cmplx(0._IDP,1._IDP,kind=IDP)                                                   !! complex number i 
+          cmplx1 = cmplx(0._IDP,1._IDP,kind=IDP)                                  !! complex number i 
           tauie = tinn(0)/tenn(0)
 	  xnuelc0 = xnuelc0/omegar    
           xnuion0 = 0.0165*xnuelc0/(tauie*sqrt(uion*tauie))                       !! ion-ion collision FR axis (Te=Ti axis)
@@ -1097,7 +1466,7 @@
               tauie = tinn(j)/tenn(j)			  
               xnuelc = xnuelc0*dni(j)/(te(j)*sqrt(te(j)))                          !! electron-ion collision FR
               xnuion = xnuion0*dni(j)/(ti(j)*sqrt(ti(j)))                      !! ion-ion collision FR
-              xkprl = real(n,kind=IDP) - real(m,kind=IDP)*qqinv(j)                                       !! parallel gradient
+              xkprl = real(n,kind=IDP) - real(m,kind=IDP)*qqinv(j)
               abkprl = abs(xkprl)
               if(abkprl .lt. 1.e-50_IDP) then
                   zetaiinv = (sqrt(2.0_IDP)*vthir*abkprl)/(omegar*(1. + cmplx1*xnuion))     
@@ -1167,9 +1536,9 @@
             end do
            end do			   
 					
-			allocate (eildreq(0:mj,0:lbmax),eildteq(0:mj,0:lbmax),eildzeq(0:mj,0:lbmax),eildrreq(0:mj,0:lbmax), &
-				  eildrteq(0:mj,0:lbmax),eildrzeq(0:mj,0:lbmax),eildtteq(0:mj,0:lbmax),eildtzeq(0:mj,0:lbmax), &
-				  eildzzeq(0:mj,0:lbmax))
+		        allocate (eildreq(0:mj,0:lbmax),eildteq(0:mj,0:lbmax),eildzeq(0:mj,0:lbmax),eildrreq(0:mj,0:lbmax), &
+			          eildrteq(0:mj,0:lbmax),eildrzeq(0:mj,0:lbmax),eildtteq(0:mj,0:lbmax),eildtzeq(0:mj,0:lbmax), &
+			          eildzzeq(0:mj,0:lbmax))
 
 			call dbydrb(sb4,omdreq,0.0_IDP,1.0_IDP,3)
 			call multb(sb1,omdreq,-1,sb4,-1,0.0_IDP,1.0_IDP)
@@ -1255,14 +1624,12 @@
 		grzoj=0.0_IDP
 		gttoj=0.0_IDP
 		gtzoj=0.0_IDP
-                                djroj=0.0_IDP
-                                djtojeq=0.0_IDP
-                                djzojeq=0.0_IDP
+                djroj=0.0_IDP
+                djtojeq=0.0_IDP
+                djzojeq=0.0_IDP
 		jbgrr=0.0_IDP
 		jbgrt=0.0_IDP
 		jbgtt=0.0_IDP
-		lplr=0.0_IDP
-		lplt=0.0_IDP
 		omdr=0.0_IDP
 		omdt=0.0_IDP
 		omdz=0.0_IDP
@@ -1286,12 +1653,12 @@
 		lplrr=0.0_IDP
 		lplrt=0.0_IDP
 		lplrz=0.0_IDP
-		lpltr=0.0_IDP
-		lpltt=0.0_IDP
 		lpltz=0.0_IDP
-		lplzr=0.0_IDP
-		lplzt=0.0_IDP
+		lpltt=0.0_IDP
 		lplzz=0.0_IDP
+		lplr=0.0_IDP
+		lplt=0.0_IDP
+		lplz=0.0_IDP
 
                 sqgdroj=0.0_IDP
 		sqgdthoj=0.0_IDP
@@ -1308,11 +1675,11 @@
 		testtt=0.0_IDP
 		testrt=0.0_IDP
 
-                         if(Trapped_on .eq. 1) then
+                if(Trapped_on .eq. 1) then
 		    omdrprp=0.0_IDP
 		    omdtprp=0.0_IDP
 		    omdzprp=0.0_IDP
-		         end if	
+		end if	
 	
 		do lq=1,leqmax
 			do l=1,lbmax
@@ -1340,9 +1707,6 @@
 			jbgtt(:,lq)=jbgtteq(:,l)
 			jbgrz(:,lq)=jbgrzeq(:,l)
 			jbgtz(:,lq)=jbgtzeq(:,l)
-			lplr(:,lq)=lplreq(:,l)
-			lplt(:,lq)=lplteq(:,l)
-			lplz(:,lq)=lplzeq(:,l)
 			djroj(:,lq)=djrojeq(:,l)
 			djtoj(:,lq)=djtojeq(:,l)
 			djzoj(:,lq)=djzojeq(:,l)
@@ -1375,12 +1739,12 @@
 			lplrr(:,lq)=lplrreq(:,l)
 			lplrt(:,lq)=lplrteq(:,l)
 			lplrz(:,lq)=lplrzeq(:,l)
-			lpltr(:,lq)=lpltreq(:,l)
 			lpltt(:,lq)=lpltteq(:,l)
 			lpltz(:,lq)=lpltzeq(:,l)
-			lplzr(:,lq)=lplzreq(:,l)
-			lplzt(:,lq)=lplzteq(:,l)
 			lplzz(:,lq)=lplzzeq(:,l)	
+			lplr(:,lq)=lplreq(:,l)
+			lplt(:,lq)=lplteq(:,l)
+			lplz(:,lq)=lplzeq(:,l)
 
                         sqgdroj(:,lq)=sqgdrojeq(:,l)
                         sqgdthoj(:,lq)=sqgdthojeq(:,l)
@@ -1406,56 +1770,7 @@
 		         end if	
 
 		
-		end do	
-
-!	equilibrium arrays for delperpsq
-
-		lplr=lplrr+lpltr+lplzr
-		lplt=lplrt+lpltt+lplzt
-		lplz=lplrz+lpltz+lplzz
-
-		do l=1,leqmax
-			lplrr(:,l)=sd1*gttoj(:,l)
-		end do
-		lplrr(:,leq0)=lplrr(:,leq0)-rinv*rinv*cureq*cureq/(eps*eps)
-		call dbydreq(lplr,lplrr,1.0_IDP,1.0_IDP,2)
-		do l=1,leqmax
-			lplr(:,l)=lplr(:,l)+rinv*lplrr(:,l)
-		end do
-
-		do l=1,leqmax
-			lplrt(:,l)=-feq*grtoj(:,l)+r*r*qqinv*bsgtt(:,l)+cureq*bst(:,l)/(eps*eps)
-		end do
-		call dbydtheq(lplr,lplrt,-1,1.0_IDP,1.0_IDP,2)
-		call dbydreq(lplt,lplrt,1.0_IDP,1.0_IDP,2)
-		lplrt=2.0*lplrt
-
-		do l=1,leqmax
-			lplrz(:,l)=rinv*cureq*grtoj(:,l)-r*bsgtt(:,l)
-		end do
-		call dbydzteq(lplr,lplrz,-1,1.0_IDP,1.0_IDP)
-		call dbydreq(lplz,lplrz,1.0_IDP,1.0_IDP,3)
-		do l=1,leqmax
-			lplz(:,l)=lplz(:,l)+rinv*lplrz(:,l)
-		end do
-		lplrz=2.0*lplrz
-
-		do l=1,leqmax
-			lpltt(:,l)=(feq*feq*grroj(:,l)-r*r*qqinv*(2*feq*bsgrt(:,l)-r*r*qqinv*bsqgtt(:,l)))/sd1-r*r*bsq(:,l)/(eps*eps)
-		end do
-		call dbydtheq(lplt,lpltt,1,1.0_IDP,1.0_IDP,2)
-
-		do l=1,leqmax
-			lpltz(:,l)=-(rinv*feq*cureq*grroj(:,l)-r*((feq+qqinv*cureq)*bsgrt(:,l)-r*r*qqinv*bsqgtt(:,l)))/sd1
-		end do
-		call dbydzteq(lplt,lpltz,1,1.0_IDP,1.0_IDP)
-		call dbydtheq(lplz,lpltz,1,1.0_IDP,1.0_IDP,3)
-		lpltz=2.0*lpltz
-
-		do l=1,leqmax
-			lplzz(:,l)=(cureq*(rinv*rinv*cureq*grroj(:,l)-2*bsgrt(:,l))+r*r*bsqgtt(:,l))/sd1
-		end do
-		call dbydzteq(lplz,lplzz,1,1.0_IDP,1.0_IDP)						
+		end do							
 
 		write(0,'(" ====> Equilibria set up DONE !! ")')
 		
@@ -1480,6 +1795,12 @@
 		deallocate (jbgrzeq)
 		deallocate (jbgtzeq)
 		deallocate (bsteq)
+		deallocate (lplrreq)
+		deallocate (lplrteq)
+		deallocate (lplrzeq)
+		deallocate (lpltzeq)
+		deallocate (lpltteq)
+		deallocate (lplzzeq)
 		deallocate (lplreq)
 		deallocate (lplteq)
 		deallocate (lplzeq)
@@ -1545,13 +1866,13 @@
 		deallocate (testtteq)
 		deallocate (testrteq)
 
-        if(Trapped_on .eq. 1) then
+                if(Trapped_on .eq. 1) then
 
 		    deallocate (omdrprpeq)
 		    deallocate (omdtprpeq)
 		    deallocate (omdzprpeq)
 
-                                end if
+                end if
 		
 		close(25)
 		

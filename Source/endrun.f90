@@ -102,6 +102,12 @@
 			end subroutine solbt
 		end interface
 
+!               Output in vtk format
+
+!                if(vtk_on .eq. 1) then  
+!                   call vtk_format
+!                end if
+
 !		Creates the radial and poloidal components of the velocity and magnetic fields		
 		
 		t=char(9)

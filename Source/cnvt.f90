@@ -8,7 +8,7 @@
 		use scratch
 		implicit none
 
-		integer :: idir,j,l,lskp
+		integer :: idir,j,l,lskp,ctte1,ctte2,ctte3,ctte4
 
 		select case (idir)
 			case (1)
@@ -76,8 +76,7 @@
 				do l=1,lmaxn
 					if (mm(lln(l)) /= 0) cycle
 					psi(0,lln(l))=(r(2)**2*psi(1,lln(l))-r(1)**2*psi(2,lln(l)))/(r(2)**2-r(1)**2)
-					call mult(sceq1,test,-1,psi,1,0.0_IDP,1.0_IDP)
-					psi(mj,lln(l))=-((r(mj)-r(mjm1))*sceq1(mj,lln(l))*mm(l)/r(mj)) - psi(mjm1,lln(l))
+					psi(mj,lln(l))=psi(mjm1,lln(l))
 				end do
 				lskp=lmaxn
 				do j=1,mj
@@ -88,6 +87,12 @@
 				do l=1,lmaxn
 					if (mm(lln(l)) /= 0) cycle
 					phi(0,lln(l))=(r(2)**2*phi(1,lln(l))-r(1)**2*phi(2,lln(l)))/(r(2)**2-r(1)**2)
+					ctte1 = eps*r(mj)*r(mj)*(feq(mj)-qqinv(mj)*cureq(mj))*(r(mj)-r(mjm1))/(cureq(mj)*(eps+r(mj)*r(mj)*r(mj)*feq(mj)))
+					ctte2 = 1/((r(mjm1)-r(mjm2))*(feq(mjm1)-qqinv(mjm1)*cureq(mjm1)))
+					ctte3 = ctte1*ctte2*(feq(mjm1)*r(mj)*feq(mj)/(eps*r(mjm1)) + cureq(mj)*feq(mjm1)/(r(mj)*r(mj)*feq(mj)))
+					ctte2 = 1/((r(mj)-r(mjm1))*(feq(mj)-qqinv(mj)*cureq(mj)))
+					ctte4 = ctte1*ctte2*(cureq(mj)*(1-feq(mj)/(r(mj)*r(mj)*eps)))/(r(mj)*r(mj))					
+					phi(mj,lln(l))=ctte4*phi(mjm1,lln(l)) + ctte3*(phi(mjm1,lln(l))-phi(mjm2,lln(l)))+r(mj)*feq(mj)*(vthprlf(mj,lln(l))-vthprlf(mjm1,lln(l)))
 				end do
 				lskp=2*lmaxn
 				do j=1,mj

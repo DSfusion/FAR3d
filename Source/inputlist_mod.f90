@@ -188,7 +188,7 @@
 		read(7,'(a1)') cdum0
 		read(7,*) ngeneq	
 		read(7,'(a1)') cdum0
-		read(7,'(a20)') eq_name			
+		read(7,'(a40)') eq_name			
 		read(7,'(a1)') cdum0	
 		read(7,*) maxstp	
 		read(7,'(a1)') cdum0
@@ -324,6 +324,8 @@
 		read(7,'(a1)') cdum0		
 		read(7,*) ndump	
 		read(7,'(a1)') cdum0
+		read(5,*) vtk_on
+		read(5,'(a1)') cdum0
 		read(7,'(a1)') cdum0
 		read(7,*) DIIID_u	
 		

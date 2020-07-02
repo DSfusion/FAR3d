@@ -300,3 +300,192 @@
 		call b2lx(lplz,-1,ieqn,ivar,0,0,1,coef)
 
 	end subroutine b2lx_dlsq
+
+	subroutine b2lx_dlsq_r(ieqn,ivar,wk1,wk2,coef)
+
+		use param
+		use domain
+		use equil
+		implicit none
+
+		integer :: ieqn,ivar,itypf,l,j
+		real(IDP) :: coef
+		real(IDP), dimension(0:,0:) :: wk1,wk2
+
+		interface
+			subroutine mult(f,g,itypeg,h,itypeh,c1,c2)
+				use param
+				implicit none
+				integer :: itypeg,itypeh
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: f,g,h
+			end subroutine mult
+			subroutine dbydth(d,a,ltype,c1,c2,k)
+				use param
+				implicit none
+				integer :: k,ltype
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: a,d
+			end subroutine dbydth
+			subroutine dbydr(d,a,c1,c2,k)
+				use param
+				implicit none
+				integer :: k
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: a,d
+			end subroutine dbydr
+			subroutine b2lx(tx,itx,ieqn,ivar,ith,ir,izt,coef)
+				use param
+				implicit none
+				integer :: itx,ieqn,ivar,ith,ir,izt
+				real(IDP) :: coef
+				real(IDP), dimension(0:,0:) :: tx
+			end subroutine b2lx
+		end interface
+
+		wk1=0. 
+		wk2=0. 
+
+		do l=1,lmax
+			do j=1,mjm1
+				wk1(j,l)=gttoj(j,l)*rinv(j)
+			end do
+		end do
+		call b2lx(wk1,1,ieqn,ivar,0,1,0,coef)
+		call dbydr(wk1,gttoj,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(wk2,wk1,1,sqgi,1,0.0_IDP,1.0_IDP)
+		call b2lx(wk2,1,ieqn,ivar,0,1,0,coef)
+		call dbydth(wk1,grtoj,-1,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(wk2,wk1,1,sqgi,1,0.0_IDP,1.0_IDP)
+		call b2lx(wk2,1,ieqn,ivar,0,1,0,-coef)
+
+		call dbydth(wk1,grroj,1,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(wk2,wk1,-1,sqgi,1,0.0_IDP,1.0_IDP)
+		call b2lx(wk2,-1,ieqn,ivar,1,0,0,coef)
+		call dbydr(wk1,grtoj,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(wk2,wk1,-1,sqgi,1,0.0_IDP,1.0_IDP)
+		call b2lx(wk2,-1,ieqn,ivar,1,0,0,-coef)
+
+		call b2lx(grtoj,-1,ieqn,ivar,1,1,0,-2*coef)
+
+		call b2lx(gttoj,1,ieqn,ivar,0,2,0,coef)
+
+		call b2lx(grroj,1,ieqn,ivar,2,0,0,coef)
+
+		wk1(:,0)=0. 
+		wk2(:,0)=0. 
+
+	end subroutine b2lx_dlsq_r
+
+	subroutine b2lx_dlsq_x(ieqn,ivar,wk1,wk2,coef)
+
+		use param
+		use domain
+		use equil
+		implicit none
+
+		integer :: ieqn,ivar,itypf,l,j
+		real(IDP) :: coef
+		real(IDP), dimension(0:,0:) :: wk1,wk2
+
+		interface
+			subroutine mult(f,g,itypeg,h,itypeh,c1,c2)
+				use param
+				implicit none
+				integer :: itypeg,itypeh
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: f,g,h
+			end subroutine mult
+			subroutine dbydth(d,a,ltype,c1,c2,k)
+				use param
+				implicit none
+				integer :: k,ltype
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: a,d
+			end subroutine dbydth
+			subroutine dbydr(d,a,c1,c2,k)
+				use param
+				implicit none
+				integer :: k
+				real(IDP) :: c1,c2
+				real(IDP), dimension(0:,0:) :: a,d
+			end subroutine dbydr
+			subroutine b2lx(tx,itx,ieqn,ivar,ith,ir,izt,coef)
+				use param
+				implicit none
+				integer :: itx,ieqn,ivar,ith,ir,izt
+				real(IDP) :: coef
+				real(IDP), dimension(0:,0:) :: tx
+			end subroutine b2lx
+		end interface
+
+		wk1=0. 
+
+		do l=1,lmax
+			wk1(:,l)=gtt(:,l)*rinv*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,1,ieqn,ivar,0,1,0,coef)
+		call dbydr(wk1,gtt,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		do l=1,lmax
+		        wk1(:,l)=wk1(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,1,ieqn,ivar,0,1,0,coef)
+		call dbydth(wk1,grt,-1,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		do l=1,lmax
+		        wk1(:,l)=wk1(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,1,ieqn,ivar,0,1,0,-coef)
+
+		call dbydth(wk1,grr,1,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		do l=1,lmax
+		        wk1(:,l)=wk1(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,-1,ieqn,ivar,1,0,0,coef)
+		call dbydr(wk1,grt,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		do l=1,lmax
+		        wk1(:,l)=wk1(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,-1,ieqn,ivar,1,0,0,-coef)
+
+		do l=1,lmax
+		        wk1(:,l)=grt(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,-1,ieqn,ivar,1,1,0,-2*coef)
+
+		do l=1,lmax
+		        wk1(:,l)=gtt(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,1,ieqn,ivar,0,2,0,coef)
+
+		do l=1,lmax
+		        wk1(:,l)=grr(:,l)*ti/(feq-qqinv*cureq)
+		end do
+		call b2lx(wk1,1,ieqn,ivar,2,0,0,coef)
+
+		wk1(:,0)=0.
+
+	end subroutine b2lx_dlsq_x

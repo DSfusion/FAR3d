@@ -1,4 +1,4 @@
-	subroutine dlsq(ss,ff,itypf,wk1,wk2,wk3,c1,c2)
+	subroutine dlsq_r(ss,ff,itypf,wk1,wk2,wk3,c1,c2)
 
 		use param
 		use domain
@@ -51,83 +51,71 @@
 		wk1=0. 
 		wk2=0. 
 
-		call eqtodyn(wk1,lplr,0.0_IDP,1.0_IDP)
 		call dbydr(wk2,ff,0.0_IDP,1.0_IDP,0)
 		do l=1,lmax
 			wk2(0,l)=0.
 		end do
-		call mult(ss,wk2,itypf,wk1,1,1.0_IDP,c2)
-
-		call eqtodyn(wk1,lplt,0.0_IDP,1.0_IDP)
-		call dbydth(wk2,ff,itypf,0.0_IDP,1.0_IDP,0)
-		do l=1,lmax
-			wk2(0,l)=0.
-		end do
-		call mult(ss,wk2,-itypf,wk1,-1,1.0_IDP,c2)
-
-		call eqtodyn(wk1,lplz,0.0_IDP,1.0_IDP)
-		call dbydzt(wk2,ff,itypf,0.0_IDP,1.0_IDP)
-		do l=1,lmax
-			wk2(0,l)=0.
-		end do
-		call mult(ss,wk2,-itypf,wk1,-1,1.0_IDP,c2)
-
-		call eqtodyn(wk3,lplrt,0.0_IDP,1.0_IDP)
-		call dbydr(wk2,ff,0.0_IDP,1.0_IDP,0)
-		do l=1,lmax
-			wk2(0,l)=0.
-		end do
-		call dbydth(wk1,wk2,itypf,0.0_IDP,1.0_IDP,0)
-		do l=1,lmax
-			wk1(0,l)=0.
-		end do
-		call mult(ss,wk1,-itypf,wk3,-1,1.0_IDP,c2)
-
-		call eqtodyn(wk3,lplrz,0.0_IDP,1.0_IDP)
-		call dbydzt(wk1,wk2,itypf,0.0_IDP,1.0_IDP)
-		do l=1,lmax
-			wk1(0,l)=0.
-		end do
-		call mult(ss,wk1,-itypf,wk3,-1,1.0_IDP,c2)
-
-		call eqtodyn(wk3,lpltz,0.0_IDP,1.0_IDP)
-		call dbydth(wk2,ff,itypf,0.0_IDP,1.0_IDP,0)
-		do l=1,lmax
-			wk2(0,l)=0.
-		end do
-		call dbydzt(wk1,wk2,-itypf,0.0_IDP,1.0_IDP)
-		do l=1,lmax
-			wk1(0,l)=0.
-		end do
-		call mult(ss,wk1,itypf,wk3,1,1.0_IDP,c2)
-
-		wk2=0.
-		call eqtodyn(wk3,lplrr,0.0_IDP,1.0_IDP)
 		do l=1,lmax
 			do j=1,mjm1
-				wk2(j,l)=dc2p(j)*(ff(j+1,l)-ff(j,l))+dc2m(j)*(ff(j-1,l)-ff(j,l))
+				wk2(j,l)=wk2(j,l)*rinv(j)
 			end do
 		end do
-		call mult(ss,wk2,itypf,wk3,1,c1,c2)
-
-		wk2=0.
-		call eqtodyn(wk3,lpltt,0.0_IDP,1.0_IDP)
+		call mult(ss,wk2,itypf,gttoj,1,1.0_IDP,c2)
+		call dbydr(wk1,gttoj,0.0_IDP,1.0_IDP,0)
 		do l=1,lmax
-			xm=mm(l)
-			wk2(1:mj,l)=-(rinv(1:mj)*xm)**2*ff(1:mj,l)
+			wk1(0,l)=0.
 		end do
+		call mult(wk3,wk1,1,sqgi,1,0.0_IDP,1.0_IDP)
 		call mult(ss,wk2,itypf,wk3,1,1.0_IDP,c2)
-
-		wk2=0.
-		call eqtodyn(wk3,lplzz,0.0_IDP,1.0_IDP)
+		call dbydth(wk1,grtoj,-1,0.0_IDP,1.0_IDP,0)
 		do l=1,lmax
-			xn=nn(l)
-			wk2(:,l)=-xn*xn*ff(:,l)
+			wk1(0,l)=0.
 		end do
+		call mult(wk3,wk1,1,sqgi,1,0.0_IDP,1.0_IDP)
+		call mult(ss,wk2,itypf,wk3,1,1.0_IDP,-c2)
+
+		call dbydth(wk2,ff,itypf,0.0_IDP,1.0_IDP,0)
 		do l=1,lmax
 			wk2(0,l)=0.
 		end do
-		call mult(ss,wk2,itypf,wk3,1,1.0_IDP,c2)
+		call dbydth(wk1,grroj,1,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(wk3,wk1,-1,sqgi,1,0.0_IDP,1.0_IDP)
+		call mult(ss,wk2,-itypf,wk3,-1,1.0_IDP,c2)
+		call dbydr(wk1,grtoj,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(wk3,wk1,-1,sqgi,1,0.0_IDP,1.0_IDP)
+		call mult(ss,wk2,-itypf,wk3,-1,1.0_IDP,-c2)
+
+		call dbydr(wk1,ff,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call dbydth(wk2,wk1,itypf,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk2(0,l)=0.
+		end do
+		call mult(ss,wk2,-itypf,grtoj,-1,1.0_IDP,-2*c2)
+
+		call dbydr(wk2,wk1,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call mult(ss,wk2,itypf,gttoj,1,1.0_IDP,c2)
+
+		call dbydth(wk1,ff,itypf,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk1(0,l)=0.
+		end do
+		call dbydth(wk2,wk1,-itypf,0.0_IDP,1.0_IDP,0)
+		do l=1,lmax
+			wk2(0,l)=0.
+		end do
+		call mult(ss,wk2,itypf,grroj,1,1.0_IDP,c2)
 
 		wk1(:,0)=0. 
 		wk2(:,0)=0. 
@@ -135,4 +123,4 @@
 		ss(:,0)=0. 
 		ff(:,0)=0. 
 
-	end subroutine dlsq
+	end subroutine dlsq_r
