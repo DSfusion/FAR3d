@@ -9,6 +9,7 @@ C-----------------------------------------------
       REAL(rprec) :: t1, t2
       CHARACTER(LEN=50) :: arg1, arg2
       CHARACTER(LEN=120) :: extension
+      LOGICAL :: lwritecdf
 C-----------------------------------------------
 !
 !     driver: reads from command line file the wout file extension and surfaces
@@ -33,6 +34,7 @@ C-----------------------------------------------
 !
       lscreen = .true.          !!Default, write to screen
       far = .false.             !!Default, don't calculate metric elements
+      lwritecdf = .false.       !!Default, write binary, not NetCDF output
 
 !
 !     Read command line argument to get input file name
@@ -107,7 +109,11 @@ C-----------------------------------------------
  !
  !    WRITE OUT CONVERTED RESULTS
  !
-      CALL write_boozmn(extension)
+      IF (lwritecdf) THEN
+         CALL write_boozmn_cdf(extension)
+      ELSE
+         CALL write_boozmn(extension)
+      ENDIF
 
  1010 CONTINUE
 !

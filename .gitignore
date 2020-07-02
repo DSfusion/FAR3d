@@ -1,5 +1,6 @@
 *~
 *.o
+*.a
 *.mod
 xfar3d
 Graphics/xplot_init_value_run
@@ -8,3 +9,4 @@ Graphics/silo.inc
 Graphics/xbw_read
 Eigensolver/xEigen
 Eigensolver/LIB_JDQZ/libjdqz.a
+BOOZ_XFORM/Sources/xbooz_xform
