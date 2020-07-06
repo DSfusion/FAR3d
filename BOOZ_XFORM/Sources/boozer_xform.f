@@ -74,13 +74,13 @@ C-----------------------------------------------
 !     READ IN PARAMETERS, DATA FROM WOUT FILE
 !
       CALL read_wout_booz(extension, iread, istat)
+      CALL second0(t1)
       IF (istat .ne. 0) THEN
          PRINT *,' ierr_vmec !=0 in booz_xform read_wout_booz'
          GOTO 1010
       END IF
 
       CLOSE (unit=iread)
-      CALL second0(t1)
 
 !
 !     COMPUTE BOOZER TRANSFORM, SURFACE BY SURFACE

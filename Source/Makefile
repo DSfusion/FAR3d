@@ -21,7 +21,7 @@ OBJS2 = inputlist.o dfault.o setup.o setmod.o seteq.o etachi.o grid.o pert.o vme
 OBJS3 = b2lx.o block.o linstart.o lincheck.o linstep.o
 
 #Operator subroutines
-OBJS4 = clgam.o derivatives.o eqdy_dyeq.o om.o dlstar.o eigensolver_tools.o Laundamp_tools.o dlsq.o
+OBJS4 = clgam.o derivatives.o eqdy_dyeq.o om.o dlstar.o eigensolver_tools.o Laundamp_tools.o dlsq.o dlsq_r.o
 
 #Output subroutines
 OBJS5 = endrun.o energy.o output.o wrdump.o rddump.o
