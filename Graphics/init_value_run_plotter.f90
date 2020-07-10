@@ -269,10 +269,10 @@
 		real(IDP), dimension(0:10) :: cnep,ctep,cnfp,cvfp,cvep,cnfpalp,cvfpalp,eqvt,eqvp
 		real(IDP), dimension(:,:), allocatable :: grr,grt,gtt,grz,gtz,gzz,sqgi,sqg, &
 							  grroj,grtoj,gttoj,grzoj,gtzoj,gzzoj,grrup,grtup,grzup,gttup,gtzup,gzzup, &
-							  bmod,bst,jbgrr,jbgrt,jbgtt,jbgrz,jbgtz,lplr,lplt,lplz,omdrprp,omdtprp,omdzprp, &
+							  bmod,bst,jbgrr,jbgrt,jbgtt,jbgrz,jbgtz,omdrprp,omdtprp,omdzprp, &
 							  omdr,omdt,omdz,djroj,djtoj,djzoj,dbsjtoj,dbsjzoj,dbsjtbj,dgttr,dgrrt,dgrtt,dgttt,dgrrz, &
-							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lpltr,lpltt, &
-							  lpltz,lplzr,lplzt,lplzz,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz, &
+							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lplr,lpltt, &
+							  lpltz,lplt,lplz,lplzz,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz, &
 							  sqgdroj,sqgdthoj,sqgdztoj,sqgdthojbst,sqgdztojbst,sqgibmodith,sqgibmodizt, &
                                                           test,testr,testt,testrr,testtt,testrt
 							   
@@ -371,10 +371,7 @@
 			!  sqgibmodith = bmod*sqg*[ d/dth (sqgi) ] / rho 
 			!  sqgibmodizt = bmod*sqg*[ d/dtz (sqgi) ] 
 			!  eildrr,eildrt,eildrz,eildtt,eildtz,eildzz,eildr,eildt,eildz electron-ion Landau damping terms
-			!  lplrr,lplrt,lplrz,lpltr,lpltt,lpltz,lplzr,lplzt,lplzz perpendicular gradient operator terms
-			!  lplr = lplrr+lpltr+lplzr
-			!  lplt = lplt=lplrt+lpltt+lplzt
-			!  lplz = lplz=lplrz+lpltz+lplzz
+			!  lplrr,lplrt,lplrz,lplr,lpltt,lpltz,lplt,lplz,lplzz perpendicular gradient operator terms
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!				
 	end module equil	
@@ -452,7 +449,6 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!			
 		
 	end module findrf
-
 	program far
 
 		use param
@@ -926,7 +922,7 @@
 !DIR$ ENDIF
 		use bspline
 		implicit none
-                include "silo.inc"
+                include "/Users/dsp/fortran_code_development/silo-4.10.2/include/silo.inc"
 
 		integer :: i,l,j,lmaxo,m,n,ihisto,l1,icycl,icol,ic,mjbz
 		integer, dimension(ldim) :: mmo,nno
@@ -963,15 +959,14 @@
 		read(8) ihist
 		rewind(8)
 		ihist=ihist+1
+		
 		allocate (numhist(ihist))
 		read(8) ihisto,numruno,numrunp,numruns,(numhist(i),i=1,ihisto),nstep,maxstp, &
 				ndump,nprint,lplots,itime,dt0,nstep1,nonlin,m0dy,nocpl
-
 		read(8) mj,lmaxo,leqmax,mjm1,mjm2,leqdim,ldim,jdim
 		read(8) (r(j),j=0,mj),(mmo(l),l=1,lmaxo),(nno(l),l=1,lmaxo),(mmeq(l),l=1,leqmax),(nneq(l),l=1,leqmax),(rinv(j),j=0,mj), &
 				(dc1m(j),j=1,mj),(dc1p(j),j=1,mj),(dc2m(j),j=1,mj),(dc2p(j),j=1,mj),(del2cm(j),j=1,mj),(del2cp(j),j=1,mj)
 				
-!               stop 19
 		if (lmax == 0) lmax=lmaxo
 		do l=1,lmaxo
 			if (mm(l) /= 0 .or. nn(l) /= 0) exit
@@ -1014,6 +1009,8 @@
 		allocate (jbgrr(0:mj,0:leqmax))
 		allocate (jbgrt(0:mj,0:leqmax))
 		allocate (jbgtt(0:mj,0:leqmax))
+		allocate (jbgrz(0:mj,0:leqmax))
+		allocate (jbgtz(0:mj,0:leqmax))
 		allocate (lplr(0:mj,0:leqmax))
 		allocate (lplt(0:mj,0:leqmax))		
 		allocate (lplz(0:mj,0:leqmax))	
@@ -1044,11 +1041,8 @@
 		allocate (lplrr(0:mj,0:leqmax))
 		allocate (lplrt(0:mj,0:leqmax))
 		allocate (lplrz(0:mj,0:leqmax))
-		allocate (lpltr(0:mj,0:leqmax))
 		allocate (lpltt(0:mj,0:leqmax))
 		allocate (lpltz(0:mj,0:leqmax))
-		allocate (lplzr(0:mj,0:leqmax))
-		allocate (lplzt(0:mj,0:leqmax))
 		allocate (lplzz(0:mj,0:leqmax))
 					
 		allocate (sqgdroj(0:mj,0:leqmax))	
@@ -1102,6 +1096,8 @@
 		jbgrr=0.0_IDP
 		jbgrt=0.0_IDP
 		jbgtt=0.0_IDP
+		jbgrz=0.0_IDP
+		jbgtz=0.0_IDP
 		lplr=0.0_IDP
 		lplt=0.0_IDP
 		omdr=0.0_IDP
@@ -1135,11 +1131,8 @@
 		lplrr=0.0_IDP
 		lplrt=0.0_IDP
 		lplrz=0.0_IDP
-		lpltr=0.0_IDP
 		lpltt=0.0_IDP
 		lpltz=0.0_IDP
-		lplzr=0.0_IDP
-		lplzt=0.0_IDP
 		lplzz=0.0_IDP
 
         if(Trapped_on .eq. 1) then
@@ -1179,6 +1172,7 @@
 				 ((grrup(j,l),j=0,mj),l=1,leqmax),((grtup(j,l),j=0,mj),l=1,leqmax),((grzup(j,l),j=0,mj),l=1,leqmax), &
 				 ((gttup(j,l),j=0,mj),l=1,leqmax),((gtzup(j,l),j=0,mj),l=1,leqmax),((gzzup(j,l),j=0,mj),l=1,leqmax), &				 
 				 ((jbgrr(j,l),j=0,mj),l=1,leqmax),((jbgrt(j,l),j=0,mj),l=1,leqmax),((jbgtt(j,l),j=0,mj),l=1,leqmax), &
+                                 ((jbgrz(j,l),j=0,mj),l=1,leqmax),((jbgtz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lplr(j,l),j=0,mj),l=1,leqmax),((lplt(j,l),j=0,mj),l=1,leqmax),((lplz(j,l),j=0,mj),l=1,leqmax), &	
 				 ((djroj(j,l),j=0,mj),l=1,leqmax),((djtoj(j,l),j=0,mj),l=1,leqmax),((djzoj(j,l),j=0,mj),l=1,leqmax), &				 
 				 ((omdr(j,l),j=0,mj),l=1,leqmax),((omdt(j,l),j=0,mj),l=1,leqmax),((omdz(j,l),j=0,mj),l=1,leqmax), &	
@@ -1188,9 +1182,9 @@
 				 ((dgttz(j,l),j=0,mj),l=1,leqmax),((dgrtp(j,l),j=0,mj),l=1,leqmax),((dgttp(j,l),j=0,mj),l=1,leqmax), &
 				 ((jsq(j,l),j=0,mj),l=1,leqmax),((bsgrt(j,l),j=0,mj),l=1,leqmax),((bsgtt(j,l),j=0,mj),l=1,leqmax), &
 				 ((bsq(j,l),j=0,mj),l=1,leqmax),((bsqgtt(j,l),j=0,mj),l=1,leqmax),((lplrr(j,l),j=0,mj),l=1,leqmax), &
-				 ((lplrt(j,l),j=0,mj),l=1,leqmax),((lplrz(j,l),j=0,mj),l=1,leqmax),((lpltr(j,l),j=0,mj),l=1,leqmax), &
-				 ((lpltt(j,l),j=0,mj),l=1,leqmax),((lpltz(j,l),j=0,mj),l=1,leqmax),((lplzr(j,l),j=0,mj),l=1,leqmax), &
-				 ((lplzt(j,l),j=0,mj),l=1,leqmax),((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &				 				 
+				 ((lplrt(j,l),j=0,mj),l=1,leqmax),((lplrz(j,l),j=0,mj),l=1,leqmax), &
+				 ((lpltt(j,l),j=0,mj),l=1,leqmax),((lpltz(j,l),j=0,mj),l=1,leqmax), &
+				 ((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &				 				 
 				 ((sqgdroj(j,l),j=0,mj),l=1,leqmax),((sqgdthoj(j,l),j=0,mj),l=1,leqmax),((sqgdztoj(j,l),j=0,mj),l=1,leqmax), &
 				 ((sqgdthojbst(j,l),j=0,mj),l=1,leqmax),((sqgdztojbst(j,l),j=0,mj),l=1,leqmax), &
 				 ((sqgibmodith(j,l),j=0,mj),l=1,leqmax),((sqgibmodizt(j,l),j=0,mj),l=1,leqmax) 		
@@ -1223,6 +1217,7 @@
 
 		rewind(8)
 		close(unit=8)
+		
 !		write(6,'("  rddump: have read fs",2a2,a1)') (numruno(i),i=1,3)
 		
 		do l=1,leqmax
