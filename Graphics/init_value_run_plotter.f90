@@ -922,7 +922,7 @@
 !DIR$ ENDIF
 		use bspline
 		implicit none
-                include "/Users/dsp/fortran_code_development/silo-4.10.2/include/silo.inc"
+                include "silo.inc"
 
 		integer :: i,l,j,lmaxo,m,n,ihisto,l1,icycl,icol,ic,mjbz
 		integer, dimension(ldim) :: mmo,nno
