@@ -8,14 +8,14 @@
 #Flag=" -ffree-line-length-none"
 Comp = ifort 
 Flag = -free
-Exc = xfar3d 
+Exc = xfar3d xfar3d_n
 Opt = -O2
 
 #Main program files
 OBJS = Modules.o Main.o
 
 #Setup subroutines files
-OBJS2 = inputlist.o dfault.o setup.o setmod.o seteq.o etachi.o grid.o pert.o vmec.o ae_profiles.o
+OBJS2 = dfault.o setup.o setmod.o seteq.o etachi.o grid.o pert.o vmec.o ae_profiles.o
 
 #Model subroutines
 OBJS3 = b2lx.o block.o linstart.o lincheck.o linstep.o
@@ -33,9 +33,15 @@ OBJS6 = mult.o cnvt.o decbt.o solbt.o quadq.o functions.o mmlims.o numinc.o eqsp
 	$(Comp) -c $(Opt) $(Flag) $<
 
 #Code compilation
-$(Exc): $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
-	$(Comp) -o $@ $(Opt) $(Flag) $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) \
-	$(OBJS5) $(OBJS6)
+xfar3d: $(OBJS) inputlist.o $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
+	$(Comp) -o $@ $(Opt) $(Flag) $(OBJS) inputlist.o $(OBJS2) $(OBJS3) \
+	$(OBJS4) $(OBJS5) $(OBJS6)
+
+xfar3d_n: $(OBJS) inputlist_namelist.o $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
+	$(Comp) -o $@ $(Opt) $(Flag) $(OBJS) inputlist_namelist.o $(OBJS2) \
+	$(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
+
+all: $(Exc)
 
 clean:
 	rm -f *.o *.mod xfar3d
