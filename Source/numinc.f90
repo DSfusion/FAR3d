@@ -17,9 +17,9 @@
 		if (i < 36) then
 			numrun(3)=charlist(i+1)
 		else
-			open (unit=6,file="farprt",status="old",POSITION="APPEND")	
+!			open (unit=6,file="farprt",status="old",POSITION="APPEND")	
 			write(6,'(" error stop in numinc. numrun(3) got to ""z"".")')
-			close(6)
+!			close(6)
 			stop
 		end if
 

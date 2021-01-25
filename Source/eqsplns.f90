@@ -57,9 +57,9 @@
 		ier=0
 		if (choice == "spline") call spline(mjeqp,xspl,yspl,cspl(:,1),cspl(:,2),cspl(:,3))
 		if (choice == "icsscu") call icsscu(xspl,fnspl,dfspl,mjeqp,smoo,yspl,cspl,mjeqp,wkspl,ier)
-		open (unit=6,file="farprt",status="old",POSITION="APPEND")
+!		open (unit=6,file="farprt",status="old",POSITION="APPEND")
 		if (ier == 129 .or. ier == 130 .or. ier == 131) write(6,'("  eqsplns: ier=",i5)') ier
-		close(6)
+!		close(6)
 		do j=0,mj
 			do jj=1,mjeqm
 				if (rfar(jj) > r(j)) exit

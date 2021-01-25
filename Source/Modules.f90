@@ -47,7 +47,7 @@
 			!  LcA0alp Landau closure 1 2nd fast particle species
 			!  LcA1alp Landau closure 2 2nd fast particle species
 			!  LcA2alp correction to the fast particle beta 2nd fast particle species
-            !  LcA3alp correction to the ratio between fast particle thermal velocity and Alfven velocity 2nd fast particle species
+			!  LcA3alp correction to the ratio between fast particle thermal velocity and Alfven velocity 2nd fast particle species
 			!  ext_prof introduce the experimental profiles	using an external text file		
 			!  omegar eigenmode frequency (required to introduce the damping effects)		
 			!  iflr thermal ions Larmour radius normalized to the device minor radius
@@ -72,7 +72,7 @@
 			!  edge_p grid point from where the VMEC data is extrapolated
 			!  inalp,ivalp,iq,iw,ix1,ix2,iwa,ix1a,ix2a internal variables
 			!  iflr_on activates thermal ion FLR effects if 1
-			!  epflr_on activates energetic particle FLR effects if 1													
+			!  epflr_on activates energetic particle FLR effects if 1							
 			!  ieldamp_on activates electron-ion Landau damping if 1
 			!  twofl_on activates two fluids effects if 1
 			!  alpha_on activates a 2nd energetic particle species if 1		
@@ -128,7 +128,7 @@
 		integer, dimension(:), allocatable :: lnumn
 		integer, dimension(:), allocatable :: mnumn												
 		integer :: ni,nis,ne
-		real(IDP) :: delta,rc,fti,fte,bmodn,mu0,uion,vthi,vthe,xnuelc0,coul_log
+		real(IDP) :: delta,rc,fti,fte
 		real(IDP), dimension(:), allocatable :: dnnbi,dne,dni,temp_epnn,ti,te,temp_ep,qprofile, &
 		                                        dnnbinn,dnenn,dninn,pthermalnn,tinn,tenn,tbn,tbnnn,pepnn,ptotnn, &
                                                         pthermal,pep,ptot,vthermalep,vAlfven,vtherm_ionP,vtherm_elecP, &
@@ -210,13 +210,7 @@
 			!  rc center of the fine grid (island)
 			!  fti fraction of interior point in transition region
 			!  fte fraction of exterior points in transition region
-			!  bmodn normalized module of the magnetic field
-			!  mu0 vacuum magnetic permeability (MKS)
-			!  uion fast particle Z number
-			!  vthi normalized ion thermal velocity at the magnetic axis
-			!  vthe normalized electron thermal velocity at the magnetic axis													
-			!  xnuelc0 electron-ion collision FR axis (MKS)
-			!  coul_log Coulomb logarithm (Te > 10 eV)								
+						
 			!!!!!!!!!!!!!!!!!!!!!! External profiles variable: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			!  dnnbi normalized fast particle density
 			!  dne normalized thermal electron density
@@ -255,10 +249,10 @@
 		implicit none
 		save
 		real(IDP), dimension(:), allocatable :: qq,qqinv,qqinvp,denseq,denseqr,psieq,chieq,preq,feq,cureq,teeq,nfeq,dnfeqdr,vfova,vfova2, &
-		                                vtherm_ion,vzt_eq,vth_eq,vth_eq1,nalpeq,valphaova,valphaova2,dnalpeqdr
+							vtherm_ion,vzt_eq,vth_eq,vth_eq1,nalpeq,valphaova,valphaova2,dnalpeqdr
 		character(len=8), dimension(2) :: ndevice
 		integer :: ngeneq,leq
-		real(IDP) :: eps,bet0
+		real(IDP) :: eps,bet0,bmodn,uion,vthi,vthe,xnuelc0,coul_log
 		real(IDP) :: omcy,bet0_f,bet0_alp,omcyalp,omcyb,rbound,norm_eildump
 		real(IDP), dimension(:), allocatable :: rs
 		integer, dimension(1:10) :: nstep_count		
@@ -267,10 +261,8 @@
 							  grroj,grtoj,gttoj,grzoj,gtzoj,gzzoj,grrup,grtup,grzup,gttup,gtzup,gzzup, &
 							  bmod,bst,jbgrr,jbgrt,jbgtt,jbgrz,jbgtz,omdrprp,omdtprp,omdzprp, &
 							  omdr,omdt,omdz,djroj,djtoj,djzoj,dbsjtoj,dbsjzoj,dbsjtbj,dgttr,dgrrt,dgrtt,dgttt,dgrrz, &
-							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lplr,lpltt, &
-							  lpltz,lplt,lplz,lplzz,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz, &
-							  sqgdroj,sqgdthoj,sqgdztoj,sqgdthojbst,sqgdztojbst,sqgibmodith,sqgibmodizt, &
-                                                          test,testr,testt,testrr,testtt,testrt
+							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lplr,lpltt,lpltz, &
+							  lplt,lplz,lplzz,lplr_r,lplt_r,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz
 							   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Definitions !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
 			!  qq safety factor
@@ -302,6 +294,13 @@
 			!  ndat indicates the number of radial points in several subroutines
 			!  eps ratio of the minor and major radius
 			!  bet0 thermal beta
+			!  bmodn normalized module of the magnetic field
+			!  uion fast particle Z number
+			!  vthi normalized ion thermal velocity at the magnetic axis
+			!  vthe normalized electron thermal velocity at the magnetic axis
+			!  xnuelc0 electron-ion collision FR axis (MKS)
+			!  coul_log Coulomb logarithm (Te > 10 eV)								
+
 			!  omcy cyclotron frequency of the fast particles (normalized to the Alfven time) 
 			!  omcyalp cyclotron frequency of the 2nd species of fast particles (normalized to the Alfven time) 
 			!  omcyb bounce frequency of the helically trapped energetic particles (normalized Alfven time)
@@ -359,15 +358,8 @@
 			!  bsgtt= bst*gtt*sqgi
 			!  bsq= bst*bst
 			!  bsqgtt= bst* bst*gtt*sqgi
-			!  sqgdroj = sqgi*d(sqg)/dr
-			!  sqgdthoj = (sqgi/rho)*d(sqg)/dth
-			!  sqgdztoj = sqgi*d(sqg)/dzt
-			!  sqgdztojbst = bst*sqgdztoj
-			!  sqgdthojbst = bst*sqgdthoj
-			!  sqgibmodith = bmod*sqg*[ d/dth (sqgi) ] / rho 
-			!  sqgibmodizt = bmod*sqg*[ d/dtz (sqgi) ] 
 			!  eildrr,eildrt,eildrz,eildtt,eildtz,eildzz,eildr,eildt,eildz electron-ion Landau damping terms
-			!  lplrr,lplrt,lplrz,lplr,lpltt,lpltz,lplt,lplz,lplzz perpendicular gradient operator terms
+			!  lplrr,lplrt,lplrz,lplr,lpltt,lpltz,lplt,lplz,lplzz,lplr_r,lplt_r perpendicular gradient operator terms
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!				
 	end module equil	
@@ -383,8 +375,9 @@
 		real(IDP), dimension(:,:), allocatable :: psi,phi,pr,uzt,nf,vprlf,vthprlf,nalp,vprlalp
 		real(IDP), dimension(:,:,:), allocatable :: cmamm,cmamp,cmapm,cmapp
 		real(IDP), dimension(:,:,:), allocatable :: amat,bmat,cmat,amatw,bmatw,cmatw,amatwalp,bmatwalp,cmatwalp
-		real(IDP), dimension(:,:), allocatable :: xt,yt,xw
+		real(IDP), dimension(:,:), allocatable :: xt,yt,xw,eilnd
 		integer, dimension(:,:), allocatable :: ipc,ipcw,ipcwalp
+		real(IDP), dimension(:,:), allocatable :: epsi,ephi,epr,eprnc,ekenc,eke,emenc,eme,ealp,ealpnc
 		
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Definitions !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
 			!  ietaeq index to select the type of eta (if 1 the electron temperature is used)
@@ -403,6 +396,7 @@
                         !  amatw,bmatw,cmatw,amatwalp,bmatwalp,cmatwalp tridiagonal matrix where the model terms are stored using block subroutine
 			!  xt,yt,xw matrix where the model terms are stored using b2lx subroutine
 			!  ipc,ipcw,ipcwalp dummy matrix used in solbt subroutine
+			!  eilnd electron-ion Landau damping terms
 			!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Normalized fluctuating variable  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!				
 			!  psi poloidal flux (norm minor radius^2 * mag. axis magnetic field)
 			!  phi electrostatic potential (norm minor radius^2 * mag. axis magnetic field / resistive time)

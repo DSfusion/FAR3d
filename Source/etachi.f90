@@ -33,13 +33,11 @@
 		mjp=mj+1
 		select case (ietaeq)
 			case(1)
-				if(ext_prof .eq. 0) then
-					eta=1.0_IDP/teeq**1.5_IDP
-				endif
+				if (ext_prof == 0) eta=1.0_IDP/teeq**1.5_IDP
 			case(2)
 				eta=etascl 
 			case(3)
-				eta=eta0*(1.+(r/reta)**(2.*etalmb)) **(1./etalmb) 
+				eta=eta0*(1.+(r/reta)**(2.*etalmb))**(1./etalmb) 
 		end select
 
 	end subroutine etachi

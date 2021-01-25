@@ -101,11 +101,11 @@
 !		Date and time		
 		call date_and_time(datew,timew,zone_h,values_s)
 
-		open (unit=6,file="farprt",status="old",POSITION="APPEND")		
+!		open (unit=6,file="farprt",status="old",POSITION="APPEND")		
 		write(6,'(/" time = ",a2,":",a2,":",a2,"       date = ",a2,"/",a2,"/",a4/)') timew(1:2),timew(3:4),timew(5:6), &
 											     datew(7:8),datew(5:6),datew(1:4)	
 
-		close(6)
+!		close(6)
 												
 !		Identify the number of equations in the model												 
 	
@@ -161,9 +161,9 @@
 !		If it is a new run the inital subroutine is called
 !		If it is a continuation the resume subroutine is called
 		if (nstres == 0) call inital	
-        if (nstres == 0) write(0,'(" ====> Preparing new run ...")')	
+		if (nstres == 0) write(0,'(" ====> Preparing new run ...")')	
 		if (nstres /= 0) call resume
-        if (nstres /= 0) write(0,'(" ====> Preparing run continuation ...")')		
+		if (nstres /= 0) write(0,'(" ====> Preparing run continuation ...")')		
 	
 !		Modification of the equlibria thermal beta		
 		if (betath_factor /= 1) write(0,'(" WARNING THERMAL BETA FACTOR ACTIVE = ",1pe13.6)') betath_factor 
@@ -263,5 +263,7 @@
 											     datew(7:8),datew(5:6),datew(1:4)
 
 		call elapsed_time(values_s,values_e)
+
+		close(6)
 
 	end program far

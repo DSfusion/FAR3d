@@ -48,7 +48,7 @@
 
 !		Summary of run paramer in the output file "farprt"	
 		
-		open (unit=6,file="farprt",status="old",POSITION="APPEND")
+!		open (unit=6,file="farprt",status="old",POSITION="APPEND")
 		
 		write(6,'(//52("*"),2a8,51("*")/)') ndevice
 		if (ngeneq == 0) write(6,'(50("*"),"cylindrical geometry",50("*")/)')
@@ -111,6 +111,6 @@
 		write(6,'(/"  linear matrix mode entries: lmaxn,lln-",i5/("                                        ",12i5))') lmaxn, &
 			  (lln(i),i=1,lmaxn)
 
-		close(6)
+!		close(6)
 
 	end subroutine output

@@ -39,13 +39,9 @@
 
 		write(7) ((sqgi(j,l),j=0,mj),l=1,leqmax),((sqg(j,l),j=0,mj),l=1,leqmax),((bst(j,l),j=0,mj),l=1,leqmax), &
 				 ((grr(j,l),j=0,mj),l=1,leqmax),((grt(j,l),j=0,mj),l=1,leqmax),((gtt(j,l),j=0,mj),l=1,leqmax), &
-				 ((grz(j,l),j=0,mj),l=1,leqmax),((gtz(j,l),j=0,mj),l=1,leqmax),((gzz(j,l),j=0,mj),l=1,leqmax), &
 				 ((grroj(j,l),j=0,mj),l=1,leqmax),((grtoj(j,l),j=0,mj),l=1,leqmax),((gttoj(j,l),j=0,mj),l=1,leqmax), &
-				 ((grzoj(j,l),j=0,mj),l=1,leqmax),((gtzoj(j,l),j=0,mj),l=1,leqmax),((gzzoj(j,l),j=0,mj),l=1,leqmax), &
-				 ((grrup(j,l),j=0,mj),l=1,leqmax),((grtup(j,l),j=0,mj),l=1,leqmax),((grzup(j,l),j=0,mj),l=1,leqmax), &
-				 ((gttup(j,l),j=0,mj),l=1,leqmax),((gtzup(j,l),j=0,mj),l=1,leqmax),((gzzup(j,l),j=0,mj),l=1,leqmax), &				 
+		 
 				 ((jbgrr(j,l),j=0,mj),l=1,leqmax),((jbgrt(j,l),j=0,mj),l=1,leqmax),((jbgtt(j,l),j=0,mj),l=1,leqmax), &
-                                 ((jbgrz(j,l),j=0,mj),l=1,leqmax),((jbgtz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lplr(j,l),j=0,mj),l=1,leqmax),((lplt(j,l),j=0,mj),l=1,leqmax),((lplz(j,l),j=0,mj),l=1,leqmax), &	
 				 ((djroj(j,l),j=0,mj),l=1,leqmax),((djtoj(j,l),j=0,mj),l=1,leqmax),((djzoj(j,l),j=0,mj),l=1,leqmax), &				 
 				 ((omdr(j,l),j=0,mj),l=1,leqmax),((omdt(j,l),j=0,mj),l=1,leqmax),((omdz(j,l),j=0,mj),l=1,leqmax), &	
@@ -57,10 +53,8 @@
 				 ((bsq(j,l),j=0,mj),l=1,leqmax),((bsqgtt(j,l),j=0,mj),l=1,leqmax),((lplrr(j,l),j=0,mj),l=1,leqmax), &
 				 ((lplrt(j,l),j=0,mj),l=1,leqmax),((lplrz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lpltt(j,l),j=0,mj),l=1,leqmax),((lpltz(j,l),j=0,mj),l=1,leqmax), &
-				 ((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &				 				 
-				 ((sqgdroj(j,l),j=0,mj),l=1,leqmax),((sqgdthoj(j,l),j=0,mj),l=1,leqmax),((sqgdztoj(j,l),j=0,mj),l=1,leqmax), &
-				 ((sqgdthojbst(j,l),j=0,mj),l=1,leqmax),((sqgdztojbst(j,l),j=0,mj),l=1,leqmax), &
-				 ((sqgibmodith(j,l),j=0,mj),l=1,leqmax),((sqgibmodizt(j,l),j=0,mj),l=1,leqmax) 				 
+				 ((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &
+				 ((lplr_r(j,l),j=0,mj),l=1,leqmax),((lplt_r(j,l),j=0,mj),l=1,leqmax)	
  	                
         if(ieldamp_on .eq. 1) then
 		  write(7) ((eildrr(j,l),j=0,mj),l=1,leqmax),((eildrt(j,l),j=0,mj),l=1,leqmax),((eildrz(j,l),j=0,mj),l=1,leqmax), &					 
@@ -91,8 +85,8 @@
 		rewind(7)
 		close(unit=7)
 		
-		open (unit=6,file="farprt",status="old",POSITION="APPEND")	
+!		open (unit=6,file="farprt",status="old",POSITION="APPEND")	
 		write (6,'("  wrdump: have written fs",2a2,a1)') (numrun(i),i=1,3)
-		close(6)
+!		close(6)
 
 	end subroutine wrdump

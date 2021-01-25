@@ -49,30 +49,18 @@
 		allocate (grr(0:mj,0:leqmax))
 		allocate (grt(0:mj,0:leqmax))
 		allocate (gtt(0:mj,0:leqmax))
-		allocate (grz(0:mj,0:leqmax))
-		allocate (gtz(0:mj,0:leqmax))
-		allocate (gzz(0:mj,0:leqmax))				
 		allocate (grroj(0:mj,0:leqmax))
 		allocate (grtoj(0:mj,0:leqmax))
 		allocate (gttoj(0:mj,0:leqmax))		
-		allocate (grzoj(0:mj,0:leqmax))
-		allocate (gtzoj(0:mj,0:leqmax))
-		allocate (gzzoj(0:mj,0:leqmax))
 		allocate (bmod(0:mj,0:leqmax))				
-		allocate (grrup(0:mj,0:leqmax))	
-		allocate (grtup(0:mj,0:leqmax))	
-		allocate (grzup(0:mj,0:leqmax))	
-		allocate (gttup(0:mj,0:leqmax))	
-		allocate (gtzup(0:mj,0:leqmax))	
-		allocate (gzzup(0:mj,0:leqmax))					
 		allocate (jbgrr(0:mj,0:leqmax))
 		allocate (jbgrt(0:mj,0:leqmax))
 		allocate (jbgtt(0:mj,0:leqmax))
-		allocate (jbgrz(0:mj,0:leqmax))
-		allocate (jbgtz(0:mj,0:leqmax))
 		allocate (lplr(0:mj,0:leqmax))
 		allocate (lplt(0:mj,0:leqmax))		
 		allocate (lplz(0:mj,0:leqmax))	
+		allocate (lplr_r(0:mj,0:leqmax))
+		allocate (lplt_r(0:mj,0:leqmax))		
 		allocate (djroj(0:mj,0:leqmax))	
 		allocate (djtoj(0:mj,0:leqmax))	
 		allocate (djzoj(0:mj,0:leqmax))	
@@ -104,14 +92,6 @@
 		allocate (lpltz(0:mj,0:leqmax))
 		allocate (lplzz(0:mj,0:leqmax))
 					
-		allocate (sqgdroj(0:mj,0:leqmax))	
-		allocate (sqgdthoj(0:mj,0:leqmax))	
-		allocate (sqgdztoj(0:mj,0:leqmax))							 			 
-		allocate (sqgdthojbst(0:mj,0:leqmax))
-		allocate (sqgdztojbst(0:mj,0:leqmax))	
-		allocate (sqgibmodith(0:mj,0:leqmax))
-		allocate (sqgibmodizt(0:mj,0:leqmax))		
-							 		
         if(ieldamp_on .eq. 1 .and. ext_prof .eq. 1) then		
 		  allocate (eildrr(0:mj,0:leqmax))		
 		  allocate (eildrt(0:mj,0:leqmax))		
@@ -136,39 +116,18 @@
 		grr=0.0_IDP
 		grt=0.0_IDP
 		gtt=0.0_IDP
-		grz=0.0_IDP
-		gtz=0.0_IDP
-		gzz=0.0_IDP		
 		grroj=0.0_IDP
 		grtoj=0.0_IDP
 		gttoj=0.0_IDP
-		grzoj=0.0_IDP
-		gtzoj=0.0_IDP	
-		gzzoj=0.0_IDP	
 		bmod=0.0_IDP
-		grrup=0.0_IDP
-		grtup=0.0_IDP
-		grzup=0.0_IDP
-		gttup=0.0_IDP
-		gtzup=0.0_IDP	
-		gzzup=0.0_IDP		
 		jbgrr=0.0_IDP
 		jbgrt=0.0_IDP
 		jbgtt=0.0_IDP
-		jbgrz=0.0_IDP
-		jbgtz=0.0_IDP
 		lplr=0.0_IDP
 		lplt=0.0_IDP
 		omdr=0.0_IDP
 		omdt=0.0_IDP
 		omdz=0.0_IDP
-		sqgdroj=0.0_IDP
-		sqgdthoj=0.0_IDP
-		sqgdztoj=0.0_IDP
-		sqgdthojbst=0.0_IDP
-		sqgdztojbst=0.0_IDP
-		sqgibmodith=0.0_IDP
-		sqgibmodizt=0.0_IDP
 
 		dbsjtoj=0.0_IDP
 		dbsjzoj=0.0_IDP
@@ -225,13 +184,9 @@
 
 		read(8) ((sqgi(j,l),j=0,mj),l=1,leqmax),((sqg(j,l),j=0,mj),l=1,leqmax),((bst(j,l),j=0,mj),l=1,leqmax), &
 				 ((grr(j,l),j=0,mj),l=1,leqmax),((grt(j,l),j=0,mj),l=1,leqmax),((gtt(j,l),j=0,mj),l=1,leqmax), &
-				 ((grz(j,l),j=0,mj),l=1,leqmax),((gtz(j,l),j=0,mj),l=1,leqmax),((gzz(j,l),j=0,mj),l=1,leqmax), &
 				 ((grroj(j,l),j=0,mj),l=1,leqmax),((grtoj(j,l),j=0,mj),l=1,leqmax),((gttoj(j,l),j=0,mj),l=1,leqmax), &
-				 ((grzoj(j,l),j=0,mj),l=1,leqmax),((gtzoj(j,l),j=0,mj),l=1,leqmax),((gzzoj(j,l),j=0,mj),l=1,leqmax), &
-				 ((grrup(j,l),j=0,mj),l=1,leqmax),((grtup(j,l),j=0,mj),l=1,leqmax),((grzup(j,l),j=0,mj),l=1,leqmax), &
-				 ((gttup(j,l),j=0,mj),l=1,leqmax),((gtzup(j,l),j=0,mj),l=1,leqmax),((gzzup(j,l),j=0,mj),l=1,leqmax), &				 
+		 
 				 ((jbgrr(j,l),j=0,mj),l=1,leqmax),((jbgrt(j,l),j=0,mj),l=1,leqmax),((jbgtt(j,l),j=0,mj),l=1,leqmax), &
-                                 ((jbgrz(j,l),j=0,mj),l=1,leqmax),((jbgtz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lplr(j,l),j=0,mj),l=1,leqmax),((lplt(j,l),j=0,mj),l=1,leqmax),((lplz(j,l),j=0,mj),l=1,leqmax), &	
 				 ((djroj(j,l),j=0,mj),l=1,leqmax),((djtoj(j,l),j=0,mj),l=1,leqmax),((djzoj(j,l),j=0,mj),l=1,leqmax), &				 
 				 ((omdr(j,l),j=0,mj),l=1,leqmax),((omdt(j,l),j=0,mj),l=1,leqmax),((omdz(j,l),j=0,mj),l=1,leqmax), &	
@@ -243,10 +198,8 @@
 				 ((bsq(j,l),j=0,mj),l=1,leqmax),((bsqgtt(j,l),j=0,mj),l=1,leqmax),((lplrr(j,l),j=0,mj),l=1,leqmax), &
 				 ((lplrt(j,l),j=0,mj),l=1,leqmax),((lplrz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lpltt(j,l),j=0,mj),l=1,leqmax),((lpltz(j,l),j=0,mj),l=1,leqmax), &
-				 ((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &				 				 
-				 ((sqgdroj(j,l),j=0,mj),l=1,leqmax),((sqgdthoj(j,l),j=0,mj),l=1,leqmax),((sqgdztoj(j,l),j=0,mj),l=1,leqmax), &
-				 ((sqgdthojbst(j,l),j=0,mj),l=1,leqmax),((sqgdztojbst(j,l),j=0,mj),l=1,leqmax), &
-				 ((sqgibmodith(j,l),j=0,mj),l=1,leqmax),((sqgibmodizt(j,l),j=0,mj),l=1,leqmax) 		
+				 ((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &
+				 ((lplr_r(j,l),j=0,mj),l=1,leqmax),((lplt_r(j,l),j=0,mj),l=1,leqmax)	
 				 
         if(ieldamp_on .eq. 1) then
 		  read(8)  ((eildrr(j,l),j=0,mj),l=1,leqmax),((eildrt(j,l),j=0,mj),l=1,leqmax),((eildrz(j,l),j=0,mj),l=1,leqmax), &					 
@@ -277,8 +230,8 @@
 		rewind(8)
 		close(unit=8)
 		
-		open (unit=6,file="farprt",status="old",POSITION="APPEND")		
+!		open (unit=6,file="farprt",status="old",POSITION="APPEND")		
 		write(6,'("  rddump: have read fs",2a2,a1)') (numruno(i),i=1,3)
-		close(6)
+!		close(6)
 
 	end subroutine rddump

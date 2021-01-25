@@ -208,6 +208,6 @@
 
 !		The equilibria main parameters are calculated	
 		
-		if (ngeneq == 1) call vmec		  	
+		call vmec		  	
 
 	end subroutine seteq

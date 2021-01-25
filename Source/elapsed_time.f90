@@ -25,8 +25,8 @@
 			seconds = seconds + 60
 		end if
 
-		open (unit=6,file="farprt",status="old",POSITION="APPEND")		
+!		open (unit=6,file="farprt",status="old",POSITION="APPEND")		
 		write(6,'(" elapsed time:",i4," hours",i3," minutes",i3," seconds")') hours,minutes,seconds
-		close(6)
+!		close(6)
 
 	end subroutine elapsed_time

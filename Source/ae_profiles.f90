@@ -34,9 +34,10 @@
                                       temp_elec_e,pres_beam_e,pres_thermal_e,pres_equil_e,zeff_e,tor_rot_freq_e,tor_rot_vel_e, &
 									  pol_rot_vel_e,den_alpha_e,temp_alpha_e
 		real(IDP) ::  B_inboard,B_outboard,Rin,Rout,btor,bpol,bnrm,tecnt,ticnt,dnecnt,dnicnt
-		real(IDP) ::  bt0,rmajr,rminr,mu0prof,va0,omgcya,betalf,bet00,vf0,vtor0		
+		real(IDP) ::  bt0,rmajr,rminr,mu0,mu0prof,va0,omgcya,betalf,bet00,vf0,vtor0		
 		real(IDP) :: dnnbinn_max,dnenn_max,dninn_max,tinn_max,tenn_max,tbnnn_max, &
-		             pthermalnn_max,ptotnn_max,dnalphann_max,talphann_max		
+		             pthermalnn_max,ptotnn_max,dnalphann_max,talphann_max, &
+			     ddm1, ddm2		
 		real(IDP), dimension(:), allocatable :: bspl,cspl,dspl
 		character*1 :: tb,cdum,cdum2
 		
@@ -114,6 +115,18 @@
 			    pol_rot_vel_e(i) = 0.
   	        end do    
 	        close(unit=nunit)
+		  end if
+		  	  
+		  if(DIIID_u .eq. 2) then		  
+            do i=1,ns0
+	          read(nunit,*) rho_e(i),qprof(i),den_beam_e(i),den_ion_e(i),den_elec_e(i), &
+                            den_imp_e(i),temp_beam_e(i),temp_ion_e(i), &
+                            temp_elec_e(i),pres_beam_e(i), pres_thermal_e(i), &
+                            pres_equil_e(i),zeff_e(i),tor_rot_freq_e(i),tor_rot_vel_e(i), &
+			    ddm1,ddm2
+			    pol_rot_vel_e(i) = 0.
+  	        end do    
+	        close(unit=nunit)
 		  end if	  
 
           uion = uion_e                                                                   !! ion species
@@ -123,7 +136,8 @@
           mu0prof = 4.*3.1415926e-7                                                       !! magnetic permeability vacuum
 		  mu0=mu0prof
           va0 = B0_e/sqrt(uion_e*mu0prof*den_ion_e(1)*1.e+20*1.672e-27)                   !! Alfven velocity axis  
-	      if(DIIID_u .eq. 1) va0 = B0_e/sqrt(uion_e*mu0prof*den_ion_e(1)*1.e+19*1.672e-27)		  
+	  if(DIIID_u .eq. 1 .or. DIIID_u .eq. 2) &
+	    va0 = B0_e/sqrt(uion_e*mu0prof*den_ion_e(1)*1.e+19*1.672e-27)		  
           omgcya = 1.602e-19*B0_e*R0_e/(1.672e-27*uion_e*va0)                             !! cyclotron FR
           betalf = 2.*mu0prof*(pres_beam_e(1)*1.e+3)/(B0_e**2)                            !! beta EP axis
           bet00 = betath_factor*2.*mu0prof*(pres_thermal_e(1)*1.e+3)/(B0_e**2)            !! beta thermal plasma axis
@@ -260,7 +274,7 @@
 		  ptotnn_max=maxval(ptotnn(0:mj))	
 		  ptot(:)=ptotnn(:)/ptotnn_max
 
-		  if(DIIID_u .eq. 1) then
+		  if(DIIID_u .eq. 1 .or. DIIID_u .eq. 2) then
 		 
             do je=0,mj
 			  if(EP_dens_on .eq. 0) then
@@ -273,6 +287,7 @@
 			  dni(je) = dninn(je)/dninn(1)			
 		  	  vAlfven(je) = (B0_e/sqrt(uion_e*mu0prof*dninn(je)*1.672e-27_IDP))/va0		
               vzt_eqp(je) = 100._IDP*vzt_eqp(je)			  
+              vth_eqp(je) = 100._IDP*vth_eqp(je)			  
             end do 			  
  
 		  end if		  
