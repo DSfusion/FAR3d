@@ -1,0 +1,93 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\csgray\c0\c0;}
+\margl1440\margr1440\vieww33200\viewh25180\viewkind1\viewscale220
+\deftab720
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\qc\partightenfactor0
+
+\f0\b\fs28 \cf0 \ul \ulc0 List of changes to FAR3d distribution\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+
+\f1\b0 \cf0 \ulnone January 25, 2021: New version with following modifications made by Luis Garcia and others to\cf2  \cb3 \expnd0\expndtw0\kerning0
+correct errors in how the ion/electron damping and thermal ion FLR terms were introduced in FAR3d. These errors in the earlier code led not only to incorrect damping rates, but also in some cases resulted in SegFaults. The following is a summary of the changes that were made:\
+\pard\pardeftab720\partightenfactor0
+\cf2 - The Landau ion/electron damping terms were modified to correct errors in the earlier version\
+- This involved adding two new subroutines: blockjl and b2lxl\
+- Corrections were made in the thermal ion FLR terms, specifically in calls to dlsq_r and related subroutines\
+- To calculate dlsq_r and the corresponding blocks, two equilibrium matrices: lplr_r and lplt_r were introduced\
+- The code has been further simplified by removing some redundant equilibrium matrices\
+- Note that the Trapped_on and vtheq terms are not included\
+- Also, the inputlist_namelist.f90 file was modified to be consistent with the new version\
+- The file inputlist_mod.f90 was removed since it is no longer needed as a separate file\cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+July 6,2020: New version with following modifications + changes from Jacobo that correct ion FLR terms was put into this directory
+\f0\b\fs24 \
+\
+linstart.f90, lincheck.f90:\
+\
+  
+\f1\b0 corrected spelling error in comment statement: \'93Sharing\'94 should be \'93Shearing\'94\
+
+\f0\b \
+linstart.f90:\
+
+\f1\b0 \
+ changed \'93write(*,\'94  \'93write(0,\'94 so these screen writes work on all platforms\
+\
+
+\f0\b vmec.f90:\
+
+\f1\b0 \
+  added      xkprl = real(n,kind=IDP) - real(m,kind=IDP)*qqinv(j)   so that Landau damping works properly\
+\
+   added  kind=IDP specifier to complx statements so precision doesn\'92t revert to lower *4 level         cmplx1 = cmplx(0._IDP,1._IDP,kind=IDP) \
+\
+   replaced \'931/r\'94 in several places with \'93rinv\'94 so there is no possibility of division by zero\
+\
+
+\f0\b inputlist.f90:
+\f1\b0 \
+\
+    increased format of eq_name from a20 to a40 so longer names can be used\
+\
+
+\f0\b inputlist_mod.f90:
+\f1\b0 \
+\
+    increased format of eq_name from a20 to a40 so longer names can be used\
+\
+
+\f0\b ae_profiles.f90:
+\f1\b0 \
+\
+    set pol_rot_vel_e = 0 since it is not included in taefl.dat file and should not be used\
+    added _IDP specifier to constant numbers so precision is not lost\
+    corrected vzt_eqp and vth_eqp - should be scaled by 1.e+3 instead of 1.e+5\
+\
+
+\f0\b eigensolver_tools.f90:\
+
+\f1\b0 \
+     lln(i) and signl(i) to the jdqz.dat  output file since these are needed by xEigen and for the post-processing\
+       done to make 2D eigenfunction plots\
+     changed \'93write(*,\'94  \'93write(0,\'94 so these screen writes work on all platforms\
+\
+
+\f0\b main_jdqz_TAEFL_cmplx.f90:
+\f1\b0 \
+\
+       added lln(i) and signl(i) to jdqz.dat reads and egn_mode_ascii.dat writes - this information is required for\
+           post-processing done to make 2D visualizations of mode structures\
+\
+
+\f0\b Eigensolver.sh:
+\f1\b0 \
+\
+The compile script was changed so that all codes are compiled together as a single binary, instead of the old way where the LIB_JDQZ files were compiled as as a separate library. There was no need to use the library approach and it tends to lead to errors on some computing platforms.\
+\
+\
+\
+}
