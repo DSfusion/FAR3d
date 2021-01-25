@@ -1,3 +1,14 @@
+!
+!     This version of inputlist.f90 reads all data in Input_Model using namelist statements. This is useful for
+!      setting up automated parameter scans and integrated modeling applications where it is necessary to read and
+!      write the main FAR3d input file from other codes. The namelist format is a standard way of doing this and
+!      allows the reads and writes to be carried out using just a few lines of code.
+!     The Input_Model file is separated into two separate namelists: far3d_init and far3d_params. far3d_init
+!       is read first and contains some basic information needed to allocate arrays, such as nubmer of equilibrium
+!       and dynamic Fourier modes and radial grid resolution; this is needed for some of the data in far3d_params.
+!       Once this is done, a call is made to set default values. Then Input_Model is rewound and far3d_init and
+!       far3d_params are read a second time so that uneeded defaults are overwritten.
+!
 	subroutine inputlist
 	
 		use param
@@ -8,21 +19,21 @@
 		use scratch
 		implicit none
 
-!		namelist/nam/maxstp,ndump,nprint,lplots,itime,dt0,nonlin,mj,lmax,leqmax,mm,nn,mmeq,nneq,Adens,Bdens,ni,nis,ne, &
-!			     delta,rc,fti,fte,stdifp,stdifu,ngeneq,eps,bet0,rs,leq,tfl_Un,tfl_Psin,tfl_pn, &
-!			     ndat,xr,xdat,etascl,reta,eta0,etalmb,ietaeq,LcA0,LcA1,LcA2,LcA3,ext_prof,omegar, &
-!				 iflr,r_epflr,iflr_on,s,gamma,ipert,widthi,gammai,pertscl,m0dy,nocpl,cnep,ctep,cvep,omcy,bet0_f,cnfp,cvfp,stdifnf,stdifvf,dpres, &
-!			     ieldamp_on,epflr_on,twofl_on,LcA0alp,LcA1alp,LcA2alp,LcA3alp,alpha_on,stdifnfalp,stdifvfalp, &
-!				 Adensalp,Bdensalp,bet0_falp,cnfpalp,cvfpalp,omcyalp,DIIID_u,r_epflralp,EP_dens_on,Alpha_dens_on,ext_prof_len,betath_factor, &
-!                EP_vel_on,Alpha_vel_on,deltaq,deltaiota,matrix_out,leqdim,ldim,jdim,nstres,etascl,reta,eta0,etalmb, &	
-!                                            q_prof_on, Trapped_on,omcyb,rbound			 
-		character*1 :: cdum0
+                namelist /far3d_init/ nstres, numrun, numruno, numvac, nonlin, ngeneq, eq_name, maxstp, dt0, ldim, leqdim, jdim    &		
+		/far3d_params/ ext_prof,ext_prof_name,ext_prof_len,iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,                  &
+		Trapped_on,matrix_out,m0dy,mm,nn,mmeq,nneq,ipert,widthix,Auto_grid_on,ni,nis,ne,delta,rc,Edge_on,edge_p,gamma,     &
+		s,betath_factor,ietaeq,bet0_f,bet0_alp,omcy,omcyb,rbound,omcyalp,itime,dpres,stdifp,stdifu,stdifv,                 &
+		stdifnf,stdifvf,stdifnalp,stdifvalp,LcA0,LcA1,LcA2,LcA3,LcA0alp,LcA1alp,LcA2alp,LcA3alp,omegar,                    &
+		iflr,r_epflr,r_epflralp,lplots,nprint,ndump,DIIID_u,EP_dens_on,Adens,Bdens,Alpha_dens_on,Adensalp,                 &
+		Bdensalp,EP_vel_on,Alpha_vel_on,q_prof_on,Eq_vel_on,Eq_velp_on,Eq_Presseq_on,Eq_Presstot_on,deltaq,                &
+		deltaiota,etascl,eta0,reta,etalmb,cnep,ctep,cnfp,cvep,cvfp,cnfpalp,cvfpalp,eqvt,eqvp
+
 		character(len=132) :: char5		
 		integer :: i
 		character(len=8) :: confil	
 		real(IDP) :: widthix	
 
-!		Read the input files
+!		Open and read the input file and open the main output farprt
 		
 		open (unit=5,file="Input_Model",status="old",form="formatted")
 		open (unit=6,file="farprt",status="unknown")
@@ -38,39 +49,20 @@
 		write(6,'("===========================||=======||====||==||== \\==|______|==|_____|=======VER1.0==============")')	
 		write(6,'("===================================================================================================")')			
 
-		write(6,'(" copy of Input_Model:")')
+		write(6,'(" Namelist output of Input_Model:")')	
 		
-		do
-			read(5,'(a)',end=20) char5
-			write(6,*) char5
-		end do
-20    rewind(5)		
+!              The following lines can be uncommented if a verbatim
+!              copy (including comments)of Input_Model is desired in farprt.	
+!		do
+!			read(5,'(a)',end=20) char5
+!			write(6,*) char5
+!		end do
+!		
+!   20           rewind(5)		
 		
-		read(5,'(a1)') cdum0										 
-		read(5,'(a1)') cdum0
-		read(5,*) nstres
-		read(5,'(a1)') cdum0
-		read(5,'(2a2)') (numrun(i),i=1,2)
-		read(5,'(a1)') cdum0
-		read(5,'(2a2,a1)') (numruno(i),i=1,3)
-		read(5,'(a1)') cdum0
-		read(5,'(a5)') numvac	
-        read(5,'(a1)') cdum0
-        read(5,*) nonlin	
-        read(5,'(a1)') cdum0
-        read(5,*) ngeneq
-        read(5,'(a1)') cdum0
-        read(5,'(a40)') eq_name			
-        read(5,'(a1)') cdum0					
-        read(5,*) maxstp	
-        read(5,'(a1)') cdum0
-        read(5,*) dt0	
-        read(5,'(a1)') cdum0		
-        read(5,*) ldim		
-        read(5,'(a1)') cdum0
-        read(5,*) leqdim	
-        read(5,'(a1)') cdum0	
-        read(5,*) jdim		
+		read(5,nml=far3d_init)
+		write(6,'(/,"FAR3d_INIT Namelist:",/)')
+		write(6,nml=far3d_init)										 
 		
 		if (nstres /= 0) then
 
@@ -81,9 +73,6 @@
 			rewind(8)
 
 		end if	
-		
-        close (5)		
-		
 		allocate (sgnleq(leqdim))		!  Vector with the sign of the equilibrium modes
 		allocate (mmeq(leqdim))			!  Vector with the equilibrium polidal mode numbers
 		allocate (nneq(leqdim))			!  Vector with the equilibrium toroidal mode numbers
@@ -173,228 +162,21 @@
 		allocate (sceq6(0:jdim,0:leqdim))	
 		allocate (sceq7(0:jdim,0:leqdim))		
 
-		call dfault	
+		allocate (epsi(ldim,2),ephi(ldim,2),epr(ldim,2),eprnc(ldim,2),ekenc(ldim,2),eke(ldim,2), &
+			  emenc(ldim,2),eme(ldim,2),ealp(ldim,2),ealpnc(ldim,2))
+			  
+		call dfault
 
-		open (unit=5,file="Input_Model",status="old",form="formatted")		
-
-		read(5,'(a1)') cdum0										 
-		read(5,'(a1)') cdum0
-		read(5,*) nstres
-		read(5,'(a1)') cdum0
-		read(5,'(2a2)') (numrun(i),i=1,2)
-		read(5,'(a1)') cdum0
-		read(5,'(2a2,a1)') (numruno(i),i=1,3)
-		read(5,'(a1)') cdum0
-		read(5,'(a5)') numvac	
-		read(5,'(a1)') cdum0
-		read(5,*) nonlin	
-		read(5,'(a1)') cdum0
-		read(5,*) ngeneq	
-		read(5,'(a1)') cdum0
-		read(5,'(a40)') eq_name			
-		read(5,'(a1)') cdum0	
-		read(5,*) maxstp	
-		read(5,'(a1)') cdum0
-		read(5,*) dt0	
-		read(5,'(a1)') cdum0		
-		read(5,*) ldim		
-		read(5,'(a1)') cdum0
-		read(5,*) leqdim	
-		read(5,'(a1)') cdum0	
-		read(5,*) jdim	
-		read(5,'(a1)') cdum0	
-		read(5,*) ext_prof	
-		read(5,'(a1)') cdum0	
-		read(5,'(a40)') ext_prof_name	
-		read(5,'(a1)') cdum0	
-		read(5,*) ext_prof_len		
-		read(5,'(a1)') cdum0	
-		read(5,*) iflr_on	
-		read(5,'(a1)') cdum0		
-		read(5,*) epflr_on	
-		read(5,'(a1)') cdum0	
-		read(5,*) ieldamp_on	
-		read(5,'(a1)') cdum0	
-		read(5,*) twofl_on	
-		read(5,'(a1)') cdum0
-		read(5,*) alpha_on	
-		read(5,'(a1)') cdum0	
-		read(5,*) Trapped_on	
-		read(5,'(a1)') cdum0	
-		read(5,*) matrix_out
-		read(5,'(a1)') cdum0
-		read(5,*) m0dy
-		read(5,'(a1)') cdum0	
-					
-		read(5,'(a1)') cdum0										 
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0		
-		read(5,*) (mm(i),i=1,ldim)
-		read(5,'(a1)') cdum0		
-		read(5,*) (nn(i),i=1,ldim)				
-		read(5,'(a1)') cdum0		
-		read(5,*) (mmeq(i),i=1,leqdim)				
-		read(5,'(a1)') cdum0		
-		read(5,*) (nneq(i),i=1,leqdim)	  
-		read(5,'(a1)') cdum0	
-		read(5,'(a1)') cdum0		
-		read(5,*) ipert	
-		read(5,'(a1)') cdum0		
-		read(5,*) widthix
-		read(5,'(a1)') cdum0		
-		read(5,*) Auto_grid_on		
-		read(5,'(a1)') cdum0		
-		read(5,*) ni
-		read(5,'(a1)') cdum0		
-		read(5,*) nis
-		read(5,'(a1)') cdum0		
-		read(5,*) ne
-		read(5,'(a1)') cdum0		
-		read(5,*) delta
-		read(5,'(a1)') cdum0		
-		read(5,*) rc	
-		read(5,'(a1)') cdum0
-		read(5,*) Edge_on	
-		read(5,'(a1)') cdum0
-		read(5,*) edge_p	
-		read(5,'(a1)') cdum0			
-		read(5,'(a1)') cdum0		
-		read(5,*) gamma			
-		read(5,'(a1)') cdum0		
-		read(5,*) s	
-		read(5,'(a1)') cdum0		
-		read(5,*) betath_factor
-		read(5,'(a1)') cdum0		
-		read(5,*) ietaeq		
-		read(5,'(a1)') cdum0		
-		read(5,*) bet0_f	
-		read(5,'(a1)') cdum0		
-		read(5,*) bet0_alp		
-		read(5,'(a1)') cdum0		
-		read(5,*) omcy			
-		read(5,'(a1)') cdum0		
-		read(5,*) omcyb			
-		read(5,'(a1)') cdum0
-		read(5,*) rbound			
-		read(5,'(a1)') cdum0		
-		read(5,*) omcyalp		
-		read(5,'(a1)') cdum0		
-		read(5,*) itime	
-		read(5,'(a1)') cdum0		
-		read(5,*) dpres		
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0		
-		read(5,*) stdifp			
-		read(5,'(a1)') cdum0		
-		read(5,*) stdifu	
-		read(5,'(a1)') cdum0		
-		read(5,*) stdifv	
-		read(5,'(a1)') cdum0	
-		read(5,*) stdifnf		
-		read(5,'(a1)') cdum0		
-		read(5,*) stdifvf	
-		read(5,'(a1)') cdum0		
-		read(5,*) stdifnalp	
-		read(5,'(a1)') cdum0		
-		read(5,*) stdifvalp
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA0			
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA1	
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA2		
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA3	
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA0alp	
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA1alp
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA2alp	
-		read(5,'(a1)') cdum0		
-		read(5,*) LcA3alp		
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0		
-		read(5,*) omegar			
-		read(5,'(a1)') cdum0		
-		read(5,*) iflr	
-		read(5,'(a1)') cdum0		
-		read(5,*) r_epflr		
-		read(5,'(a1)') cdum0		
-		read(5,*) r_epflralp	
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0
-		read(5,*) lplots			
-		read(5,'(a1)') cdum0		
-		read(5,*) nprint	
-		read(5,'(a1)') cdum0		
-		read(5,*) ndump	
-!		read(5,'(a1)') cdum0
-!		read(5,*) vtk_on
-		read(5,'(a1)') cdum0			
-		read(5,'(a1)') cdum0
-		read(5,*) DIIID_u	
+!		close(unit=5)	
+!		open (unit=5,file="Input_Model",status="old",form="formatted")
+		rewind(5)
+		read(5,nml=far3d_init)
+		read(5,nml=far3d_params)
+											 
+		write(6,'(/,"FAR3d_PARAMS Namelist:",/)')
+		write(6,nml=far3d_params)										 
+		write(6,'(///)')
 		
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0
-		read(5,'(a1)') cdum0		
-		read(5,*) EP_dens_on			
-		read(5,'(a1)') cdum0		
-		read(5,*) Adens			
-		read(5,'(a1)') cdum0		
-		read(5,*) Bdens	
-		read(5,'(a1)') cdum0		
-		read(5,*) Alpha_dens_on		
-		read(5,'(a1)') cdum0		
-		read(5,*) Adensalp		
-		read(5,'(a1)') cdum0		
-		read(5,*) Bdensalp		
-		read(5,'(a1)') cdum0		
-		read(5,*) EP_vel_on	
-		read(5,'(a1)') cdum0	
-		read(5,*) Alpha_vel_on	
-		read(5,'(a1)') cdum0		
-		read(5,*) q_prof_on
-		read(5,'(a1)') cdum0		
-		read(5,*) Eq_vel_on
-		read(5,'(a1)') cdum0	
-		read(5,*) Eq_velp_on				
-		read(5,'(a1)') cdum0	
-		read(5,*) Eq_Presseq_on			
-		read(5,'(a1)') cdum0
-		read(5,*) Eq_Presstot_on			
-		read(5,'(a1)') cdum0
-		read(5,*) deltaq			
-		read(5,'(a1)') cdum0	
-		read(5,*) deltaiota	
-		read(5,'(a1)') cdum0	
-		read(5,*) etascl
-		read(5,'(a1)') cdum0	
-		read(5,*) eta0
-		read(5,'(a1)') cdum0	
-		read(5,*) reta
-		read(5,'(a1)') cdum0	
-		read(5,*) etalmb		
-		read(5,'(a1)') cdum0			
-		read(5,*) (cnep(i),i=0,10)		
-		read(5,'(a1)') cdum0		
-		read(5,*) (ctep(i),i=0,10)	
-		read(5,'(a1)') cdum0	
-		read(5,*) (cnfp(i),i=0,10)			
-		read(5,'(a1)') cdum0		
-		read(5,*) (cvep(i),i=0,10)
-		read(5,'(a1)') cdum0		
-		read(5,*) (cvfp(i),i=0,10)	
-		read(5,'(a1)') cdum0		
-		read(5,*) (cnfpalp(i),i=0,10)	
-		read(5,'(a1)') cdum0		
-		read(5,*) (cvfpalp(i),i=0,10)	
-		read(5,'(a1)') cdum0		
-		read(5,*) (eqvt(i),i=0,10)
-		read(5,'(a1)') cdum0		
-		read(5,*) (eqvp(i),i=0,10)	
-
 		widthi(:)=widthix
 
 		if (Auto_grid_on == 1) then
@@ -404,9 +186,12 @@
 		  ne =  jdim/4
                   
 		end if	
+
+!             Uncomment to test numrun, numruno, numvac
+!		write(6,'(2a2)') (numrun(i),i=1,2)	
+!		write(6,'(2a2,a1)') (numruno(i),i=1,3)
+!		write(6,'(a5)') numvac
 		
-		close (5)
-		
-		close(6)
-		
+		close(5)		
+!		close(6)
 	end subroutine inputlist
