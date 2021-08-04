@@ -18,8 +18,8 @@
 							  omdzeq,dbsjtojeq,dbsjzojeq,dbsjtbjeq,dgttreq,dgrrteq,dgrtteq,dgttteq,dgrrzeq, &
 							  dgrtzeq,dgttzeq,dgrtpeq,dgttpeq,jsqeq,bsgrteq,bsgtteq,bsqeq,bsqgtteq, &
 							  lplrreq,lplrteq,lplrzeq,lpltreq,lpltteq,lpltzeq,lplzreq,lplzteq,lplzzeq, &
-							  eildreq,eildteq,eildzeq,eildrreq,eildrteq,eildrzeq,eildtteq,eildtzeq,eildzzeq, &
-							  sb1,sb2,sb3,sb4,sb5,sb6
+							  bsjgrteq,bsjgtteq,bstgeq,bsqgeq,eildreq,eildteq,eildzeq,eildrreq,eildrteq, &
+							  eildrzeq,eildtteq,eildtzeq,eildzzeq,sb1,sb2,sb3,sb4,sb5,sb6
 		LOGICAL :: lasym
 
 		interface
@@ -118,7 +118,8 @@
 			  dgrtz(0:mj,0:leqmax),dgttz(0:mj,0:leqmax),dgrtp(0:mj,0:leqmax),dgttp(0:mj,0:leqmax), &
 			  bsgrt(0:mj,0:leqmax),bsgtt(0:mj,0:leqmax),bsq(0:mj,0:leqmax),bsqgtt(0:mj,0:leqmax), &
 			  lplrr(0:mj,0:leqmax),lplrt(0:mj,0:leqmax),lplrz(0:mj,0:leqmax),lpltr(0:mj,0:leqmax),lpltt(0:mj,0:leqmax), &
-			  lpltz(0:mj,0:leqmax),lplzr(0:mj,0:leqmax),lplzt(0:mj,0:leqmax),lplzz(0:mj,0:leqmax))
+			  lpltz(0:mj,0:leqmax),lplzr(0:mj,0:leqmax),lplzt(0:mj,0:leqmax),lplzz(0:mj,0:leqmax), &
+			  bsjgrt(0:mj,0:leqmax),bsjgtt(0:mj,0:leqmax),bstg(0:mj,0:leqmax),bsqg(0:mj,0:leqmax))
 		if (ieldamp_on == 1) allocate (eildr(0:mj,0:leqmax),eildt(0:mj,0:leqmax),eildz(0:mj,0:leqmax),eildrr(0:mj,0:leqmax), &
 					       eildrt(0:mj,0:leqmax),eildrz(0:mj,0:leqmax),eildtt(0:mj,0:leqmax),eildtz(0:mj,0:leqmax), &
 					       eildzz(0:mj,0:leqmax))
@@ -418,6 +419,7 @@
 			  bsgrteq(0:mj,0:lbmax),bsgtteq(0:mj,0:lbmax),bsqeq(0:mj,0:lbmax),bsqgtteq(0:mj,0:lbmax), &
 			  lplrreq(0:mj,0:lbmax),lplrteq(0:mj,0:lbmax),lplrzeq(0:mj,0:lbmax),lpltreq(0:mj,0:lbmax),lpltteq(0:mj,0:lbmax), &
 			  lpltzeq(0:mj,0:lbmax),lplzreq(0:mj,0:lbmax),lplzteq(0:mj,0:lbmax),lplzzeq(0:mj,0:lbmax), &
+			  bsjgrteq(0:mj,0:lbmax),bsjgtteq(0:mj,0:lbmax),bstgeq(0:mj,0:lbmax),bsqgeq(0:mj,0:lbmax), &
 			  sb1(0:mj,0:lbmax),sb2(0:mj,0:lbmax),sb3(0:mj,0:lbmax),sb4(0:mj,0:lbmax),sb5(0:mj,0:lbmax),sb6(0:mj,0:lbmax))
 
 		sqgieq=0.0_IDP
@@ -702,6 +704,11 @@
 		end do
 		call multb(lplzzeq,sb3,1,sb1,-1,0.0_IDP,-1.0_IDP)
 
+		call multb(bsjgrteq,jbgrteq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(bsjgtteq,jbgtteq,1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(bstgeq,jsqeq,1,bsteq,-1,0.0_IDP,1.0_IDP)
+		call multb(bsqgeq,bstgeq,-1,bsteq,-1,0.0_IDP,1.0_IDP)
+
 		sqgi=0.0_IDP
 		sqg=0.0_IDP
 		bst=0.0_IDP
@@ -749,6 +756,10 @@
 		lplzr=0.0_IDP
 		lplzt=0.0_IDP
 		lplzz=0.0_IDP
+		bsjgrt=0.0_IDP
+		bsjgtt=0.0_IDP
+		bstg=0.0_IDP
+		bsqg=0.0_IDP
 
 		do lq=1,leqmax
 			do l=1,lbmax
@@ -802,6 +813,10 @@
 			lplzr(:,lq)=lplzreq(:,l)
 			lplzt(:,lq)=lplzteq(:,l)
 			lplzz(:,lq)=lplzzeq(:,l)
+			bsjgrt(:,lq)=bsjgrteq(:,l)
+			bsjgtt(:,lq)=bsjgtteq(:,l)
+			bstg(:,lq)=bstgeq(:,l)
+			bsqg(:,lq)=bsqgeq(:,l)
 		end do
 
 		if (ieldamp_on == 1) then
@@ -944,7 +959,8 @@
 		deallocate (sqgeq,sqgieq,bmodeq,bsteq,grreq,grteq,gtteq,grrojeq,grtojeq,gttojeq,jbgrreq,jbgrteq,jbgtteq, &
 			    lplreq,lplteq,djrojeq,djtojeq,djzojeq,jsqeq,omdreq,omdteq,omdzeq,dbsjtojeq,dbsjzojeq,dbsjtbjeq,dgttreq, &
 			    dgrrteq,dgrtteq,dgttteq,dgrrzeq,dgrtzeq,dgttzeq,dgrtpeq,dgttpeq,bsgrteq,bsgtteq,bsqeq,bsqgtteq, &
-			    lplrreq,lplrteq,lplrzeq,lpltreq,lpltteq,lpltzeq,lplzreq,lplzteq,lplzzeq,sb1,sb2,sb3,sb4,sb5,sb6)
+			    lplrreq,lplrteq,lplrzeq,lpltreq,lpltteq,lpltzeq,lplzreq,lplzteq,lplzzeq,bsjgrteq,bsjgtteq, &
+			    bstgeq,bsqgeq,sb1,sb2,sb3,sb4,sb5,sb6)
 
 	end subroutine vmec
 

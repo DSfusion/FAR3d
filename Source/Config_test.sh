@@ -4,15 +4,11 @@
 #-----------------------------------------------------------------------
 
 #These are generic flags and commands.
-#Comp="gfortran" 
-#Flag=" -ffree-line-length-none"
-Comp="ifort" 
-#Flag=" -free -heap-arrays -check bounds"
-Flag=" -free -heap-arrays"
+Comp="gfortran" 
 Exc=" xfar3d" 
 Opt=" -O2"
-
-# Note:including the heap-arrays flag seems to be necessary with ifort on the Mac to avoid Seg-Faults for some runs
+Flag1=" -ffree-line-length-none -g -frange-check -fbounds-check"
+Flag2=" -fbacktrace -ffpe-trap=invalid -ftrapv -ffree-line-length-none"
 
 #Main program files
 OBJS=" Modules.f90 Main.f90" 
@@ -28,7 +24,7 @@ OBJS5=" endrun.f90 energy.f90 output.f90 wrdump.f90 rddump.f90"
 OBJS6=" mult.f90 cnvt.f90 decbt.f90 solbt.f90 quadq.f90 functions.f90 mmlims.f90 numinc.f90 eqsplns.f90 elapsed_time.f90 fitter.f90"
 
 #Code compilation
-$Comp -o $Exc $Opt $Flag $OBJS $OBJS2 $OBJS3 $OBJS4 $OBJS5 $OBJS6       
+$Comp -o $Exc $Opt $Flag1 $Flag2 $OBJS $OBJS2 $OBJS3 $OBJS4 $OBJS5 $OBJS6       
 
 #-----------------------------------------------------------------------
 #                             Dependencies

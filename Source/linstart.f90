@@ -164,6 +164,15 @@
 				real(IDP) :: c1,c2
 				real(IDP), dimension(0:,0:) :: ss,ff,wk1,wk2,wk3
 			end subroutine dlstar
+!			subroutine dlstar_ext(ss,ff,itypf,wk1,wk2,wk3,wkeq1,wkeq2,wkeq3,tx,c1,c2)
+!				use param
+!				implicit none
+!				integer :: itypf
+!				real(IDP) :: c1,c2
+!				real(IDP), dimension(0:,0:) :: ss,ff,wk1,wk2,wk3
+!				real(IDP), dimension(0:,0:) :: wkeq1,wkeq2,wkeq3
+!				real(IDP), dimension(0:) :: tx
+!			end subroutine dlstar_ext
 			subroutine dlsq(ss,ff,itypf,wk1,wk2,wk3,c1,c2)
 				use param
 				implicit none
@@ -338,10 +347,8 @@
 
 !  read start or continue values into proper arrays
 
+!		call dlstar_ext(uzt,phi,-1,sc1,sc2,sc3,sceq1,sceq2,sceq3,sd1,0.0_IDP,1.0_IDP)
 		call dlstar(uzt,phi,-1,sc1,sc2,sc3,0.0_IDP,1.0_IDP)
-		do l=1,lmax
-			uzt(mj,l)=(uzt(mjm1,l)*(r(mj)-r(mjm2))-uzt(mjm2,l)*(r(mj)-r(mjm1)))/(r(mjm1)-r(mjm2))
-		end do
 		call cnvt(1)
 
 !  calculate "c" coefficients to be used in blockj, b2lx and b2lx0
@@ -750,7 +757,7 @@
 				end do
 			else
 				do l=1,leqmax
-					sceq5(:,l)=1.2533*iflr*iflr*ti*bmod(:,l)/(dni*vtherm_elecP*(feq-qqinv*cureq))
+					sceq5(:,l)=1.2533*iflr*iflr*bmod(:,l)/(denseq*vtherm_ion*(feq-qqinv*cureq))
 				end do
 			end if
 			call blockj_landau_grad_parallel(sceq5,1,1,iq,0,0,0,1.0_IDP)
@@ -1144,6 +1151,51 @@
 		call block_dlsq_r(3,3,stdifp)
 
 !  u-zeta expression
+
+!	WARNING: sd1 is feq-qqinv*cureq
+
+!		sd1=feq-qqinv*cureq
+!		do l=1,leqmax
+!			sceq1(:,l)=denseq*(jbgtt(:,l)-rinv*rinv*cureq*cureq*jsq(:,l)/(epsq*sd1))
+!		end do
+!		call blockj(sceq1,1,4,2,0,2,0,1.0_IDP)
+!		do l=1,leqmax
+!			sceq2(:,l)=-denseq*(jbgrt(:,l)-cureq*bstg(:,l)/(epsq*sd1))
+!		end do
+!		call dbydreq(sceq3,sceq1,0.0_IDP,1.0_IDP,2)
+!		do l=1,leqmax
+!			sceq3(:,l)=sceq3(:,l)+rinv*sceq1(:,l)
+!		end do
+!		call dbydtheq(sceq3,sceq2,-1,1.0_IDP,1.0_IDP,2)
+!		call blockj(sceq3,1,4,2,0,1,0,1.0_IDP)
+!		do l=1,leqmax
+!			sceq1(:,l)=-denseq*(feq*jbgrt(:,l)-r*r*qqinv*bsjgtt(:,l)-cureq*bstg(:,l)/epsq)/sd1
+!		end do
+!		sceq3=sceq1+sceq2
+!		call blockj(sceq3,-1,4,2,1,1,0,1.0_IDP)
+!		do l=1,leqmax
+!			sceq2(:,l)=denseq*(feq*jbgrr(:,l)-r*r*(qqinv*bsjgrt(:,l)+bsqg(:,l)/epsq))/sd1
+!		end do
+!		call blockj(sceq2,1,4,2,2,0,0,1.0_IDP)
+!		call dbydreq(sceq3,sceq1,0.0_IDP,1.0_IDP,2)
+!		call dbydtheq(sceq3,sceq2,1,1.0_IDP,1.0_IDP,2)
+!		call blockj(sceq3,-1,4,2,1,0,0,1.0_IDP)
+!		do l=1,leqmax
+!			sceq1(:,l)=denseq*(rinv*cureq*jbgrt(:,l)-r*bsjgtt(:,l))/sd1
+!		end do
+!		call blockj(sceq1,-1,4,2,0,1,1,1.0_IDP)
+!		do l=1,leqmax
+!			sceq2(:,l)=-denseq*(rinv*cureq*jbgrr(:,l)-r*bsjgrt(:,l))/sd1
+!		end do
+!		call blockj(sceq2,1,4,2,1,0,1,1.0_IDP)
+!		call dbydreq(sceq3,sceq1,0.0_IDP,1.0_IDP,3)
+!		do l=1,leqmax
+!			sceq3(:,l)=sceq3(:,l)+rinv*sceq1(:,l)
+!		end do
+!		call dbydtheq(sceq3,sceq2,1,1.0_IDP,1.0_IDP,3)
+!		call blockj(sceq3,-1,4,2,0,0,1,1.0_IDP)
+
+!	END WARNING
 
 		do l=1,leqmax
 			sceq2(:,l)=denseq*jbgrt(:,l)

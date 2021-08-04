@@ -53,9 +53,9 @@
 		tb=char(9)
 
 !  vr up
-		call dbydth(sc1,phi,-1,0.0_IDP,-1.0_IDP,0)
+		call dbydth(sc1,phi,-1,0.0_IDP,-eps,0)
 !  vth up
-		call dbydr(sc2,phi,0.0_IDP,1.0_IDP,0)
+		call dbydr(sc2,phi,0.0_IDP,eps,0)
 
 		allocate (vrsqmx(lmaxn))
 		vrsqmx=0.0
@@ -72,7 +72,7 @@
 		lvrmx=maxloc(vrsqmx)
 		lvrmax=lvrmx(1)
 		jvrmx=maxloc(sc3(:,lvrmax))
-		jvrmax=jvrmx(1)
+		jvrmax=jvrmx(1)-1
 
 		theta=atan2(sc1(jvrmax,lln(lo(lvrmax))),sc1(jvrmax,lln(lvrmax)))
 		csth=cos(theta)
@@ -95,9 +95,9 @@
 				where (abs(vprlf(:,l)) < 1.e-50_IDP) vprlf(:,l)=0
 				vthprlf(:,l)=vthprlf(:,l)/scnorm
 				where (abs(vthprlf(:,l)) < 1.e-50_IDP) vthprlf(:,l)=0
-				sc1(:,l)=eps*sc1(:,l)/scnorm
+				sc1(:,l)=sc1(:,l)/scnorm
 				where (abs(sc1(:,l)) < 1.e-50_IDP) sc1(:,l)=0
-				sc2(:,l)=eps*sc2(:,l)/scnorm
+				sc2(:,l)=sc2(:,l)/scnorm
 				where (abs(sc2(:,l)) < 1.e-50_IDP) sc2(:,l)=0
 			end do
 			if (alpha_on == 1) then

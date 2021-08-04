@@ -54,7 +54,9 @@
 				 ((lplrt(j,l),j=0,mj),l=1,leqmax),((lplrz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lpltt(j,l),j=0,mj),l=1,leqmax),((lpltz(j,l),j=0,mj),l=1,leqmax), &
 				 ((lplzz(j,l),j=0,mj),l=1,leqmax),((bmod(j,l),j=0,mj),l=1,leqmax), &
-				 ((lplr_r(j,l),j=0,mj),l=1,leqmax),((lplt_r(j,l),j=0,mj),l=1,leqmax)	
+				 ((lplr_r(j,l),j=0,mj),l=1,leqmax),((lplt_r(j,l),j=0,mj),l=1,leqmax), &	
+				 ((bsjgrt(j,l),j=0,mj),l=1,leqmax),((bsjgtt(j,l),j=0,mj),l=1,leqmax), &
+				 ((bstg(j,l),j=0,mj),l=1,leqmax),((bsqg(j,l),j=0,mj),l=1,leqmax)
  	                
         if(ieldamp_on .eq. 1) then
 		  write(7) ((eildrr(j,l),j=0,mj),l=1,leqmax),((eildrt(j,l),j=0,mj),l=1,leqmax),((eildrz(j,l),j=0,mj),l=1,leqmax), &					 

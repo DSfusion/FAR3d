@@ -56,31 +56,35 @@
 		if (nonlin == 0) write(6,'(57("*"),"linear",56("*")/)')
 		if (nonlin /= 0) write(6,'(55("*"),"nonlinear",55("*")//)')
 
-		write(6,'(/"control:"/"numrun  =     ",2a2,a1," numruno =     ",2a2,a1," numruns =     ",2a2,a1," numvac  =     ",a5/ &
-		                      " maxstp  =",i10,"nstep   =",i10," ndump   =",i10," nprint  =",i10,"plots  =",i10," itime   =",i10/ &
-							  " dt0     =",1pe10.3," nstep1  =",i10," nonlin  =",i10/ &
-							  "Adens  =",1pe10.3," Bdens  =",1pe10.3,"Adensalp  =",1pe10.3," Bdensalp  =",1pe10.3/ &
-							  "LcA0  =",1pe10.3," LcA1  =",1pe10.3," LcA2  =",1pe10.3," LcA3  =",1pe10.3/ &
-							  "LcA0alp  =",1pe10.3," LcA1alp  =",1pe10.3," LcA2alp  =",1pe10.3," LcA3alp  =",1pe10.3/)') &					  
-							numrun,numruno,numruns,numvac,maxstp,nstep,ndump,nprint,lplots,itime,dt0,nstep1,nonlin, &
-							Adens,Bdens,Adensalp,Bdensalp,LcA0,LcA1,LcA2,LcA3,LcA0alp,LcA1alp,LcA2alp,LcA3alp
+		write(6,'(/"control:"/"numrun  =     ",2a2,a1," numruno =     ",2a2,a1," numruns =     ",2a2,a1," numvac  =     ",a5, &  
+				     " maxstp  =",i10," nstep   =",i10/"ndump   =",i10," nprint  =",i10," lplots  =",i10, &
+				     " itime   =",i10," dt0     =",1pe10.3," nonlin  =",i10/)') numrun,numruno,numruns,numvac,maxstp,nstep, &
+				ndump,nprint,lplots,itime,dt0,nonlin
 
 		write(6,'("numhist =",11("    ",a6))') (numhist(i),i=1,ihist)
 
 		write(6,'(/"domain:"/"mj      =",i10," lmax    =",i10," leqmax  =",i10," mmin    =",i10," mmax    =",i10, &
-					 " nmin    =",i10/"nmax    =",i10," mmineq  =",i10," mmaxeq  =",i10," nmineq  =",i10," nmaxeq  =",i10, &
-					 " l0      =",i10/"leq0    =",i10," lhmax   =",i10," lheqmx  =",i10," ni      =",i10," nis     =",i10, &
-					 " ne      =",i10/"delta   =",1pe10.3," rc      =",0pf10.7," fti     =",0pf10.7," fte     =",0pf10.7)') &
+				    " nmin    =",i10/"nmax    =",i10," mmineq  =",i10," mmaxeq  =",i10," nmineq  =",i10," nmaxeq  =",i10, &
+				    " l0      =",i10/"leq0    =",i10," lhmax   =",i10," lheqmx  =",i10," ni      =",i10," nis     =",i10, &
+				    " ne      =",i10/"delta   =",1pe10.3," rc      =",0pf10.7," fti     =",0pf10.7," fte     =",0pf10.7)') &
 				mj,lmax,leqmax,mmin,mmax,nmin,nmax,mmineq,mmaxeq,nmineq,nmaxeq,l0,leq0,lhmax,lheqmx,ni,nis,ne,delta,rc,fti,fte
 
-		write(6,'(/"equil:"/"ngeneq  =",i10," ndevice =",2a8/" eps     =",0pf10.7/ &
-							" bet0    =",1pe10.3," leq     =",i10/)') &				 
-                       ngeneq,ndevice,eps,bet0,leq
+		write(6,'(/"equil:"/"ngeneq  =",i10," ndevice =",2a8/"eps     =",0pf10.7," bet0    =",1pe10.3," bet0_f  =",1pe10.3, &
+				   " bet0_al =",1pe10.3," omcy    =",1pe10.3," omcyalp =",1pe10.3/"Adens   =",1pe10.3," Bdens   =",1pe10.3, &
+				   " Adensal =",1pe10.3," Bdensal =",1pe10.3)') &				 
+				ngeneq,ndevice,eps,bet0,bet0_f,bet0_alp,omcy,omcyalp,Adens,Bdens,Adensalp,Bdensalp
 
 		write(6,'(/"dynamo:"/"etascl  =",1pe10.3," reta    =",0pf10.7," eta0    =",1pe10.3," etalmb  =",1pe10.3," ietaeq  =",i10 &
-					 /"s       =",1pe10.3," gamma   =",1pe10.3," stdifp  =",1pe10.3," stdifu  =",1pe10.3 &
-					 /"ipert   =",i10," pertscl =",1pe10.3," dt      =",1pe10.3," time    =",1pe10.3/)') etascl,reta,eta0,etalmb, &
-				ietaeq,s,gamma,stdifp,stdifu,ipert,pertscl,dt,time
+				    /"s       =",1pe10.3," gamma   =",1pe10.3," stdifp  =",1pe10.3," stdifu  =",1pe10.3," stdifnf =",1pe10.3, &
+				    " stdifvf =",1pe10.3/"stdifv  =",1pe10.3," stdifnal=",1pe10.3," stdifval=",1pe10.3/"LcA0    =",1pe10.3, &
+				    " LcA1    =",1pe10.3," LcA2    =",1pe10.3," LcA3    =",1pe10.3/"LcA0alp =",1pe10.3, &
+				    " LcA1alp =",1pe10.3," LcA2alp =",1pe10.3," LcA3alp =",1pe10.3/"iflr    =",i10," epflr   =",i10, &
+				    " ieldamp =",i10," twofl   =",i10," alpha   =",i10/"omegar  =",1pe10.3," r_iflr  =",1pe10.3, &
+				    " r_epflr =",1pe10.3," r_epalp =",1pe10.3," dpres   =",1pe10.3/"ipert   =",i10, &
+				    " pertscl =",1pe10.3," dt      =",1pe10.3," time    =",1pe10.3/)') etascl,reta,eta0, &
+				etalmb,ietaeq,s,gamma,stdifp,stdifu,stdifnf,stdifvf,stdifv,stdifnalp,stdifvalp,LcA0,LcA1,LcA2,LcA3,LcA0alp, &
+				LcA1alp,LcA2alp,LcA3alp,iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,omegar,iflr,r_epflr,r_epflralp,dpres, &
+				ipert,pertscl,dt,time
 
 		write(6,'(/"ll(m,n)")')
 		do m=mmax,mmin,-1

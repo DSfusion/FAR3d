@@ -198,7 +198,7 @@
 			do l=1,lmaxn
 				l1=lln(l)
 				if (signl(l1) < 0) cycle
-				write(6,'(3i4,1p6e10.3)') l1,mm(l1),nn(l1),eps*eps*ekenc(l1,2),eps*eps*emenc(l1,2),bet0_f*eprnc(l1,2)/bet0, &
+				write(6,'(3i4,1p8e10.3)') l1,mm(l1),nn(l1),eps*eps*ekenc(l1,2),eps*eps*emenc(l1,2),bet0_f*eprnc(l1,2)/bet0, &
 							  bet0_alp*ealpnc(l1,2)/bet0,gamphi(l1),gampsi(l1),gampr(l1),gamalpha(l1)
 			end do
 		else

@@ -262,7 +262,8 @@
 							  bmod,bst,jbgrr,jbgrt,jbgtt,jbgrz,jbgtz,omdrprp,omdtprp,omdzprp, &
 							  omdr,omdt,omdz,djroj,djtoj,djzoj,dbsjtoj,dbsjzoj,dbsjtbj,dgttr,dgrrt,dgrtt,dgttt,dgrrz, &
 							  dgrtz,dgttz,dgrtp,dgttp,jsq,bsgrt,bsgtt,bsq,bsqgtt,lplrr,lplrt,lplrz,lplr,lpltt,lpltz, &
-							  lplt,lplz,lplzz,lplr_r,lplt_r,eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz
+							  lplt,lplz,lplzz,lplr_r,lplt_r,bsjgrt,bsjgtt,bstg,bsqg, &
+							  eildr,eildt,eildz,eildrr,eildrt,eildrz,eildtt,eildtz,eildzz
 							   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Definitions !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
 			!  qq safety factor
@@ -357,7 +358,11 @@
 			!  bsgrt= bst*grt*sqgi
 			!  bsgtt= bst*gtt*sqgi
 			!  bsq= bst*bst
-			!  bsqgtt= bst* bst*gtt*sqgi
+			!  bsqgtt= bst*bst*gtt*sqgi
+			!  bsjgrt= bst*sqg*grt
+			!  bsjgtt= bst*sqg*gtt
+			!  bstg= bst*sqg*sqg
+			!  bsqg= bst*bst*sqg*sqg
 			!  eildrr,eildrt,eildrz,eildtt,eildtz,eildzz,eildr,eildt,eildz electron-ion Landau damping terms
 			!  lplrr,lplrt,lplrz,lplr,lpltt,lpltz,lplt,lplz,lplzz,lplr_r,lplt_r perpendicular gradient operator terms
 
