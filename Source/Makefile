@@ -43,7 +43,7 @@ chkdirs:
 	$(Comp) -c $(Opt) $(Flag) $<
 
 $(ARC): $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
-	ar -r $(ARC) $(OBJS) inputlist_namelist.o $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
+	ar -r $(ARC) $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6)
 
 #Code compilation
 xfar3d: driver.f90 libs
