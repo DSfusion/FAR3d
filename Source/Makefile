@@ -44,4 +44,4 @@ xfar3d_n: $(OBJS) inputlist_namelist.o $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJ
 all: $(Exc)
 
 clean:
-	rm -f *.o *.mod xfar3d
+	rm -f *.o *.mod $(Exc)
