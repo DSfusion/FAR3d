@@ -9,7 +9,7 @@
 !       Once this is done, a call is made to set default values. Then Input_Model is rewound and far3d_init and
 !       far3d_params are read a second time so that uneeded defaults are overwritten.
 !
-	subroutine inputlist
+	subroutine inputlist_namelist
 	
 		use param
 		use cotrol
@@ -194,4 +194,4 @@
 		
 		close(5)		
 !		close(6)
-	end subroutine inputlist
+	end subroutine inputlist_namelist

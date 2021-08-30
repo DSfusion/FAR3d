@@ -18,7 +18,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
-	subroutine far3d_main
+	subroutine far3d_main(input_namelist)
 
 		use param
 		use cotrol
@@ -27,6 +27,8 @@
 		use dynamo
 		use scratch
 		implicit none
+
+                logical, intent(in) :: input_namelist
 
 !		namelist/nam/maxstp,ndump,nprint,lplots,itime,dt0,nonlin,mj,lmax,leqmax,mm,nn,mmeq,nneq,Adens,Bdens,ni,nis,ne, &
 !			     delta,rc,fti,fte,stdifp,stdifu,ngeneq,eps,bet0,rs,leq,tfl_Un,tfl_Psin,tfl_pn, &
@@ -46,7 +48,9 @@
 
 		interface
 			subroutine inputlist
-			end subroutine inputlist		
+			end subroutine inputlist
+                        subroutine inputlist_namelist
+                        end subroutine inputlist_namelist
 			subroutine dfault
 			end subroutine dfault
 			subroutine inital
@@ -90,7 +94,11 @@
 			                                     
 		write(0,'(" ====> Checking input list ... ")')		
 	
-		call inputlist	
+                if (input_namelist) then
+                   call inputlist_namelist
+                else
+                   call inputlist
+                endif
 
 		write(0,'(" ====> Input list check DONE !! ")')		
 		
