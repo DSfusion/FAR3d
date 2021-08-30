@@ -12,7 +12,7 @@ Exc = xfar3d xfar3d_n
 Opt = -O2
 
 #Main program files
-OBJS = Modules.o Main.o
+OBJS = driver.o Modules.o Main.o
 
 #Setup subroutines files
 OBJS2 = dfault.o setup.o setmod.o seteq.o etachi.o grid.o pert.o vmec.o ae_profiles.o
