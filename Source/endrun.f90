@@ -1,4 +1,4 @@
-	subroutine endrun
+	subroutine far3d_endrun
 
 		use param
 		use cotrol
@@ -350,4 +350,4 @@
 		end do
 		close(92)
 
-	end subroutine endrun
+	end subroutine far3d_endrun

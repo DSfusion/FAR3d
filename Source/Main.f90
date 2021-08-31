@@ -53,18 +53,18 @@
                         end subroutine inputlist_namelist
 			subroutine dfault
 			end subroutine dfault
-			subroutine inital
-			end subroutine inital
-			subroutine resume
-			end subroutine resume
+			subroutine far3d_inital
+			end subroutine far3d_inital
+			subroutine far3d_resume
+			end subroutine far3d_resume
 			subroutine linstart
 			end subroutine linstart
 			subroutine output
 			end subroutine output
 			subroutine wrdump
 			end subroutine wrdump
-			subroutine endrun
-			end subroutine endrun
+			subroutine far3d_endrun
+			end subroutine far3d_endrun
 			subroutine numinc
 			end subroutine numinc
 			subroutine energy(i)
@@ -166,11 +166,11 @@
 		allocate (numhist(ihist))			  	
 
 !		nstres indicates if the run is a new run or a continuation
-!		If it is a new run the inital subroutine is called
-!		If it is a continuation the resume subroutine is called
-		if (nstres == 0) call inital	
+!		If it is a new run the far3d_inital subroutine is called
+!		If it is a continuation the far3d_resume subroutine is called
+		if (nstres == 0) call far3d_inital
 		if (nstres == 0) write(0,'(" ====> Preparing new run ...")')	
-		if (nstres /= 0) call resume
+		if (nstres /= 0) call far3d_resume
 		if (nstres /= 0) write(0,'(" ====> Preparing run continuation ...")')		
 	
 !		Modification of the equlibria thermal beta		
@@ -258,9 +258,9 @@
 			if (nonlin == 0) call lincheck
 			numrun(3)="z"	
 
-!		Subroutine endrun writes the eigenfuctions output				
+!		Subroutine far3d_endrun writes the eigenfuctions output
 			call wrdump
-			call endrun
+			call far3d_endrun
 
 		end if
 

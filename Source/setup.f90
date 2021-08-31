@@ -1,4 +1,4 @@
-	subroutine inital
+	subroutine far3d_inital
 
 		use param
 		use cotrol
@@ -51,9 +51,9 @@
 !		Subroutine pert set up the perturbation in the equilibria			
 		call pert     
 
-	end subroutine inital
+	end subroutine far3d_inital
 
-	subroutine resume
+	subroutine far3d_resume
 
 		use param
 		use cotrol
@@ -115,4 +115,4 @@
 !		Subroutine pert set up the perturbation in the equilibria			
 		call pert	  
 
-	end subroutine resume
+	end subroutine far3d_resume
