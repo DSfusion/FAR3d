@@ -4,16 +4,9 @@
 		use domain
 		use equil
 		use dynamo
-		use cotrol		
+		use cotrol
+                use ffunctions
 		implicit none
-
-		interface
-			function erf(x)
-				use param
-				implicit none
-				real(IDP) :: erf,x
-			end function erf
-		end interface
 
 		integer :: l,l1,lp,iamm,iann,j,jj,jm,jp,ndivi,n,k
 		integer, dimension(ldim) :: jsl

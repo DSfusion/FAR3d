@@ -17,7 +17,7 @@ Opt = -O2
 ARC = $(FAR3D_HOME)/lib/libfar3d.a
 
 #Main program files
-OBJS = Modules.o Main.o
+OBJS = Modules.o Main.o functions.o
 
 #Setup subroutines files
 OBJS2 = dfault.o setup.o setmod.o seteq.o etachi.o grid.o pert.o vmec.o ae_profiles.o inputlist.o inputlist_namelist.o
@@ -32,7 +32,7 @@ OBJS4 = clgam.o derivatives.o eqdy_dyeq.o om.o dlstar.o eigensolver_tools.o Laun
 OBJS5 = endrun.o energy.o output.o wrdump.o rddump.o
 
 #Tool subroutines
-OBJS6 = mult.o cnvt.o decbt.o solbt.o quadq.o functions.o mmlims.o numinc.o eqsplns.o elapsed_time.o fitter.o
+OBJS6 = mult.o cnvt.o decbt.o solbt.o quadq.o mmlims.o numinc.o eqsplns.o elapsed_time.o fitter.o
 
 libs: chkdirs $(ARC)
 

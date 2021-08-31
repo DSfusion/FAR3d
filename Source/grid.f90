@@ -59,24 +59,13 @@
 		use param
 		use domain
 		use findrf
+                use ffunctions
 		implicit none
 
 		integer :: ni0,ne0,nis0,nset,nte,nti,maxj,j,jt,jj,minj
 		real(IDP) :: fe,fi,de,di,dr,ss,b
 
 		interface
-			function zeroin(ax,bx,f,tol)
-				use param
-				implicit none
-				real(IDP) :: ax,bx,tol,zeroin
-				interface
-					function f(x)
-						use param
-						implicit none
-						real(IDP) :: f,x
-					end function f
-				end interface
-			end function zeroin
 			function findf(f)
 				use param
 				implicit none

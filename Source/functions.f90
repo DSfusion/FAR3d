@@ -1,3 +1,6 @@
+module ffunctions
+  implicit none
+  contains
 	function zeroin(ax,bx,f,tol)
 
 		use param
@@ -269,3 +272,4 @@
 		end if
 
 	end function erf
+end module ffunctions
