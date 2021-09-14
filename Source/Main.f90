@@ -18,7 +18,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
-	subroutine far3d_main(input_namelist)
+	subroutine far3d_main(input_namelist, nmodes, modenum, &
+                              grwth_avg, omega_r_avg, dev_g, dev_o)
 
 		use param
 		use cotrol
@@ -29,6 +30,9 @@
 		implicit none
 
                 logical, intent(in) :: input_namelist
+                integer, intent(out) :: nmodes
+                integer, dimension(11), intent(out) :: modenum
+                real(IDP), dimension(11), intent(out) :: grwth_avg, omega_r_avg, dev_g, dev_o
 
 !		namelist/nam/maxstp,ndump,nprint,lplots,itime,dt0,nonlin,mj,lmax,leqmax,mm,nn,mmeq,nneq,Adens,Bdens,ni,nis,ne, &
 !			     delta,rc,fti,fte,stdifp,stdifu,ngeneq,eps,bet0,rs,leq,tfl_Un,tfl_Psin,tfl_pn, &
@@ -76,6 +80,8 @@
 				integer, dimension(8) :: values_s,values_e
 			end subroutine elapsed_time
 		end interface
+
+                nmodes = 0
 
 !		Input read	 
                                                    
@@ -255,7 +261,7 @@
 			
 !  		Stepping done.
 !		Subroutine lincheck calculates the growth rate and the frequency of the instability	
-			if (nonlin == 0) call lincheck
+			if (nonlin == 0) call lincheck(nmodes, modenum, grwth_avg, omega_r_avg, dev_g, dev_o)
 			numrun(3)="z"	
 
 !		Subroutine far3d_endrun writes the eigenfuctions output
