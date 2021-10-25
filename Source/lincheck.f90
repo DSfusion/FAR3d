@@ -1,4 +1,5 @@
-	subroutine lincheck
+	subroutine lincheck(ip,np,grwth_avg,omega_r_avg,deviation_growth, &
+                            deviation_freq)
 
 		use param
 		use cotrol
@@ -7,10 +8,15 @@
 		use dynamo
 		use scratch
 		implicit none
-		integer :: i,ip,j,l,l1,ivar,lp,nvar
-		integer, dimension(11) :: np
+
+                integer, intent(out) :: ip
+		integer, dimension(11), intent(out) :: np
+		real(IDP), dimension(11), intent(out) :: grwth_avg, &
+                                   omega_r_avg,deviation_growth,deviation_freq
+
+		integer :: i,j,l,l1,ivar,lp,nvar
 		real(IDP) :: epsq,oneos,betfc,betfc_f,betfc_alp,coef,omcyd,omcydalp,beteom,betiom
-		real(IDP), dimension(11) :: grwth_avg,omega_r_avg,sum_iter,deviation_growth,deviation_freq
+		real(IDP), dimension(11) :: sum_iter
 		real(IDP), dimension(:,:), allocatable :: ytrhs
 		real(IDP), dimension(:), allocatable :: slhs,srhs,crhs,grwth,omega_r
 

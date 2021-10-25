@@ -18,7 +18,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
-	program far
+	subroutine far3d_main(input_namelist, nmodes, modenum, &
+                              grwth_avg, omega_r_avg, dev_g, dev_o)
 
 		use param
 		use cotrol
@@ -27,6 +28,11 @@
 		use dynamo
 		use scratch
 		implicit none
+
+                logical, intent(in) :: input_namelist
+                integer, intent(out) :: nmodes
+                integer, dimension(11), intent(out) :: modenum
+                real(IDP), dimension(11), intent(out) :: grwth_avg, omega_r_avg, dev_g, dev_o
 
 !		namelist/nam/maxstp,ndump,nprint,lplots,itime,dt0,nonlin,mj,lmax,leqmax,mm,nn,mmeq,nneq,Adens,Bdens,ni,nis,ne, &
 !			     delta,rc,fti,fte,stdifp,stdifu,ngeneq,eps,bet0,rs,leq,tfl_Un,tfl_Psin,tfl_pn, &
@@ -46,21 +52,23 @@
 
 		interface
 			subroutine inputlist
-			end subroutine inputlist		
+			end subroutine inputlist
+                        subroutine inputlist_namelist
+                        end subroutine inputlist_namelist
 			subroutine dfault
 			end subroutine dfault
-			subroutine inital
-			end subroutine inital
-			subroutine resume
-			end subroutine resume
+			subroutine far3d_inital
+			end subroutine far3d_inital
+			subroutine far3d_resume
+			end subroutine far3d_resume
 			subroutine linstart
 			end subroutine linstart
 			subroutine output
 			end subroutine output
 			subroutine wrdump
 			end subroutine wrdump
-			subroutine endrun
-			end subroutine endrun
+			subroutine far3d_endrun
+			end subroutine far3d_endrun
 			subroutine numinc
 			end subroutine numinc
 			subroutine energy(i)
@@ -72,6 +80,8 @@
 				integer, dimension(8) :: values_s,values_e
 			end subroutine elapsed_time
 		end interface
+
+                nmodes = 0
 
 !		Input read	 
                                                    
@@ -90,7 +100,11 @@
 			                                     
 		write(0,'(" ====> Checking input list ... ")')		
 	
-		call inputlist	
+                if (input_namelist) then
+                   call inputlist_namelist
+                else
+                   call inputlist
+                endif
 
 		write(0,'(" ====> Input list check DONE !! ")')		
 		
@@ -158,11 +172,11 @@
 		allocate (numhist(ihist))			  	
 
 !		nstres indicates if the run is a new run or a continuation
-!		If it is a new run the inital subroutine is called
-!		If it is a continuation the resume subroutine is called
-		if (nstres == 0) call inital	
+!		If it is a new run the far3d_inital subroutine is called
+!		If it is a continuation the far3d_resume subroutine is called
+		if (nstres == 0) call far3d_inital
 		if (nstres == 0) write(0,'(" ====> Preparing new run ...")')	
-		if (nstres /= 0) call resume
+		if (nstres /= 0) call far3d_resume
 		if (nstres /= 0) write(0,'(" ====> Preparing run continuation ...")')		
 	
 !		Modification of the equlibria thermal beta		
@@ -247,12 +261,12 @@
 			
 !  		Stepping done.
 !		Subroutine lincheck calculates the growth rate and the frequency of the instability	
-			if (nonlin == 0) call lincheck
+			if (nonlin == 0) call lincheck(nmodes, modenum, grwth_avg, omega_r_avg, dev_g, dev_o)
 			numrun(3)="z"	
 
-!		Subroutine endrun writes the eigenfuctions output				
+!		Subroutine far3d_endrun writes the eigenfuctions output
 			call wrdump
-			call endrun
+			call far3d_endrun
 
 		end if
 
@@ -266,4 +280,4 @@
 
 		close(6)
 
-	end program far
+       end subroutine far3d_main

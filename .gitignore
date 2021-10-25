@@ -3,6 +3,7 @@
 *.a
 *.mod
 xfar3d
+xfar3d_n
 Graphics/xplot_init_value_run
 Graphics/xplot_egn_jdqz_far3d
 Graphics/silo.inc

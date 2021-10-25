@@ -8,6 +8,7 @@
         use equil
         use dynamo
         use scratch
+        use ffunctions
         implicit none
 		
 		interface		
@@ -17,13 +18,6 @@
 				integer :: n
 				real(IDP), dimension(:) :: x,y,b,c,d
 			end subroutine spline
-			function seval(n,u,x,y,b,c,d)
-				use param
-				implicit none
-				integer :: n
-				real(IDP) :: seval,u
-				real(IDP), dimension(:) :: x,y,b,c,d
-			end function seval			
 		end interface		
 	
 		integer :: 	j,ic,i,l

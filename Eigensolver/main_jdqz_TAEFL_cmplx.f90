@@ -41,9 +41,9 @@ c
         real(kind=r8) :: time_1, time_2, elapse
         
         CALL getarg(1, arg1)
-        read(arg1,'(e12.4)') center_freq
+        read(arg1,*) center_freq
         CALL getarg(2, arg2)
-        read(arg2,'(e12.4)') growth_rate
+        read(arg2,*) growth_rate
         write(*,'("freq. = ",e12.4,3x,"growth = ",e12.4)')
      >     center_freq, growth_rate
         open(unit=15,file="jdqz.dat",status="old")
