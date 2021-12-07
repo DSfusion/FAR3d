@@ -11,11 +11,12 @@ c                than trying to figure that out for itself), and to
 c                target a complex root, using command line input
 c                only for the real part. Further tuning to be done.
 c
-        program testjdqz
+        subroutine far3d_eigen(center_freq, growth_rate)
         use myjdqz_mod, only : myjdqz_setup,noeqn,mn_col,ns
         implicit none
 
         integer, parameter :: r8 = kind(1.0d0)
+        real(r8), intent(in) :: center_freq, growth_rate
 
         integer :: lwork
         double complex, allocatable, dimension(:,:) :: zwork
@@ -28,7 +29,7 @@ c
         real*8, allocatable, dimension(:) :: rho, omega
         integer, allocatable, dimension(:) :: im_col, in_col, lln, signl
         integer :: i, k, jj, m, kmax0, ivar, mneg
-        real*8 :: enrg1, enrg2, center_freq, growth_rate
+        real*8 :: enrg1, enrg2
         
         integer :: kmax
         integer :: neq, jmin,jmax,maxstep, testspace
@@ -40,10 +41,6 @@ c
         character*80 fileA, fileB, arg1, arg2
         real(kind=r8) :: time_1, time_2, elapse
         
-        CALL getarg(1, arg1)
-        read(arg1,*) center_freq
-        CALL getarg(2, arg2)
-        read(arg2,*) growth_rate
         write(*,'("freq. = ",e12.4,3x,"growth = ",e12.4)')
      >     center_freq, growth_rate
         open(unit=15,file="jdqz.dat",status="old")
@@ -228,9 +225,7 @@ c  be modified for other uses.
        end do
        close(unit=33)
 
-      
-      stop
-      end program
+      end subroutine far3d_eigen
 
 
 
