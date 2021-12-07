@@ -1,4 +1,4 @@
-	subroutine output
+	subroutine far3d_output
 
 		use param
 		use cotrol
@@ -117,4 +117,4 @@
 
 !		close(6)
 
-	end subroutine output
+	end subroutine far3d_output

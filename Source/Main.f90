@@ -206,7 +206,7 @@
 		numhist(ihist)=confil
 
 !		The model parameter are included in farprt output file		
-		call output
+		call far3d_output
 
 !		The model parameter are saved in fs####z file	
 		if (nstres == 0) call wrdump
