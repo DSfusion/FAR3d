@@ -11,12 +11,13 @@ c                than trying to figure that out for itself), and to
 c                target a complex root, using command line input
 c                only for the real part. Further tuning to be done.
 c
-        subroutine far3d_eigen(center_freq, growth_rate)
+        subroutine far3d_eigen(center_freq, growth_rate, kmax)
         use myjdqz_mod, only : myjdqz_setup,noeqn,mn_col,ns
         implicit none
 
         integer, parameter :: r8 = kind(1.0d0)
         real(r8), intent(in) :: center_freq, growth_rate
+        integer, intent(in)  :: kmax  ! the number of eigenvalues we want
 
         integer :: lwork
         double complex, allocatable, dimension(:,:) :: zwork
@@ -31,7 +32,6 @@ c
         integer :: i, k, jj, m, kmax0, ivar, mneg
         real*8 :: enrg1, enrg2
         
-        integer :: kmax
         integer :: neq, jmin,jmax,maxstep, testspace
         integer :: order, method, gmres_m, cgstab_l, maxnmv
         real(kind=r8) :: tol, lock
@@ -40,9 +40,10 @@ c
         integer :: j,ierr
         character*80 fileA, fileB, arg1, arg2
         real(kind=r8) :: time_1, time_2, elapse
-        
+
         write(*,'("freq. = ",e12.4,3x,"growth = ",e12.4)')
      >     center_freq, growth_rate
+        write(*,'(A,I3,A)')'Searching for ',kmax,' eigenvalues.'
         open(unit=15,file="jdqz.dat",status="old")
         read(15,*) ns, mn_col, noeqn
 c       write(*,*) ns,mn_col, noeqn
@@ -68,9 +69,6 @@ c        ztarget = dcmplx(0.05*center_freq,center_freq)               !for TAEFL
 
         
       tol = 1.d-9
-
-!...  kmax is number of eigenvalues we want
-      kmax = 7
       kmax0 = kmax
 
 !...  jmin,jmax size of search space
