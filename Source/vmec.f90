@@ -1,5 +1,9 @@
 	subroutine vmec
 
+#ifdef IMAS
+   use transp_eq
+   use far3d_wout
+#endif
 		use param
 		use cotrol
 		use domain
@@ -21,6 +25,14 @@
 							  bsjgrteq,bsjgtteq,bstgeq,bsqgeq,eildreq,eildteq,eildzeq,eildrreq,eildrteq, &
 							  eildrzeq,eildtteq,eildtzeq,eildzzeq,sb1,sb2,sb3,sb4,sb5,sb6
 		LOGICAL :: lasym
+
+#ifdef IMAS
+  TYPE(transpeq) :: treq
+  TYPE(fardata)  :: f3eq
+  integer, parameter :: i2clockwise=1, i2counterclockwise=-1
+  integer        :: i2nt1, i2ns
+  integer        :: ierr, rhovar
+#endif
 
 		interface
 			subroutine mmblims
@@ -124,6 +136,124 @@
 					       eildrt(0:mj,0:leqmax),eildrz(0:mj,0:leqmax),eildtt(0:mj,0:leqmax),eildtz(0:mj,0:leqmax), &
 					       eildzz(0:mj,0:leqmax))
 
+#ifdef IMAS
+  write(*,*) 'TRANSP2FAR3D'
+  call ids_eqGet(treq, eq_name, 'd3d', ierr)
+  if (ierr /= 0) then
+     write(*,*) 'ids_eqGet returned ierr = ',ierr
+     stop
+  endif
+
+  write(*,*) 'Surfaces from 0 to ',treq%nsm1
+  write(*,*) treq%ntm1,' poloidal angles.'
+  if (treq%ntm1.lt.1) stop
+
+  ! Spline-interpolate data into i2mex
+  i2nt1 = 2*treq%ntm1 + 1
+  i2ns = max(treq%nsm1+1, 97)
+  call i2mex_fromTranspEq(treq, i2nt1, i2ns, i2counterclockwise, ierr)
+  write(*,*) 'i2mex returned ierr = ',ierr
+
+  rhovar = FLUX !ROOTFLUX
+  call i2mex2far3d(f3eq, .false., rhovar)
+
+  ! Copy data to FAR3d data structure
+
+  ! Header info
+  nfp = 1
+  lbmax = (f3eq%nt1 - 1)/4 +1
+  mjeqp = f3eq%ns
+  lasym = .true.
+
+  ndevice(1)="    toka"
+  ndevice(2)="mak     "
+
+  mjeq=mjeqp-1
+  mjeqm1=mjeq-1
+  lbm2=2*lbmax-1
+
+  allocate (mmb(lbm2),nnb(lbm2),llc(lbmax),lls(lbmax))
+
+  allocate (rfar(0:mjeq),rbinv(0:mjeq),qfar(0:mjeq),pfar(0:mjeq),phip(0:mjeq),curfar(0:mjeq),ffar(0:mjeq), &
+       sfar1(0:mjeq),sfar2(0:mjeq),sfar3(0:mjeq),sfar4(0:mjeq))
+
+  allocate (rmnb(0:mjeq,0:lbm2),sqgb(0:mjeq,0:lbm2),sqgib(0:mjeq,0:lbm2),bmodb(0:mjeq,0:lbm2), &
+       grrb(0:mjeq,0:lbm2),grtb(0:mjeq,0:lbm2),gttb(0:mjeq,0:lbm2), &
+       grrojb(0:mjeq,0:lbm2),grtojb(0:mjeq,0:lbm2),gttojb(0:mjeq,0:lbm2), &
+       jbgrrb(0:mjeq,0:lbm2),jbgrtb(0:mjeq,0:lbm2),jbgttb(0:mjeq,0:lbm2))
+
+  rmnb(:,0)=0.0_IDP
+  sqgib(:,0)=0.0_IDP
+  sqgb(:,0)=0.0_IDP
+  grrb(:,0)=0.0_IDP
+  grtb(:,0)=0.0_IDP
+  gttb(:,0)=0.0_IDP
+  grrojb(:,0)=0.0_IDP
+  grtojb(:,0)=0.0_IDP
+  gttojb(:,0)=0.0_IDP
+
+  ! Poloidal, toroidal mode numbers
+  do l=1,lbmax
+     mmb(l) = l-1
+     nnb(l) = 0
+  enddo
+
+  ! Profile data
+  phip(1:mjeq) = f3eq%phip(2:mjeqp)
+  qfar(1:mjeq) = f3eq%iota(2:mjeqp)
+  curfar(1:mjeq) = f3eq%cur(2:mjeqp)
+  ffar(1:mjeq) = f3eq%f(2:mjeqp)
+  pfar(1:mjeq) = f3eq%pres(2:mjeqp)
+
+  ! Stellarator-symmetric components of coordinates, Jacobian
+  rmnb(1:mjeqp, 1:lbmax) = transpose(f3eq%RMNC(0:lbmax-1, 2:mjeqp))
+  bmodb(1:mjeqp, 1:lbmax) = transpose(f3eq%BMNC(0:lbmax-1, 2:mjeqp))
+  sqgb(1:mjeqp, 1:lbmax) = transpose(f3eq%GMNC(0:lbmax-1, 2:mjeqp))
+  sqgib(1:mjeqp, 1:lbmax) = transpose(f3eq%GIMNC(0:lbmax-1, 2:mjeqp))
+
+  ! Stellarator-symmetric components of metric tensor
+  grrb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRRMNC(0:lbmax-1, 2:mjeqp))
+  grtb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRTMNS(0:lbmax-1, 2:mjeqp))
+  gttb(1:mjeqp, 1:lbmax) = transpose(f3eq%GTTMNC(0:lbmax-1, 2:mjeqp))
+  grrojb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRROJC(0:lbmax-1, 2:mjeqp))
+  grtojb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRTOJS(0:lbmax-1, 2:mjeqp))
+  gttojb(1:mjeqp, 1:lbmax) = transpose(f3eq%GTTOJC(0:lbmax-1, 2:mjeqp))
+  jbgrrb(1:mjeqp, 1:lbmax) = transpose(f3eq%JBGRRC(0:lbmax-1, 2:mjeqp))
+  jbgrtb(1:mjeqp, 1:lbmax) = transpose(f3eq%JBGRTS(0:lbmax-1, 2:mjeqp))
+  jbgttb(1:mjeqp, 1:lbmax) = transpose(f3eq%JBGTTC(0:lbmax-1, 2:mjeqp))
+
+  lb0=1
+  l1=lbmax
+  do l=1,lbmax
+     if (l == lb0) cycle
+     l1=l1+1
+     llc(l)=l1
+     lls(l)=l1
+  end do
+  llc(lb0)=lb0
+  lls(lb0)=0
+
+  ! Non-stellarator symmetric components of coords, Jacobian
+  rmnb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%RMNS(0:mjeq-1,2:lbmax+1))
+  bmodb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%BMNS(0:mjeq-1,2:lbmax+1))
+  sqgb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GMNS(0:mjeq-1,2:lbmax+1))
+  sqgib(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GIMNS(0:mjeq-1,2:lbmax+1))
+
+  ! Non-stellarator-symmetric components of metric tensor
+  grrb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GRRMNS(0:mjeq-1,2:lbmax+1))
+  grtb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%GRTMNC(0:mjeq-1,2:lbmax+1))
+  gttb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GTTMNS(0:mjeq-1,2:lbmax+1))
+  grrojb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GRROJS(0:mjeq-1,2:lbmax+1))
+  grtojb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%GRTOJC(0:mjeq-1,2:lbmax+1))
+  gttojb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GTTOJS(0:mjeq-1,2:lbmax+1))
+  jbgrrb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%JBGRRS(0:mjeq-1,2:lbmax+1))
+  jbgrtb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%JBGRTC(0:mjeq-1,2:lbmax+1))
+  jbgttb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%JBGTTS(0:mjeq-1,2:lbmax+1))
+
+  call far3d_free(f3eq)
+
+  write(*,*) 'END TRANSP2FAR3D'
+#else
  		open(unit=25,file=eq_name,status='old',convert='big_endian',form='unformatted')
 
 		read(25) nfp,lbmax,mjeqp,lasym
@@ -208,6 +338,8 @@
 					  jbgrrb(j,lls(l)),jbgrtb(j,llc(l)),jbgttb(j,lls(l)),l=1,lbmax)
 			end do
 		end if
+
+#endif
 
 		do l=1,lbmax
 			if (nnb(l) == 0 .and. mmb(l) < 0) then

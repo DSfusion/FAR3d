@@ -19,6 +19,7 @@
 		use scratch
 		implicit none
 
+		real(IDP) :: widthix
                 namelist /far3d_init/ nstres, numrun, numruno, numvac, nonlin, ngeneq, eq_name, maxstp, dt0, ldim, leqdim, jdim    &		
 		/far3d_params/ ext_prof,ext_prof_name,ext_prof_len,iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,                  &
 		Trapped_on,matrix_out,m0dy,mm,nn,mmeq,nneq,ipert,widthix,Auto_grid_on,ni,nis,ne,delta,rc,Edge_on,edge_p,gamma,     &
@@ -31,7 +32,6 @@
 		character(len=132) :: char5		
 		integer :: i
 		character(len=8) :: confil	
-		real(IDP) :: widthix	
 
 !		Open and read the input file and open the main output farprt
 		
