@@ -3,6 +3,7 @@
 #ifdef IMAS
    use transp_eq
    use far3d_wout
+   use dcon_ids_mod
 #endif
 		use param
 		use cotrol
@@ -137,8 +138,14 @@
 					       eildzz(0:mj,0:leqmax))
 
 #ifdef IMAS
-  write(*,*) 'TRANSP2FAR3D'
-  call ids_eqGet(treq, eq_name, 'd3d', ierr)
+  write(*,*) 'TRANSP2FAR3D equilibrium'
+  call ids2dcon(6, eq_name, 'd3d', ierr)
+  if (ierr /= 0) then
+     write(*,*) 'ids2dcon returned ierr = ',ierr
+     stop
+  endif
+  !call ids_eqGet(treq, eq_name, 'd3d', ierr)
+  call ids_eqGet(treq, 6, ierr) ! set equilibrium data
   if (ierr /= 0) then
      write(*,*) 'ids_eqGet returned ierr = ',ierr
      stop

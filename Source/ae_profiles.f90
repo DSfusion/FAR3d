@@ -2,6 +2,12 @@
 
 !   	Set up profiles using an external source
 
+#ifdef IMAS
+   use transp_eq
+   use far3d_wout
+   use dcon_ids_mod
+#endif
+
         use param
         use cotrol
         use domain
@@ -34,7 +40,33 @@
 			     ddm1, ddm2		
 		real(IDP), dimension(:), allocatable :: bspl,cspl,dspl
 		character*1 :: tb,cdum,cdum2
-		
+#ifdef IMAS
+  TYPE(bdstruc) :: bd
+  integer        :: ierr, rhovar
+  write(*,*) 'TRANSP2FAR3D Profiles'
+  call ids2dcon(6, ext_prof_name, 'd3d', ierr)
+  if (ierr /= 0) then
+     write(*,*) 'ids2dcon returned ierr = ',ierr
+     stop
+  endif
+  call ids_beamGet(bd, 6, ierr) ! set equilibrium data
+  if (ierr /= 0) then
+     write(*,*) 'ids_beamGet returned ierr = ',ierr
+     stop
+  endif
+
+  alpha_on = bd%lalpha
+
+  ext_prof_len = bd%nr
+  B0_e = bd%bt
+  R0_e = bd%rgcen
+  a_e = bd%minrad
+  kappa_e = bd%elong
+  delt_e = bd%triavg
+  uion_e = bd%ionmass
+  beta0_e = bd%beta0
+  rmax_e = bd%rm
+#endif
 		tb = char(9)
 
 		allocate(rho_e(ext_prof_len))		
@@ -66,6 +98,23 @@
 
 	      xpi = 4.*atan(1.)
 	
+#ifdef IMAS
+  rho_e = bd%rho
+  qprof = bd%q
+  den_beam_e = bd%bdens
+  den_ion_e = bd%idens
+  den_elec_e = bd%edens
+  den_imp_e = bd%zdens
+  temp_beam_e = bd%tbeam
+  temp_ion_e = bd%ti
+  temp_elec_e = bd%te
+  pres_beam_e = bd%pbeam
+  pres_thermal_e = bd%pt
+  pres_equil_e = bd%pe
+  tor_rot_vel_e = bd%trot
+  pol_rot_vel_e = bd%prot
+  write(*,*) 'END TRANSP2FAR3D'
+#else
           nunit = 17		    
           open(unit=nunit,file=ext_prof_name,status="old",form="formatted")
 
@@ -122,7 +171,7 @@
   	        end do    
 	        close(unit=nunit)
 		  end if	  
-
+#endif
           uion = uion_e                                                                   !! ion species
           bt0 = B0_e                                                                      !! magnetic field axis
           rmajr = R0_e                                                                    !! major radius
@@ -357,6 +406,25 @@
 
 	      xpi = 4.*atan(1.)
 	
+#ifdef IMAS
+  rho_e = bd%rho
+  qprof = bd%q
+  den_beam_e = bd%bdens
+  den_ion_e = bd%idens
+  den_elec_e = bd%edens
+  den_alpha_e = bd%adens
+  den_imp_e = bd%zdens
+  temp_beam_e = bd%tbeam
+  temp_ion_e = bd%ti
+  temp_elec_e = bd%te
+  temp_alpha_e = bd%ta
+  pres_beam_e = bd%pbeam
+  pres_thermal_e = bd%pt
+  pres_equil_e = bd%pe
+  tor_rot_vel_e = bd%trot
+  pol_rot_vel_e = bd%prot
+  write(*,*) 'END TRANSP2FAR3D'
+#else
           nunit = 17		  
           open(unit=nunit,file=ext_prof_name,status="old",form="formatted")
 
@@ -387,6 +455,7 @@
                             pres_thermal_e(i),pres_equil_e(i),tor_rot_vel_e(i),pol_rot_vel_e(i)         
   	       end do    
 	       close(unit=nunit)	  	  
+#endif
 
           uion = uion_e                                                                   !! ion species
           bt0 = B0_e                                                                      !! magnetic field axis

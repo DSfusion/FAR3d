@@ -57,7 +57,7 @@ chkdirs:
 ifdef IMAS_PREFIX
 
 #Transp2Far3D subroutines
-OBJS7 = scxform.o far3d_wout_mod.o readtranspeq.o transp2i2mex.o ids_eqGet.o i2mex2far3d.o
+OBJS7 = scxform.o far3d_wout_mod.o readtranspeq.o transp2i2mex.o i2mex2far3d.o dcon_ids_mod.o
 
 scxform.o: $(TRANSP2FAR3D_HOME)/scxform.f90
 	$(Comp) -assume nounderscore -cpp -c $(Opt) $(Flag) $<
@@ -74,8 +74,8 @@ transp2i2mex.o: $(TRANSP2FAR3D_HOME)/transp2i2mex.f90
 i2mex2far3d.o: $(TRANSP2FAR3D_HOME)/i2mex2far3d.f90 far3d_wout_mod.o
 	$(Comp) $(I2MEX) -cpp -c $(Opt) $(Flag) $<
 
-ids_eqGet.o: $(TRANSP2FAR3D_HOME)/ids_eqGet.f90
-	$(Comp) $(IMAS) -cpp -c $(Opt) $(Flag) $<
+dcon_ids_mod.o: $(TRANSP2FAR3D_HOME)/dcon_ids_mod.f90
+	$(Comp) $(IMAS_FLAG) $(IMAS) -cpp -c $(Opt) $(Flag) $<
 
 endif
 
