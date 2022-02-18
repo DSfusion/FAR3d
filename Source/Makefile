@@ -59,22 +59,22 @@ ifdef IMAS_PREFIX
 #Transp2Far3D subroutines
 OBJS7 = scxform.o far3d_wout_mod.o readtranspeq.o transp2i2mex.o i2mex2far3d.o dcon_ids_mod.o
 
-scxform.o: $(TRANSP2FAR3D_HOME)/scxform.f90
+scxform.o: Transp2Far3d/scxform.f90
 	$(Comp) -assume nounderscore -cpp -c $(Opt) $(Flag) $<
 
-far3d_wout_mod.o: $(TRANSP2FAR3D_HOME)/far3d_wout_mod.f90
+far3d_wout_mod.o: Transp2Far3d/far3d_wout_mod.f90
 	$(Comp) -cpp -c $(Opt) $(Flag) $<
 
-readtranspeq.o: $(TRANSP2FAR3D_HOME)/readtranspeq.f90
+readtranspeq.o: Transp2Far3d/readtranspeq.f90
 	$(Comp) -cpp -c $(Opt) $(Flag) $<
 
-transp2i2mex.o: $(TRANSP2FAR3D_HOME)/transp2i2mex.f90
+transp2i2mex.o: Transp2Far3d/transp2i2mex.f90
 	$(Comp) $(I2MEX) $(PSPLINE) -cpp -c $(Opt) $(Flag) $<
 
-i2mex2far3d.o: $(TRANSP2FAR3D_HOME)/i2mex2far3d.f90 far3d_wout_mod.o
+i2mex2far3d.o: Transp2Far3d/i2mex2far3d.f90 far3d_wout_mod.o
 	$(Comp) $(I2MEX) -cpp -c $(Opt) $(Flag) $<
 
-dcon_ids_mod.o: $(TRANSP2FAR3D_HOME)/dcon_ids_mod.f90
+dcon_ids_mod.o: Transp2Far3d/dcon_ids_mod.f90
 	$(Comp) $(IMAS_FLAG) $(IMAS) -cpp -c $(Opt) $(Flag) $<
 
 endif
