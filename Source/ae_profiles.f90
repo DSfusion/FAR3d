@@ -135,7 +135,7 @@
           omgcya = 1.602e-19*B0_e*R0_e/(1.672e-27*uion_e*va0)                             !! cyclotron FR
           betalf = 2.*mu0prof*(pres_beam_e(1)*1.e+3)/(B0_e**2)                            !! beta EP axis
           bet00 = betath_factor*2.*mu0prof*(pres_thermal_e(1)*1.e+3)/(B0_e**2)            !! beta thermal plasma axis
-          vf0 = sqrt(2.)*(sqrt(1000.*temp_beam_e(1)*1.6e-19/(uion_e*1.672e-27)))/va0      !! normalized EP thermal velocity axis
+          vf0 = sqrt(2.)*(sqrt(1000.*temp_beam_e(1)*1.6e-19/(spe1*1.672e-27)))/va0      !! normalized EP thermal velocity axis
           vthi = sqrt(1000.*temp_ion_e(1)*1.6e-19/(uion_e*1.672e-27))/va0                 !! normalized ion thermal velocity axis
           vthe = sqrt(1000.*temp_elec_e(1)*1.6e-19/(9.109e-31))/va0                              !! normalized electron thermal velocity axis
           vtor0 = tor_rot_vel_e(1)*1.e+5/va0                                              !! normalized toroidal velocity axis
@@ -225,7 +225,7 @@
           do je=0,mj
             xx = r(je)
             tenn(je) = 1.e+3*seval(ns0,xx,rho_e,temp_elec_e,bspl,cspl,dspl)
-            vtherm_elecP(je) = sqrt(tenn(je)*1.6e-19/(uion_e*9.1094e-31))/va0	
+            vtherm_elecP(je) = sqrt(tenn(je)*1.6e-19/(9.1094e-31))/va0	
           end do	
 		  tenn_max=maxval(tenn(0:mj))	
 		  te(:)=tenn(:)/tenn_max		  
@@ -305,9 +305,9 @@
               nfeq(je)=dnnbi(je) 
 			end if  
 			if(EP_vel_on .eq. 0) then
-			  vfova(je)=sqrt(tbnnn(je)*1.602e-19/(uion_e*1.672e-27))/(va0*LcA3)
+			  vfova(je)=sqrt(tbnnn(je)*1.602e-19/(spe1*1.672e-27))/(va0*LcA3)
 			end if  
-            vthermalep(je)=sqrt(tbnnn(je)*1.602e-19/(uion_e*1.672e-27))	
+            vthermalep(je)=sqrt(tbnnn(je)*1.602e-19/(spe1*1.672e-27))	
 
 		    if(q_prof_on .eq. 1) then	
 			qq(je)=qprofile(je)
@@ -398,7 +398,7 @@
           omgcya = 1.602e-19*B0_e*R0_e/(1.672e-27*uion_e*va0)                             !! cyclotron FR
           betalf = 2.*mu0prof*(pres_beam_e(1)*1.e+3)/(B0_e**2)                            !! beta EP axis
           bet00 = betath_factor*2.*mu0prof*(pres_thermal_e(1)*1.e+3)/(B0_e**2)            !! beta thermal plasma axis
-          vf0 = sqrt(2.)*(sqrt(1000.*temp_beam_e(1)*1.6e-19/(uion_e*1.672e-27)))/va0      !! normalized EP thermal velocity axis
+          vf0 = sqrt(2.)*(sqrt(1000.*temp_beam_e(1)*1.6e-19/(spe1*1.672e-27)))/va0      !! normalized EP thermal velocity axis
           vthi = sqrt(1000.*temp_ion_e(1)*1.6e-19/(uion_e*1.672e-27))/va0                 !! normalized ion thermal velocity axis
           vthe = sqrt(1000.*temp_elec_e(1)*1.6e-19/(9.109e-31))/va0                              !! normalized electron thermal velocity axis
           vtor0 = tor_rot_vel_e(1)*1.e+5_IDP/va0                                              !! normalized toroidal velocity axis
@@ -501,7 +501,7 @@
           do je=0,mj
             xx = r(je)
             tenn(je) = 1.e+3*seval(ns0,xx,rho_e,temp_elec_e,bspl,cspl,dspl)
-            vtherm_elecP(je) = sqrt(tenn(je)*1.6e-19/(uion_e*9.1094e-31))/va0
+            vtherm_elecP(je) = sqrt(tenn(je)*1.6e-19/(9.1094e-31))/va0
           end do	
 		  tenn_max=maxval(tenn(0:mj))	
 		  te(:)=tenn(:)/tenn_max				  
@@ -573,9 +573,9 @@
               nfeq(je)=dnnbi(je) 
 			end if  
 			if(EP_vel_on .eq. 0) then
-			  vfova(je)=sqrt(tbnnn(je)*1.602e-19/(uion_e*1.672e-27))/(va0*LcA3)
+			  vfova(je)=sqrt(tbnnn(je)*1.602e-19/(spe1*1.672e-27))/(va0*LcA3)
 			end if
-            vthermalep(je)=sqrt(tbnnn(je)*1.602e-19/(uion_e*1.672e-27))		
+            vthermalep(je)=sqrt(tbnnn(je)*1.602e-19/(spe1*1.672e-27))		
                           if(q_prof_on .eq. 1) then	
 			qq(je)=qprofile(je)
 		    end if  
@@ -585,7 +585,7 @@
               nalpeq(je)=dnalpha(je) 	
 			end if  
 			if(Alpha_vel_on .eq. 0) then
-			  valphaova(je)=sqrt(talphann(je)*1.602e-19/(2*1.672e-27))/(va0*LcA3alp)
+			  valphaova(je)=sqrt(talphann(je)*1.602e-19/(spe2*1.672e-27))/(va0*LcA3alp)
                                                end if
 		    etann(je)=etactte*dninn(je)/(dnenn(je)*sqrt(tenn(je)*tenn(je)*tenn(je)))		  
 

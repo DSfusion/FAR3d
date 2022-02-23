@@ -268,9 +268,13 @@
 		read(5,'(a1)') cdum0		
 		read(5,*) betath_factor
 		read(5,'(a1)') cdum0		
-		read(5,*) ietaeq		
+		read(5,*) ietaeq
 		read(5,'(a1)') cdum0		
-		read(5,*) bet0_f	
+		read(5,*) spe1		
+		read(5,'(a1)') cdum0		
+		read(5,*) bet0_f
+		read(5,'(a1)') cdum0		
+		read(5,*) spe2		
 		read(5,'(a1)') cdum0		
 		read(5,*) bet0_alp		
 		read(5,'(a1)') cdum0		

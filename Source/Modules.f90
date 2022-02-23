@@ -17,7 +17,7 @@
 		integer :: ihist,nocpl,maxstp,nstep,ndump,nprint,lplots,itime,nstep1,nonlin,noeqn,edge_p, &
                            iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,inalp,ivalp,iq,iw,ix1,ix2,iwa,ix1a,ix2a, &
 		           EP_dens_on,Alpha_dens_on,EP_vel_on,Alpha_vel_on,Trapped_on,ext_prof_len,q_prof_on,Eq_vel_on, & 
-                           Eq_velp_on,Eq_Presseq_on,Eq_Presstot_on,Auto_grid_on,Edge_on,vtk_on
+                           Eq_velp_on,Eq_Presseq_on,Eq_Presstot_on,Auto_grid_on,Edge_on,vtk_on,spe1,spe2
                                                                          
 		character(len=40) :: eq_name,ext_prof_name		
 		logical :: matrix_out
@@ -97,6 +97,8 @@
                         !  Auto_grid_on activates a default grid spacing
                         !  Edge_on activates the VMEC data extrapolation
                         !  vtk_on activates the vtk format in the output
+                        !  spe1 is the ion mass to proton mass ratio for the first EP population
+                        !  spe2 is the ion mass to proton mass ratio for the second EP population
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!		
 	
 	end module cotrol

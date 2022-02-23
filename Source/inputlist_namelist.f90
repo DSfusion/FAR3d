@@ -19,14 +19,14 @@
 		use scratch
 		implicit none
 
-                namelist /far3d_init/ nstres, numrun, numruno, numvac, nonlin, ngeneq, eq_name, maxstp, dt0, ldim, leqdim, jdim    &		
+        namelist /far3d_init/ nstres, numrun, numruno, numvac, nonlin, ngeneq, eq_name, maxstp, dt0, ldim, leqdim, jdim    &		
 		/far3d_params/ ext_prof,ext_prof_name,ext_prof_len,iflr_on,epflr_on,ieldamp_on,twofl_on,alpha_on,                  &
 		Trapped_on,matrix_out,m0dy,mm,nn,mmeq,nneq,ipert,widthix,Auto_grid_on,ni,nis,ne,delta,rc,Edge_on,edge_p,gamma,     &
 		s,betath_factor,ietaeq,bet0_f,bet0_alp,omcy,omcyb,rbound,omcyalp,itime,dpres,stdifp,stdifu,stdifv,                 &
 		stdifnf,stdifvf,stdifnalp,stdifvalp,LcA0,LcA1,LcA2,LcA3,LcA0alp,LcA1alp,LcA2alp,LcA3alp,omegar,                    &
 		iflr,r_epflr,r_epflralp,lplots,nprint,ndump,DIIID_u,EP_dens_on,Adens,Bdens,Alpha_dens_on,Adensalp,                 &
 		Bdensalp,EP_vel_on,Alpha_vel_on,q_prof_on,Eq_vel_on,Eq_velp_on,Eq_Presseq_on,Eq_Presstot_on,deltaq,                &
-		deltaiota,etascl,eta0,reta,etalmb,cnep,ctep,cnfp,cvep,cvfp,cnfpalp,cvfpalp,eqvt,eqvp
+		deltaiota,etascl,eta0,reta,etalmb,cnep,ctep,cnfp,cvep,cvfp,cnfpalp,cvfpalp,eqvt,eqvp,spe1,spe2
 
 		character(len=132) :: char5		
 		integer :: i
