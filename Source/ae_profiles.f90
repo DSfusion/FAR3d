@@ -151,7 +151,8 @@
           write(0,'("bt0 = ",e12.5," rmajr = ",f8.4, &
                     " rminr = ",f8.4,/,"va0 = ",e15.7, &
                     " pres_beam0 = ",e15.7)') B0_e, rmajr,rminr,va0, pres_beam_e(1)
-          write(0,'("Conversion factor from code freqeuncy to kHz: ",e15.7)') va0/(2000.*xpi*R0_e)		  
+          freqfac =  va0/(2000.*xpi*R0_e)
+          write(0,'("Conversion factor from code frequency to kHz: ",e15.7)') freqfac
 
           allocate(bspl(ns0),cspl(ns0),dspl(ns0))
 		  allocate(qprofile(0:mj))
@@ -414,7 +415,8 @@
           write(0,'("bt0 = ",e12.5," rmajr = ",f8.4, &
                     " rminr = ",f8.4,/,"va0 = ",e15.7, &
                     " pres_beam0 = ",e15.7)') B0_e, rmajr,rminr,va0, pres_beam_e(1)
-          write(0,'("Conversion factor from code freqeuncy to kHz: ",e15.7)') va0/(2000.*xpi*R0_e)		  
+          freqfac =  va0/(2000.*xpi*R0_e)
+          write(0,'("Conversion factor from code frequency to kHz: ",e15.7)') freqfac
   
           allocate(bspl(ns0),cspl(ns0),dspl(ns0))
 		  allocate(qprofile(0:mj))

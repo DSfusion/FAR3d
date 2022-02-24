@@ -128,7 +128,7 @@
 		integer, dimension(:), allocatable :: lnumn
 		integer, dimension(:), allocatable :: mnumn												
 		integer :: ni,nis,ne
-		real(IDP) :: delta,rc,fti,fte
+		real(IDP) :: delta,rc,fti,fte,freqfac
 		real(IDP), dimension(:), allocatable :: dnnbi,dne,dni,temp_epnn,ti,te,temp_ep,qprofile, &
 		                                        dnnbinn,dnenn,dninn,pthermalnn,tinn,tenn,tbn,tbnnn,pepnn,ptotnn, &
                                                         pthermal,pep,ptot,vthermalep,vAlfven,vtherm_ionP,vtherm_elecP, &

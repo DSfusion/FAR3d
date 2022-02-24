@@ -994,6 +994,7 @@
 			write(88,'(i4,3x,1pe13.5,6x,1pe13.5,/)') np(i), grwth_avg(i), omega_r_avg(i)
 			write(88,'(7x,1pe13.5,6x,1pe13.5,/)') deviation_growth(i), deviation_freq(i)
 		end do
+                write(88,'(1pe15.7)') freqfac
 		close(unit=88)
 		deallocate (omega_r)
 		deallocate (grwth)
