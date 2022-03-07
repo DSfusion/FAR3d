@@ -157,7 +157,7 @@
 
   ! Spline-interpolate data into i2mex
   i2nt1 = 2*treq%ntm1 + 1
-  i2ns = max(treq%nsm1+1, 97)
+  i2ns = max(treq%nsm1+1, 100)
   call i2mex_fromTranspEq(treq, i2nt1, i2ns, i2counterclockwise, ierr)
   write(*,*) 'i2mex returned ierr = ',ierr
 
@@ -189,6 +189,13 @@
        grrojb(0:mjeq,0:lbm2),grtojb(0:mjeq,0:lbm2),gttojb(0:mjeq,0:lbm2), &
        jbgrrb(0:mjeq,0:lbm2),jbgrtb(0:mjeq,0:lbm2),jbgttb(0:mjeq,0:lbm2))
 
+  rfar(0)=0.0_IDP
+  rbinv(0)=0.0_IDP
+  qfar(0)=0.0_IDP
+  pfar(0)=0.0_IDP
+  phip(0)=0.0_IDP
+  curfar(0)=0.0_IDP
+
   rmnb(:,0)=0.0_IDP
   sqgib(:,0)=0.0_IDP
   sqgb(:,0)=0.0_IDP
@@ -213,23 +220,32 @@
   pfar(1:mjeq) = f3eq%pres(2:mjeqp)
 
   ! Stellarator-symmetric components of coordinates, Jacobian
-  rmnb(1:mjeqp, 1:lbmax) = transpose(f3eq%RMNC(0:lbmax-1, 2:mjeqp))
-  bmodb(1:mjeqp, 1:lbmax) = transpose(f3eq%BMNC(0:lbmax-1, 2:mjeqp))
-  sqgb(1:mjeqp, 1:lbmax) = transpose(f3eq%GMNC(0:lbmax-1, 2:mjeqp))
-  sqgib(1:mjeqp, 1:lbmax) = transpose(f3eq%GIMNC(0:lbmax-1, 2:mjeqp))
+  rmnb(1:mjeq, 1:lbmax) = transpose(f3eq%RMNC(0:lbmax-1, 2:mjeqp))
+  bmodb(1:mjeq, 1:lbmax) = transpose(f3eq%BMNC(0:lbmax-1, 2:mjeqp))
+  sqgb(1:mjeq, 1:lbmax) = transpose(f3eq%GMNC(0:lbmax-1, 2:mjeqp))
+  sqgib(1:mjeq, 1:lbmax) = transpose(f3eq%GIMNC(0:lbmax-1, 2:mjeqp))
 
   ! Stellarator-symmetric components of metric tensor
-  grrb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRRMNC(0:lbmax-1, 2:mjeqp))
-  grtb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRTMNS(0:lbmax-1, 2:mjeqp))
-  gttb(1:mjeqp, 1:lbmax) = transpose(f3eq%GTTMNC(0:lbmax-1, 2:mjeqp))
-  grrojb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRROJC(0:lbmax-1, 2:mjeqp))
-  grtojb(1:mjeqp, 1:lbmax) = transpose(f3eq%GRTOJS(0:lbmax-1, 2:mjeqp))
-  gttojb(1:mjeqp, 1:lbmax) = transpose(f3eq%GTTOJC(0:lbmax-1, 2:mjeqp))
-  jbgrrb(1:mjeqp, 1:lbmax) = transpose(f3eq%JBGRRC(0:lbmax-1, 2:mjeqp))
-  jbgrtb(1:mjeqp, 1:lbmax) = transpose(f3eq%JBGRTS(0:lbmax-1, 2:mjeqp))
-  jbgttb(1:mjeqp, 1:lbmax) = transpose(f3eq%JBGTTC(0:lbmax-1, 2:mjeqp))
+  grrb(1:mjeq, 1:lbmax) = transpose(f3eq%GRRMNC(0:lbmax-1, 2:mjeqp))
+  grtb(1:mjeq, 1:lbmax) = transpose(f3eq%GRTMNS(0:lbmax-1, 2:mjeqp))
+  gttb(1:mjeq, 1:lbmax) = transpose(f3eq%GTTMNC(0:lbmax-1, 2:mjeqp))
+  grrojb(1:mjeq, 1:lbmax) = transpose(f3eq%GRROJC(0:lbmax-1, 2:mjeqp))
+  grtojb(1:mjeq, 1:lbmax) = transpose(f3eq%GRTOJS(0:lbmax-1, 2:mjeqp))
+  gttojb(1:mjeq, 1:lbmax) = transpose(f3eq%GTTOJC(0:lbmax-1, 2:mjeqp))
+  jbgrrb(1:mjeq, 1:lbmax) = transpose(f3eq%JBGRRC(0:lbmax-1, 2:mjeqp))
+  jbgrtb(1:mjeq, 1:lbmax) = transpose(f3eq%JBGRTS(0:lbmax-1, 2:mjeqp))
+  jbgttb(1:mjeq, 1:lbmax) = transpose(f3eq%JBGTTC(0:lbmax-1, 2:mjeqp))
 
-  lb0=1
+  lb0=0
+  do l=1,lbmax
+     if (mmb(l) == 0 .and. nnb(l) == 0) exit
+  end do
+  lb0=l
+  if (lb0 == 0 .or. lb0 > lbmax) then
+     write (6,'("  vmec: lb0=0")')
+     stop
+  end if
+
   l1=lbmax
   do l=1,lbmax
      if (l == lb0) cycle
@@ -241,21 +257,21 @@
   lls(lb0)=0
 
   ! Non-stellarator symmetric components of coords, Jacobian
-  rmnb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%RMNS(0:mjeq-1,2:lbmax+1))
-  bmodb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%BMNS(0:mjeq-1,2:lbmax+1))
-  sqgb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GMNS(0:mjeq-1,2:lbmax+1))
-  sqgib(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GIMNS(0:mjeq-1,2:lbmax+1))
+  rmnb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%RMNS(0:lbmax-1, 2:mjeqp))
+  bmodb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%BMNS(0:lbmax-1, 2:mjeqp))
+  sqgb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GMNS(0:lbmax-1, 2:mjeqp))
+  sqgib(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GIMNS(0:lbmax-1, 2:mjeqp))
 
   ! Non-stellarator-symmetric components of metric tensor
-  grrb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GRRMNS(0:mjeq-1,2:lbmax+1))
-  grtb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%GRTMNC(0:mjeq-1,2:lbmax+1))
-  gttb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GTTMNS(0:mjeq-1,2:lbmax+1))
-  grrojb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GRROJS(0:mjeq-1,2:lbmax+1))
-  grtojb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%GRTOJC(0:mjeq-1,2:lbmax+1))
-  gttojb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GTTOJS(0:mjeq-1,2:lbmax+1))
-  jbgrrb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%JBGRRS(0:mjeq-1,2:lbmax+1))
-  jbgrtb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%JBGRTC(0:mjeq-1,2:lbmax+1))
-  jbgttb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%JBGTTS(0:mjeq-1,2:lbmax+1))
+  grrb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GRRMNS(0:lbmax-1, 2:mjeqp))
+  grtb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%GRTMNC(0:lbmax-1, 2:mjeqp))
+  gttb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GTTMNS(0:lbmax-1, 2:mjeqp))
+  grrojb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GRROJS(0:lbmax-1, 2:mjeqp))
+  grtojb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%GRTOJC(0:lbmax-1, 2:mjeqp))
+  gttojb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%GTTOJS(0:lbmax-1, 2:mjeqp))
+  jbgrrb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%JBGRRS(0:lbmax-1, 2:mjeqp))
+  jbgrtb(1:mjeq, llc(1:lbmax)) = transpose(f3eq%JBGRTC(0:lbmax-1, 2:mjeqp))
+  jbgttb(1:mjeq, lls(1:lbmax)) = transpose(f3eq%JBGTTS(0:lbmax-1, 2:mjeqp))
 
   call far3d_free(f3eq)
 

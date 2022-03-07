@@ -113,6 +113,7 @@
   pres_equil_e = bd%pe
   tor_rot_vel_e = bd%trot
   pol_rot_vel_e = bd%prot
+  ns0 = ext_prof_len  ! number of rows
   write(*,*) 'END TRANSP2FAR3D'
 #else
           nunit = 17		    
