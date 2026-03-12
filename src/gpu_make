@@ -1,0 +1,40 @@
+MAKE_CMD := make
+ifdef VERBOSE
+  MAKE_CMD += VERBOSE=1
+endif
+
+# GPU build flags
+GPU_FC      := ftn
+GPU_FFLAGS  := -g -O3 -mp -acc=gpu -gpu=managed,debug -Minstrument -traceback -cuda
+GPU_LDFLAGS := -lnvhpcwrapnvtx -cuda
+
+all: ../build
+	@cd ../build; \
+	FC=$(F90) cmake -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpicxx \
+	  -DCMAKE_Fortran_COMPILER=mpif90 ..; \
+	$(MAKE_CMD)
+
+debug: ../build
+	@cd ../build; \
+	FC=$(F90) cmake -DCMAKE_BUILD_TYPE=Debug ..; \
+	$(MAKE_CMD)
+
+gpu: ../build
+	@cd ../build; \
+	export OMPI_MCA_opal_cuda_support=0; \
+	cmake -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_Fortran_COMPILER=$(GPU_FC) \
+	  -DCMAKE_Fortran_FLAGS="$(GPU_FFLAGS)" \
+	  -DCMAKE_EXE_LINKER_FLAGS="$(GPU_LDFLAGS)" \
+	  ..; \
+	$(MAKE_CMD)
+
+../build:
+	@mkdir -p ../build
+
+clean:
+	@echo "Cleaning build folder"
+	@rm -rf ../build
+	@rm -f far3d.x
+
