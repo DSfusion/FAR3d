@@ -11,3 +11,10 @@ Graphics/xbw_read
 Eigensolver/xEigen
 Eigensolver/LIB_JDQZ/libjdqz.a
 BOOZ_XFORM/Sources/xbooz_xform
+/build-release/
+/build-debug/
+/build-gpu/
+/.spack-env/
+/spack-build-*/
+/build-linux-*/
+__pycache__/

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Usage: in the root dir
+#  make build-gpu
+#  cd build-gpu
+#  . ../runconf.gpu
+#  make -j 8
+#
+
+set -euo pipefail
+
+export NVHPC=/opt/nvidia/hpc_sdk/Linux_x86_64/26.3
+export PATH="$NVHPC/compilers/bin:$PATH"
+
+HPCX="$NVHPC/comm_libs/13.1/hpcx/hpcx-2.25.1/ompi/bin"
+
+printf '\n==> NVHPC 26.3 / CUDA 13.1 GPU build\n'
+cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DFAR3D_ENABLE_GPU=ON \
+    -DCMAKE_C_COMPILER=${HPCX}/mpicc \
+    -DCMAKE_Fortran_COMPILER=${HPCX}/mpifort \
+    -DCUDAToolkit_ROOT=${NVHPC}/cuda/13.1 \
+    -DFAR3D_CUDA_VERSION=13.1
+
+

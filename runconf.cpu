@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Usage: in the root dir
+#  make build-cpu
+#  cd build-cpu
+#  . ../runconf.cpu
+#  make -j 8
+#
+
+set -euo pipefail
+
+CC=/usr/bin/mpicc
+FC=/usr/bin/mpifort
+
+printf '\n==> CPU build with %s \n' $FC
+
+cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DFAR3D_ENABLE_GPU=OFF \
+    -DCMAKE_C_COMPILER=${CC} \
+    -DCMAKE_Fortran_COMPILER=${FC} 
+
+
