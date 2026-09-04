@@ -1,0 +1,55 @@
+# Copyright (c) 2024 FAR3d developers
+#
+# SPDX-License-Identifier: MIT
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+
+from spack.package import depends_on, license, requires, version
+
+
+class Far3d(CMakePackage, CudaPackage):
+    """Parallel gyrofluid code for nonlinear simulations of energetic
+    particle-driven instabilities in three-dimensional configurations."""
+
+    homepage = "https://github.com/DSfusion/FAR3d"
+    git = "https://github.com/DSfusion/FAR3d.git"
+
+    license("MIT")
+
+    # This version is normally associated with the already-cloned checkout by
+    # `spack develop --no-clone`; the Git metadata is only a fallback fetcher.
+    version("develop", branch="master")
+
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+    depends_on("cmake@3.24:", type="build")
+    depends_on("mpi")
+
+    requires("%nvhpc", when="+cuda", msg="far3d+cuda requires CUDA Fortran from NVHPC")
+
+    def setup_build_environment(self, env):
+        if "+cuda" in self.spec:
+            env.set("NVHPC_CUDA_HOME", self.spec["cuda"].prefix)
+
+    def cmake_args(self):
+        spec = self.spec
+        args = [
+            # Use the MPI wrappers as the project compilers. Spack guarantees
+            # that this MPI dependency is paired with the selected compiler.
+            self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
+            self.define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
+            self.define_from_variant("FAR3D_ENABLE_GPU", "cuda"),
+        ]
+
+        if "+cuda" in spec:
+            args.extend(
+                [
+                    self.define("CUDAToolkit_ROOT", spec["cuda"].prefix),
+                ]
+            )
+            cuda_arch = spec.variants["cuda_arch"].value
+            if cuda_arch:
+                args.append(self.define("FAR3D_GPU_ARCH", "cc" + cuda_arch[0]))
+
+        return args

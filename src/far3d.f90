@@ -27,7 +27,9 @@ program far3d
   use transfer
   use tools
   use scratch
+#ifdef FAR3D_ENABLE_GPU
   use openacc
+#endif
   
   implicit none
 
@@ -78,9 +80,13 @@ program far3d
 ! Find the ID of this PE
   call MPI_COMM_RANK(MPI_COMM_WORLD, myPE  , ierror)
   numPEsm1 = numPEs-1
+#ifdef FAR3D_ENABLE_GPU
   numdev = acc_get_num_devices(ACC_DEVICE_NVIDIA)
   call acc_set_device_num(myPE,ACC_DEVICE_NVIDIA)
   call acc_init(ACC_DEVICE_NVIDIA)
+#else
+  numdev = 0
+#endif
   
   ! if (myPE == 0) write(0,'(" ====> Checking input list ... ")')
 
