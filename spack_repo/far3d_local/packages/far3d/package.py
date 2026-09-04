@@ -28,6 +28,10 @@ class Far3d(CMakePackage, CudaPackage):
 
     requires("%nvhpc", when="+cuda", msg="far3d+cuda requires CUDA Fortran from NVHPC")
 
+    def setup_build_environment(self, env):
+        if "+cuda" in self.spec:
+            env.set("NVHPC_CUDA_HOME", self.spec["cuda"].prefix)
+
     def cmake_args(self):
         spec = self.spec
         args = [
@@ -39,11 +43,9 @@ class Far3d(CMakePackage, CudaPackage):
         ]
 
         if "+cuda" in spec:
-            cuda_version = str(spec["cuda"].version.up_to(2))
             args.extend(
                 [
                     self.define("CUDAToolkit_ROOT", spec["cuda"].prefix),
-                    self.define("FAR3D_CUDA_VERSION", cuda_version),
                 ]
             )
             cuda_arch = spec.variants["cuda_arch"].value
