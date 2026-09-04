@@ -8,10 +8,10 @@ Both CPU and GPU versions are included in this code.
 
 ## Build
 
-FAR3d requires CMake 3.24 or newer, a Fortran compiler, MPI, OpenMP,
-and OpenACC. Configure from the repository root; CMake discovers the
-MPI and parallel-runtime flags instead of using an MPI compiler wrapper
-as the project compiler.
+FAR3d requires CMake 3.24 or newer, a Fortran compiler, MPI, and OpenMP.
+The GPU variant additionally requires NVHPC, OpenACC, and CUDA. Configure from
+the repository root; CMake discovers the MPI and parallel-runtime flags instead
+of using an MPI compiler wrapper as the project compiler.
 
 The historical entry points remain available from `src`:
 
@@ -83,6 +83,7 @@ spack -e .spack-env install
 ```
 
 `far3d+cuda` requires an NVHPC compiler and a CUDA package known to Spack. For
-example, select them with `far3d@develop+cuda %nvhpc ^cuda@13.1`. The recipe
-uses the selected MPI package's `mpicc` and `mpifc` wrappers as the CMake
-compilers, so MPI and the underlying Fortran compiler remain ABI-compatible.
+example, select them and an NVIDIA compute capability with
+`far3d@develop+cuda cuda_arch=80 %nvhpc ^cuda@13.1`. The recipe uses the
+selected MPI package's `mpicc` and `mpifc` wrappers as the CMake compilers, so
+MPI and the underlying Fortran compiler remain ABI-compatible.

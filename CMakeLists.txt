@@ -96,7 +96,6 @@ endif()
 
 find_package(MPI REQUIRED COMPONENTS Fortran)
 find_package(OpenMP REQUIRED COMPONENTS Fortran)
-find_package(OpenACC REQUIRED COMPONENTS Fortran)
 
 set(far3d_sources
     src/MPI_tools/transfer.f90
@@ -131,6 +130,7 @@ set(far3d_sources
     src/tools.f90)
 
 if(FAR3D_ENABLE_GPU)
+    find_package(OpenACC REQUIRED COMPONENTS Fortran)
     if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(NVHPC|PGI)$")
         message(FATAL_ERROR
             "FAR3D_ENABLE_GPU requires the NVHPC Fortran compiler; "
@@ -148,6 +148,8 @@ else()
     list(APPEND far3d_sources src/matrix_cpu.f90)
 endif()
 
+set_source_files_properties(src/far3d.f90 PROPERTIES Fortran_PREPROCESS ON)
+
 add_executable(far3d ${far3d_sources})
 set_target_properties(far3d PROPERTIES
     OUTPUT_NAME far3d.x
@@ -157,8 +159,7 @@ target_include_directories(far3d PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/modules")
 target_link_libraries(far3d PRIVATE
     MPI::MPI_Fortran
-    OpenMP::OpenMP_Fortran
-    OpenACC::OpenACC_Fortran)
+    OpenMP::OpenMP_Fortran)
 
 # Runtime diagnostics for the debug configuration. Optimization and debug
 # symbols themselves are supplied by CMake's standard build-type flags.
@@ -167,7 +168,9 @@ target_compile_options(far3d PRIVATE
     "$<$<AND:$<CONFIG:Debug>,$<Fortran_COMPILER_ID:NVHPC,PGI>>:-Mbounds;-Mchkptr;-Mchkstk;-traceback>")
 
 if(FAR3D_ENABLE_GPU)
-    target_link_libraries(far3d PRIVATE CUDA::cudart)
+    target_compile_definitions(far3d PRIVATE FAR3D_ENABLE_GPU)
+    target_link_libraries(far3d PRIVATE
+        OpenACC::OpenACC_Fortran CUDA::cudart)
 
     set(far3d_gpu_options -acc=gpu -gpu=mem:separate)
     if(FAR3D_CUDA_VERSION)

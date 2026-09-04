@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: MIT
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
-from spack.package import depends_on, license, requires, variant, version
+from spack.package import depends_on, license, requires, version
 
 
-class Far3d(CMakePackage):
+class Far3d(CMakePackage, CudaPackage):
     """Parallel gyrofluid code for nonlinear simulations of energetic
     particle-driven instabilities in three-dimensional configurations."""
 
@@ -20,13 +21,10 @@ class Far3d(CMakePackage):
     # `spack develop --no-clone`; the Git metadata is only a fallback fetcher.
     version("develop", branch="master")
 
-    variant("cuda", default=False, description="Build the NVHPC CUDA Fortran implementation")
-
     depends_on("c", type="build")
     depends_on("fortran", type="build")
     depends_on("cmake@3.24:", type="build")
     depends_on("mpi")
-    depends_on("cuda", when="+cuda", type=("build", "link", "run"))
 
     requires("%nvhpc", when="+cuda", msg="far3d+cuda requires CUDA Fortran from NVHPC")
 
@@ -48,5 +46,8 @@ class Far3d(CMakePackage):
                     self.define("FAR3D_CUDA_VERSION", cuda_version),
                 ]
             )
+            cuda_arch = spec.variants["cuda_arch"].value
+            if cuda_arch:
+                args.append(self.define("FAR3D_GPU_ARCH", "cc" + cuda_arch[0]))
 
         return args
