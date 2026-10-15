@@ -1,0 +1,2 @@
+To build, create clean build directory, cd into it and type: cmake ../
+Then type: make

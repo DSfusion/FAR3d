@@ -1,0 +1,9 @@
+#!/bin/bash
+#SBATCH -n 5
+#SBATCH -c 1
+#SBATCH --time=1:00:00
+#SBATCH --output job-%j.out             # Job output file
+#SBATCH --error  job-%j.err             # Job Error File
+#SBATCH --mem=32gb                      # Reserve 32gb for this job
+
+mpirun -n 5 ../../../FAR3d_v2/build/far3d.x

@@ -1,0 +1,34 @@
+
+NWDir="../../../Version2.0-FAR3d-from-Luis-7-18-2025/Up*/FAR*/src"
+diff bigf.f90         $NWDir/bigf.f90
+diff block_mod.f90	 $NWDir/block_mod.f90
+diff cnvt.f90	 $NWDir/cnvt.f90
+diff dbyd.f90	 $NWDir/dbyd.f90
+diff dbydb.f90	 $NWDir/dbydb.f90
+diff delstar.f90	 $NWDir/delstar.f90
+diff dfault.f90	 $NWDir/dfault.f90
+#diff diagnostics.f90  $NWDir/diagnostics.f90
+diff divv.f90	 $NWDir/divv.f90
+diff dlsq.f90	 $NWDir/dlsq.f90
+diff dlstar.f90	 $NWDir/dlstar.f90
+#diff equilibrium.f90  $NWDir/equilibrium.f90
+#diff far3d.f90	 $NWDir/far3d.f90
+diff findr.f90	 $NWDir/findr.f90
+diff findrf.f90	 $NWDir/findrf.f90
+diff fit_mod.f90	 $NWDir/fit_mod.f90
+diff gam_mod.f90	 $NWDir/gam_mod.f90
+#diff globals.f90	 $NWDir/globals.f90
+diff grid.f90	 $NWDir/grid.f90
+diff initialize.f90	 $NWDir/initialize.f90
+#diff lincheck.f90	 $NWDir/lincheck.f90
+#diff linstart.f90	 $NWDir/linstart.f90
+#diff Makefile	 $NWDir/Makefile
+diff matrix.f90	 $NWDir/matrix.f90
+diff mult_mod.f90	 $NWDir/mult_mod.f90
+diff multb_mod.f90	 $NWDir/multb_mod.f90
+diff om_mod.f90	 $NWDir/om_mod.f90
+#diff output_mod.f90	 $NWDir/output_mod.f90
+diff scratch.f90	 $NWDir/scratch.f90
+#diff solve.f90	 $NWDir/solve.f90
+diff tools.f90	 $NWDir/tools.f90
+
