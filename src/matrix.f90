@@ -203,8 +203,8 @@ CONTAINS
     ! decbt calls subroutines  dec(m,m0,a,ip,ier)  and  sol(m,m0,a,y,ip)
     ! for solution of m by m linear systems.
 
-    integer :: nm1, nm2, km1, i, j, k, l
-    real(IDP) :: dp
+    integer :: nm1, nm2, km1, j, k, l
+    real(IDP), dimension(m) :: dpv
 
     if (m > 0 .and. n > 3) then
        nm1 = n - 1
@@ -222,29 +222,25 @@ CONTAINS
        end do
        !$OMP END PARALLEL DO
        ! adjust b(*,*,2). -----------------------------------------------------
-       !$OMP PARALLEL DO PRIVATE(dp) COLLAPSE(2)
+       !$OMP PARALLEL DO PRIVATE(dpv)
        do j = 1,m
-          do i = 1,m
-             dp = 0.
-             do l = 1,m
-                dp = dp + c(i,l,2)*c(l,j,1)
-             end do
-             b(i,j,2) = b(i,j,2) - dp
+          dpv = 0.
+          do l = 1,m
+             dpv = dpv + c(:,l,2)*c(l,j,1)
           end do
+          b(:,j,2) = b(:,j,2) - dpv
        end do
        !$OMP END PARALLEL DO
        ! main loop.  process block-rows 2 to n-1. -----------------------------
        do k = 2,nm1
           km1 = k - 1
-          !$OMP PARALLEL DO PRIVATE(dp) COLLAPSE(2)
+          !$OMP PARALLEL DO PRIVATE(dpv)
           do j = 1,m
-             do i = 1,m
-                dp = 0.
-                do l = 1,m
-                   dp = dp + c(i,l,k)*b(l,j,km1)
-                end do
-                a(i,j,k) = a(i,j,k) - dp
+             dpv = 0.
+             do l = 1,m
+                dpv = dpv + c(:,l,k)*b(l,j,km1)
              end do
+             a(:,j,k) = a(:,j,k) - dpv
           end do
           !$OMP END PARALLEL DO
           call dec (m, a(:,:,k), ip(:,k), ier)
@@ -259,26 +255,22 @@ CONTAINS
           !$OMP END PARALLEL DO
        end do
        ! process last block-row and return. -----------------------------------
-       !$OMP PARALLEL DO PRIVATE(dp) COLLAPSE(2)
+       !$OMP PARALLEL DO PRIVATE(dpv)
        do j = 1,m
-          do i = 1,m
-             dp = 0.
-             do l = 1,m
-                dp = dp + b(i,l,n)*b(l,j,nm2)
-             end do
-             c(i,j,n) = c(i,j,n) - dp
+          dpv = 0.
+          do l = 1,m
+             dpv = dpv + b(:,l,n)*b(l,j,nm2)
           end do
+          c(:,j,n) = c(:,j,n) - dpv
        end do
        !$OMP END PARALLEL DO
-       !$OMP PARALLEL DO PRIVATE(dp) COLLAPSE(2)
+       !$OMP PARALLEL DO PRIVATE(dpv)
        do j = 1,m
-          do i = 1,m
-             dp = 0.
-             do l = 1,m
-                dp = dp + c(i,l,n)*b(l,j,nm1)
-             end do
-             a(i,j,n) = a(i,j,n) - dp
+          dpv = 0.
+          do l = 1,m
+             dpv = dpv + c(:,l,n)*b(l,j,nm1)
           end do
+          a(:,j,n) = a(:,j,n) - dpv
        end do
        !$OMP END PARALLEL DO
        call dec (m, a(:,:,n), ip(:,n), ier)
