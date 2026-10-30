@@ -3,7 +3,7 @@ ifdef VERBOSE
         MAKE_CMD+=" VERBOSE=1"
 endif
 
-# BLAS/LAPACK backend, e.g. make LAPACK=Accelerate, LAPACK=MKL, LAPACK=Reference or LAPACK=NPC
+# BLAS/LAPACK backend, e.g. make LAPACK=None, LAPACK=Accelerate, LAPACK=MKL, LAPACK=Reference or LAPACK=NPC
 CMAKE_OPTS=
 ifdef LAPACK
         CMAKE_OPTS+=-DFAR3D_LAPACK=$(LAPACK)

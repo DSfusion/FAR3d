@@ -397,9 +397,21 @@ subroutine linstart
   cmapm=0.
   cmapp=0.
 
-  amat=0.
-  bmat=0.
-  cmat=0.
+  ! first touch of the block matrices from the threads that stream them in
+  ! solbt_all (memory placement on multi-socket machines)
+  if (myPE <= numPElm1) then
+     do it=n_st(myPE),n_nd(myPE)
+        loca=nskpn(it)+1
+        mnum3=noeqn*mnumn(it)
+        call bt_zero(mnum3,mjm1,amat(loca:))
+        call bt_zero(mnum3,mjm1,bmat(loca:))
+        call bt_zero(mnum3,mjm1,cmat(loca:))
+     end do
+  else
+     amat=0.
+     bmat=0.
+     cmat=0.
+  end if
 
   ipc=0
   xt=0.

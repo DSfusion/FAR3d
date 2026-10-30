@@ -26,8 +26,9 @@ find_package(OpenMP REQUIRED)
 # -------------------------
 # BLAS / LAPACK
 # -------------------------
-# FAR3D_LAPACK selects the BLAS/LAPACK backend for the block-tridiagonal solver
-# in matrix.f90:
+# FAR3D_LAPACK selects the BLAS/LAPACK backend for the factorisation (decbt) in
+# matrix.f90; the solves in the time step (solbt_all) do not use BLAS:
+#   None       - built-in dec/sol routines, no BLAS/LAPACK
 #   Accelerate - Apple Accelerate framework (default on macOS)
 #   MKL        - Intel oneMKL (default elsewhere), found via its CMake package
 #                (MKL_DIR, MKLROOT or MKL_ROOT, e.g. after sourcing oneAPI setvars.sh)
@@ -39,8 +40,8 @@ if(APPLE)
 else()
     set(FAR3D_LAPACK_DEFAULT "MKL")
 endif()
-set(FAR3D_LAPACK "${FAR3D_LAPACK_DEFAULT}" CACHE STRING "BLAS/LAPACK backend: Accelerate, MKL, Reference or NPC")
-set_property(CACHE FAR3D_LAPACK PROPERTY STRINGS Accelerate MKL Reference NPC)
+set(FAR3D_LAPACK "${FAR3D_LAPACK_DEFAULT}" CACHE STRING "BLAS/LAPACK backend: None, Accelerate, MKL, Reference or NPC")
+set_property(CACHE FAR3D_LAPACK PROPERTY STRINGS None Accelerate MKL Reference NPC)
 set(FAR3D_REFLAPACK_ROOT "/opt/homebrew/opt/lapack" CACHE PATH "Install prefix of the reference BLAS/LAPACK")
 set(FAR3D_NPC_ROOT "" CACHE PATH "NPC build or install directory containing lib/libnpc_lp64")
 # libnpc_lp64.so depends on the LLVM OpenMP runtime (libomp)
@@ -49,7 +50,9 @@ set(FAR3D_NPC_OMP_DIR "" CACHE PATH "Directory containing libomp.so needed by NP
 set(FAR3D_MKL_THREADING "gnu_thread" CACHE STRING "MKL threading layer: gnu_thread, intel_thread or sequential")
 set_property(CACHE FAR3D_MKL_THREADING PROPERTY STRINGS gnu_thread intel_thread sequential)
 
-if(FAR3D_LAPACK STREQUAL "Accelerate")
+set(LAPACK_LIBS "")
+if(FAR3D_LAPACK STREQUAL "None")
+elseif(FAR3D_LAPACK STREQUAL "Accelerate")
     find_library(ACCELERATE_FRAMEWORK Accelerate REQUIRED)
     set(LAPACK_LIBS ${ACCELERATE_FRAMEWORK})
 elseif(FAR3D_LAPACK STREQUAL "Reference")
@@ -72,7 +75,7 @@ elseif(FAR3D_LAPACK STREQUAL "NPC")
     # NPC first so that its dgetrf/dgetrs take precedence over MKL's
     set(LAPACK_LIBS ${NPC_LIB} MKL::MKL ${NPC_OMP_LIB})
 else()
-    message(FATAL_ERROR "Unknown FAR3D_LAPACK='${FAR3D_LAPACK}' (use Accelerate, MKL, Reference or NPC)")
+    message(FATAL_ERROR "Unknown FAR3D_LAPACK='${FAR3D_LAPACK}' (use None, Accelerate, MKL, Reference or NPC)")
 endif()
 message(STATUS "FAR3D_LAPACK = ${FAR3D_LAPACK} ${LAPACK_LIBS}")
 
@@ -87,6 +90,11 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.f90 src/*.F90 src/*.f)
 # -------------------------
 add_executable(far3d.x ${SOURCES})
 target_include_directories(far3d.x PRIVATE)
+# matrix.f90 selects the LAPACK or built-in factorisation with the preprocessor
+set_source_files_properties(src/matrix.f90 PROPERTIES Fortran_PREPROCESS ON)
+if(NOT FAR3D_LAPACK STREQUAL "None")
+    target_compile_definitions(far3d.x PRIVATE FAR3D_USE_LAPACK)
+endif()
 # -------------------------
 # Link libraries
 # -------------------------

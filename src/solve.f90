@@ -16,6 +16,8 @@ subroutine solve
 
   integer :: l,i,mnum3,l1,l1t,it,loca,loci,locx,lskp,mnum2
   real(IDP) :: epsq,omcyd,omcydalp,scmn,scmx,uztmx,uztedg,t0
+  integer :: nfam
+  integer, dimension(n_end-n_start+1) :: fam_m,fam_a,fam_i,fam_x
 
   interface
      subroutine cnvt(idir)
@@ -47,6 +49,17 @@ subroutine solve
         real(IDP), dimension(mj_start:,0:) :: f
      end subroutine divv
   end interface
+
+  ! block order and offsets of the toroidal families for solbt_all (relative
+  ! to the first element of amat, ipc and xt; xt does not start at 1 on all
+  ! processes)
+  nfam=n_end-n_start+1
+  do it=n_start,n_end
+     fam_m(it-n_start+1)=noeqn*mnumn(it)
+     fam_a(it-n_start+1)=nskpn(it)+1
+     fam_i(it-n_start+1)=nskpin(it)+1
+     fam_x(it-n_start+1)=nskpxn(it)+1-lbound(xt,1)+1
+  end do
 
   epsq=eps*eps
   omcyd = omcy
@@ -299,14 +312,10 @@ subroutine solve
 
   ! call cpu_time(time_sm)
 
+  ! the toroidal families are independent block-tridiagonal systems; all
+  ! families of this process are solved together (one barrier per block row)
   t0=wtime()
-  do it=n_start,n_end
-     loca=nskpn(it)+1
-     loci=nskpin(it)+1
-     locx=nskpxn(it)+1
-     mnum3=noeqn*mnumn(it)
-     call solbt(mnum3,mjm1,amat(loca:),bmat(loca:),cmat(loca:),xt(locx:),ipc(loci:))
-  end do
+  call solbt_all(nfam,fam_m,mjm1,fam_a,fam_i,fam_x,amat,bmat,cmat,xt,ipc)
   t_solbt=t_solbt+wtime()-t0
 
   ! call cpu_time(time_em)
@@ -472,14 +481,10 @@ subroutine solve
 
      ! call cpu_time(time_sm)
 
+     ! the toroidal families are independent block-tridiagonal systems; all
+     ! families of this process are solved together (one barrier per block row)
      t0=wtime()
-     do it=n_start,n_end
-        loca=nskpn(it)+1
-        loci=nskpin(it)+1
-        locx=nskpxn(it)+1
-        mnum3=noeqn*mnumn(it)
-        call solbt(mnum3,mjm1,amat(loca:),bmat(loca:),cmat(loca:),xt(locx:),ipc(loci:))
-     end do
+     call solbt_all(nfam,fam_m,mjm1,fam_a,fam_i,fam_x,amat,bmat,cmat,xt,ipc)
      t_solbt=t_solbt+wtime()-t0
 
      ! call cpu_time(time_em)
