@@ -6,7 +6,11 @@ MODULE matrix
 
   ! Block-tridiagonal solver for the toroidal families, on top of BLAS/LAPACK.
 
+  ! decbt replaces the diagonal blocks by their inverses, so that the solves
+  ! in every time step (solbt) are matrix-vector products only.
+
   PUBLIC  :: decbt, solbt, wtime
+  PRIVATE :: lu_inverse
 
   ! accumulated wall-clock time (s) of the family loops around decbt and solbt
   real(IDP), PUBLIC :: t_decbt = 0., t_solbt = 0.
@@ -26,6 +30,36 @@ CONTAINS
     wtime = real(clk,IDP)/real(rate,IDP)
 
   end function wtime
+
+  subroutine lu_inverse (m, a, ip, w)
+
+    ! Replace the LU factors in a (from dgetrf, pivots ip) by the inverse matrix,
+    ! computed by solving with the identity as right-hand side (dgetrs scales
+    ! better over many threads than dgetri). w is m by m workspace.
+
+    implicit none
+
+    integer :: m, i, j, info
+    integer, dimension(m) :: ip
+    real(IDP), dimension(m,m) :: a, w
+    external :: dgetrs
+
+    !$OMP PARALLEL DO
+    do j = 1,m
+       w(:,j) = 0.
+       w(j,j) = 1.
+    end do
+    !$OMP END PARALLEL DO
+    call dgetrs ('N', m, m, a, m, ip, w, m, info)
+    !$OMP PARALLEL DO
+    do j = 1,m
+       do i = 1,m
+          a(i,j) = w(i,j)
+       end do
+    end do
+    !$OMP END PARALLEL DO
+
+  end subroutine lu_inverse
 
   subroutine decbt (m, n, a, b, c, ip, ier)
 
@@ -63,8 +97,8 @@ CONTAINS
     !    ip = integer array of length m*n for working storage.
     ! output..
     ! a,b,c = m by m by n arrays containing the block lu decomposition
-    !         of the input matrix (lu factors of the diagonal blocks in
-    !         LAPACK format).
+    !         of the input matrix, with the diagonal blocks replaced by
+    !         their inverses.
     !    ip = m by n array of pivot information.  ip(*,k) contains
     !         information for the k-th digonal block.
     !   ier = 0  if no trouble occurred, or
@@ -74,12 +108,14 @@ CONTAINS
 
     integer :: nm1, nm2, k, info
     real(IDP), parameter :: one = 1.0_IDP, mone = -1.0_IDP
+    real(IDP), dimension(:,:), allocatable :: work
     external :: dgetrf, dgetrs, dgemm
 
     ier = 0
     if (m > 0 .and. n > 3) then
        nm1 = n - 1
        nm2 = n - 2
+       allocate (work(m,m))
        ! process the first block-row. -----------------------------------------
        call dgetrf (m, m, a(1,1,1), m, ip(1,1), info)
        if (info /= 0) then
@@ -88,6 +124,7 @@ CONTAINS
        end if
        call dgetrs ('N', m, m, a(1,1,1), m, ip(1,1), b(1,1,1), m, info)
        call dgetrs ('N', m, m, a(1,1,1), m, ip(1,1), c(1,1,1), m, info)
+       call lu_inverse (m, a(1,1,1), ip(1,1), work)
        ! adjust b(*,*,2). -----------------------------------------------------
        call dgemm ('N', 'N', m, m, m, mone, c(1,1,2), m, c(1,1,1), m, one, b(1,1,2), m)
        ! main loop.  process block-rows 2 to n-1. -----------------------------
@@ -99,6 +136,7 @@ CONTAINS
              return
           end if
           call dgetrs ('N', m, m, a(1,1,k), m, ip(1,k), b(1,1,k), m, info)
+          call lu_inverse (m, a(1,1,k), ip(1,k), work)
        end do
        ! process last block-row and return. -----------------------------------
        call dgemm ('N', 'N', m, m, m, mone, b(1,1,n), m, b(1,1,nm2), m, one, c(1,1,n), m)
@@ -108,6 +146,7 @@ CONTAINS
           ier = n
           return
        end if
+       call lu_inverse (m, a(1,1,n), ip(1,n), work)
     else
        ier = -1
     end if
@@ -137,24 +176,28 @@ CONTAINS
     !         (treated as an m by n array here).
     ! output..
     !     y = solution vector, of length m*n.
-    ! solbt uses LAPACK dgetrs for the diagonal blocks and BLAS dgemv for
-    ! the block-vector products.
+    ! the diagonal blocks hold their inverses (from decbt), so solbt only
+    ! needs matrix-vector products (BLAS dgemv).
 
-    integer :: nm1, nm2, k, kb, info
-    real(IDP), parameter :: one = 1.0_IDP, mone = -1.0_IDP
-    external :: dgetrs, dgemv
+    integer :: nm1, nm2, k, kb
+    real(IDP), parameter :: zero = 0.0_IDP, one = 1.0_IDP, mone = -1.0_IDP
+    real(IDP), dimension(m) :: tmp
+    external :: dgemv
 
     nm1 = n - 1
     nm2 = n - 2
     ! forward solution sweep. ----------------------------------------------
-    call dgetrs ('N', m, 1, a(1,1,1), m, ip(1,1), y(1,1), m, info)
+    tmp = y(:,1)
+    call dgemv ('N', m, m, one, a(1,1,1), m, tmp, 1, zero, y(1,1), 1)
     do k = 2,nm1
        call dgemv ('N', m, m, mone, c(1,1,k), m, y(1,k-1), 1, one, y(1,k), 1)
-       call dgetrs ('N', m, 1, a(1,1,k), m, ip(1,k), y(1,k), m, info)
+       tmp = y(:,k)
+       call dgemv ('N', m, m, one, a(1,1,k), m, tmp, 1, zero, y(1,k), 1)
     end do
     call dgemv ('N', m, m, mone, c(1,1,n), m, y(1,nm1), 1, one, y(1,n), 1)
     call dgemv ('N', m, m, mone, b(1,1,n), m, y(1,nm2), 1, one, y(1,n), 1)
-    call dgetrs ('N', m, 1, a(1,1,n), m, ip(1,n), y(1,n), m, info)
+    tmp = y(:,n)
+    call dgemv ('N', m, m, one, a(1,1,n), m, tmp, 1, zero, y(1,n), 1)
     ! backward solution sweep. ---------------------------------------------
     do kb = 1,nm1
        k = n - kb
