@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 
 project(far3d LANGUAGES Fortran C)
 
@@ -24,6 +24,59 @@ find_package(MPI REQUIRED)
 find_package(OpenMP REQUIRED)
 
 # -------------------------
+# BLAS / LAPACK
+# -------------------------
+# FAR3D_LAPACK selects the BLAS/LAPACK backend for the block-tridiagonal solver
+# in matrix.f90:
+#   Accelerate - Apple Accelerate framework (default on macOS)
+#   MKL        - Intel oneMKL (default elsewhere), found via its CMake package
+#                (MKL_DIR, MKLROOT or MKL_ROOT, e.g. after sourcing oneAPI setvars.sh)
+#   Reference  - reference BLAS/LAPACK from FAR3D_REFLAPACK_ROOT
+#   NPC        - LAPACK from NAG Portable Cores (libnpc_lp64 in FAR3D_NPC_ROOT/lib),
+#                BLAS from sequential MKL (the BLAS backend NPC was built with)
+if(APPLE)
+    set(FAR3D_LAPACK_DEFAULT "Accelerate")
+else()
+    set(FAR3D_LAPACK_DEFAULT "MKL")
+endif()
+set(FAR3D_LAPACK "${FAR3D_LAPACK_DEFAULT}" CACHE STRING "BLAS/LAPACK backend: Accelerate, MKL, Reference or NPC")
+set_property(CACHE FAR3D_LAPACK PROPERTY STRINGS Accelerate MKL Reference NPC)
+set(FAR3D_REFLAPACK_ROOT "/opt/homebrew/opt/lapack" CACHE PATH "Install prefix of the reference BLAS/LAPACK")
+set(FAR3D_NPC_ROOT "" CACHE PATH "NPC build or install directory containing lib/libnpc_lp64")
+# libnpc_lp64.so depends on the LLVM OpenMP runtime (libomp)
+set(FAR3D_NPC_OMP_DIR "" CACHE PATH "Directory containing libomp.so needed by NPC")
+# gnu_thread shares libgomp with the OpenMP runtime used by gfortran
+set(FAR3D_MKL_THREADING "gnu_thread" CACHE STRING "MKL threading layer: gnu_thread, intel_thread or sequential")
+set_property(CACHE FAR3D_MKL_THREADING PROPERTY STRINGS gnu_thread intel_thread sequential)
+
+if(FAR3D_LAPACK STREQUAL "Accelerate")
+    find_library(ACCELERATE_FRAMEWORK Accelerate REQUIRED)
+    set(LAPACK_LIBS ${ACCELERATE_FRAMEWORK})
+elseif(FAR3D_LAPACK STREQUAL "Reference")
+    find_library(REF_LAPACK_LIB lapack PATHS ${FAR3D_REFLAPACK_ROOT}/lib NO_DEFAULT_PATH REQUIRED)
+    find_library(REF_BLAS_LIB blas PATHS ${FAR3D_REFLAPACK_ROOT}/lib NO_DEFAULT_PATH REQUIRED)
+    set(LAPACK_LIBS ${REF_LAPACK_LIB} ${REF_BLAS_LIB})
+elseif(FAR3D_LAPACK STREQUAL "MKL")
+    # LP64 interface: matrix.f90 passes default (32-bit) integers to BLAS/LAPACK
+    set(MKL_INTERFACE "lp64")
+    set(MKL_THREADING "${FAR3D_MKL_THREADING}")
+    find_package(MKL CONFIG REQUIRED HINTS $ENV{MKLROOT})
+    set(LAPACK_LIBS MKL::MKL)
+elseif(FAR3D_LAPACK STREQUAL "NPC")
+    find_library(NPC_LIB npc_lp64 PATHS ${FAR3D_NPC_ROOT}/lib NO_DEFAULT_PATH REQUIRED)
+    find_library(NPC_OMP_LIB omp PATHS ${FAR3D_NPC_OMP_DIR} REQUIRED)
+    # dgemm/dgemv come from MKL; NPC itself links mkl_sequential, so match it
+    set(MKL_INTERFACE "lp64")
+    set(MKL_THREADING "sequential")
+    find_package(MKL CONFIG REQUIRED HINTS $ENV{MKLROOT})
+    # NPC first so that its dgetrf/dgetrs take precedence over MKL's
+    set(LAPACK_LIBS ${NPC_LIB} MKL::MKL ${NPC_OMP_LIB})
+else()
+    message(FATAL_ERROR "Unknown FAR3D_LAPACK='${FAR3D_LAPACK}' (use Accelerate, MKL, Reference or NPC)")
+endif()
+message(STATUS "FAR3D_LAPACK = ${FAR3D_LAPACK} ${LAPACK_LIBS}")
+
+# -------------------------
 # Source files
 # -------------------------
 # Automatically include all Fortran source files
@@ -40,6 +93,7 @@ target_include_directories(far3d.x PRIVATE)
 target_link_libraries(far3d.x
     MPI::MPI_Fortran
     OpenMP::OpenMP_Fortran
+    ${LAPACK_LIBS}
 )
 # -------------------------
 # Optional: Compiler flags
