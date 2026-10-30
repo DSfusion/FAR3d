@@ -4,10 +4,27 @@ MODULE matrix
 
   IMPLICIT NONE
 
-  PUBLIC  :: decbt, solbt
+  PUBLIC  :: decbt, solbt, wtime
   PRIVATE :: dec, sol
 
+  ! accumulated wall-clock time (s) of the family loops around decbt and solbt
+  real(IDP), PUBLIC :: t_decbt = 0., t_solbt = 0.
+
 CONTAINS
+
+  function wtime ()
+
+    ! wall-clock time in seconds
+
+    implicit none
+
+    real(IDP) :: wtime
+    integer(8) :: clk, rate
+
+    call system_clock(clk, rate)
+    wtime = real(clk,IDP)/real(rate,IDP)
+
+  end function wtime
 
   subroutine dec (n, a, ip, ier)
 

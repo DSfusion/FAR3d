@@ -15,7 +15,7 @@ subroutine solve
   implicit none
 
   integer :: l,i,mnum3,l1,l1t,it,loca,loci,locx,lskp,mnum2
-  real(IDP) :: epsq,omcyd,omcydalp,scmn,scmx,uztmx,uztedg
+  real(IDP) :: epsq,omcyd,omcydalp,scmn,scmx,uztmx,uztedg,t0
 
   interface
      subroutine cnvt(idir)
@@ -299,6 +299,7 @@ subroutine solve
 
   ! call cpu_time(time_sm)
 
+  t0=wtime()
   do it=n_start,n_end
      loca=nskpn(it)+1
      loci=nskpin(it)+1
@@ -306,6 +307,7 @@ subroutine solve
      mnum3=noeqn*mnumn(it)
      call solbt(mnum3,mjm1,amat(loca:),bmat(loca:),cmat(loca:),xt(locx:),ipc(loci:))
   end do
+  t_solbt=t_solbt+wtime()-t0
 
   ! call cpu_time(time_em)
   ! time_m=time_m+time_em-time_sm
@@ -470,6 +472,7 @@ subroutine solve
 
      ! call cpu_time(time_sm)
 
+     t0=wtime()
      do it=n_start,n_end
         loca=nskpn(it)+1
         loci=nskpin(it)+1
@@ -477,6 +480,7 @@ subroutine solve
         mnum3=noeqn*mnumn(it)
         call solbt(mnum3,mjm1,amat(loca:),bmat(loca:),cmat(loca:),xt(locx:),ipc(loci:))
      end do
+     t_solbt=t_solbt+wtime()-t0
 
      ! call cpu_time(time_em)
      ! time_m=time_m+time_em-time_sm

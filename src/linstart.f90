@@ -27,6 +27,7 @@ subroutine linstart
                xsii,xsie,xsi2,xsi3,xsi4,ztr,zti,zir,zii,zer,zei,vther,vthir,tauie,xnuelc,xnuion,fctr,rsq
   complex(IDP) :: zetai,zetae,zetai2,zetai3,zetai4,zi,y0i,y1i,y2i,ddii,zetae2,zetae3,zetae4,ze,y0e,y1e,y2e,ddee,rei,sei, &
                   stfe,stfi,reii,sei1,sei2,sei3,zetaiinv,zetaeinv,cmplx1
+  real(IDP) :: t0
   real(IDP), dimension(:), allocatable :: xa
   real(IDP), dimension(:,:), allocatable :: scp2,scp3
   character*1 :: tb
@@ -1902,6 +1903,7 @@ subroutine linstart
   !    end do
   ! end do
 
+  t0=wtime()
   do it=n_start,n_end
      loca=nskpn(it)+1
      loci=nskpin(it)+1
@@ -1912,6 +1914,7 @@ subroutine linstart
         stop 19
      end if
   end do
+  t_decbt=t_decbt+wtime()-t0
 
   ! call cpu_time(time_em)
   ! write(6,'(/"Time spent in writing matrices:",1pe13.6," seconds")') time_em-time_sm

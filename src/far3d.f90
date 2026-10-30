@@ -15,6 +15,8 @@
 program far3d
 
   use mpi
+  use, intrinsic :: iso_fortran_env, only: int64
+!$ use omp_lib
   use param
   use processor
   use cotrol
@@ -25,6 +27,7 @@ program far3d
   use diagnostics
   use output_mod
   use transfer
+  use matrix, only: t_decbt, t_solbt
   use tools
   use scratch
   
@@ -45,6 +48,8 @@ program far3d
 
   integer :: i,l,j,iend,l2t,mnum,idum,mjo,leqmaxo,ierror
   integer, dimension(8) :: values_s,values_e
+  integer(int64) :: clk_rate,clk_start,clk_lin,clk_setup,clk_step
+  integer :: nthreads
   real(IDP) :: d,dk,scmn,scmx,sclmn,sclmx,scnorm,dum
   character(len=132) :: char5
   character(len=10) :: timew,datew,zone_h
@@ -55,8 +60,11 @@ program far3d
   character(len=2), dimension(3) :: numrunp
   character(len=5) :: numvac
 
-!  Input read 
-                                                   
+!  Input read
+
+! Wall-clock timer for setup and time stepping
+  call system_clock(clk_start,clk_rate)
+
   print *, "====================/ WELCOME TO \===================="
   print *, "======================================================"
   print *, "===============================  ______========_======"
@@ -77,6 +85,11 @@ program far3d
 ! Find the ID of this PE
   call MPI_COMM_RANK(MPI_COMM_WORLD, myPE  , ierror)
   numPEsm1 = numPEs-1
+
+! Number of OpenMP threads (1 if built without OpenMP)
+  nthreads = 1
+!$ nthreads = omp_get_max_threads()
+  if (myPE == 0) write(0,'(" ====> MPI processes = ",i4,", OpenMP threads = ",i4)') numPEs,nthreads
   
   ! if (myPE == 0) write(0,'(" ====> Checking input list ... ")')
 
@@ -275,8 +288,6 @@ program far3d
 
 !  From here the model is advanced in time
 
-  ! write(0,'(" ====> Time stepping begins ...")')  
-
   ! do i = 1,10
   !   nstep_count(i)=maxstp*i/10
   ! end do
@@ -290,12 +301,22 @@ program far3d
 !  Subroutine linstart creates the tridiagonal matrix where the right and left side of the
 !  model equations are added  
 
+     call system_clock(clk_lin)
+     if (myPE == 0) write(0,'(" ====> Setup time (ms)         = ",f14.3)') 1000.0_IDP*real(clk_lin-clk_start,IDP)/real(clk_rate,IDP)
+
      call linstart
+
+     call system_clock(clk_setup)
+     if (myPE == 0) then
+        write(0,'(" ====> linstart time (ms)      = ",f14.3)') 1000.0_IDP*real(clk_setup-clk_lin,IDP)/real(clk_rate,IDP)
+        write(0,'(" ====> Time stepping begins ...")')
+     end if
 
      iend = 0
      do while (nstep < nstep1+maxstp)
 
         nstep=nstep+1
+        if (myPE == 0) write(0,'(" ====> Time step = ",i6, " / ",i6)') nstep, maxstp
 
         ! if (nstep_count(i) == nstep) then
         !    write(0,'(" ====> Time step = ",i8)') nstep
@@ -346,7 +367,13 @@ program far3d
         endif
 
      end do
-
+     call system_clock(clk_step)
+     if (myPE == 0) then
+        write(0,'(" ====> Time stepping time (ms) = ",f14.3)') 1000.0_IDP*real(clk_step-clk_setup,IDP)/real(clk_rate,IDP)
+        write(0,'(" ====> Time stepping ends ...")')
+        write(0,'(" ====> decbt time (ms)         = ",f14.3)') 1000.0_IDP*t_decbt
+        write(0,'(" ====> solbt time (ms)         = ",f14.3)') 1000.0_IDP*t_solbt
+     end if
 !  stepping done.
 !  Subroutine lincheck calculates the growth rate and the frequency of the instability
 
