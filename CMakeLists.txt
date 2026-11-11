@@ -113,3 +113,18 @@ message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMAKE_Fortran_FLAGS = ${CMAKE_Fortran_FLAGS}")
 message(STATUS "CMAKE_Fortran_FLAGS_RELEASE = ${CMAKE_Fortran_FLAGS_RELEASE}")
 message(STATUS "CMAKE_Fortran_FLAGS_DEBUG = ${CMAKE_Fortran_FLAGS_DEBUG}")
+
+# -------------------------
+# CPU-specific code generation
+# -------------------------
+# Generate code for the CPU of the build machine (e.g. AVX-512); the executable
+# may not run on older CPUs
+option(FAR3D_MARCH_NATIVE "Optimise for the CPU of the build machine (-march=native / -xHost)" OFF)
+if(FAR3D_MARCH_NATIVE)
+    if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
+        target_compile_options(far3d.x PRIVATE -xHost)
+    else()
+        target_compile_options(far3d.x PRIVATE -march=native)
+    endif()
+endif()
+message(STATUS "FAR3D_MARCH_NATIVE = ${FAR3D_MARCH_NATIVE}")
